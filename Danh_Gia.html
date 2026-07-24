@@ -246,14 +246,6 @@ button{
   color: black !important;
 }
 
-/* ẨN BUTTON CHỈ Ở DATA_Thuốc + DATA_VX */
-
-#sheetImport .btn-primary,
-#sheetImport .btn-danger,
-#sheetVX .btn-primary,
-#sheetVX .btn-danger{
-  display:none !important;
-}
 
 /* ẨN TEXTAREA */
 
@@ -261,6 +253,7 @@ button{
 #vxInput{
   display:none  !important;
 }
+
 
 .delete-btn-wrap{
 
@@ -335,7 +328,6 @@ button{
 .btn-primary{
   background:#2563eb;
   color:white;
-    width:400px;
 }
   
   
@@ -371,6 +363,25 @@ button{
   	.btn-XACNHAN{
   background:#2563eb;
   color:white;}
+  
+  .save-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:120px;          /* Hai nút rộng bằng nhau */
+    height:42px;          /* Cao bằng nhau */
+    padding:0;
+    margin-right:10px;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+    background:#28a745;   /* đổi theo màu của bạn */
+    color:#fff;
+    font-size:15px;
+    font-weight:600;
+    text-decoration:none;
+    box-sizing:border-box;
+}
   </style>
   
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.css">
@@ -406,7 +417,19 @@ button{
 
     <h1>📋 Target</h1>
 
-    <input type="file" id="targetExcelFile" accept=".xlsx,.xls" onchange="importTargetExcel(event)" style="margin-bottom:15px;">
+<input
+    type="file"
+    id="targetExcelFile"
+    accept=".xlsx,.xls"
+    onchange="importTargetExcel(event)"
+    hidden
+>
+
+<label for="targetExcelFile" class="save-btn">📥 Nhập</label>
+
+<button type="button" class="save-btn" onclick="exportTargetExcel()">
+    📤 Xuất
+</button>
 
     <div class="table-wrapper">
 
@@ -882,27 +905,53 @@ button{
 <input type="file" id="excelFile" accept=".xlsx,.xls" onchange="importExcelFile(event)" style="margin-bottom:10px;">
     <textarea id="excelInput" placeholder="Paste dữ liệu Excel vào đây..."></textarea>
 
-    <div class="btn-group">
-
-      <button class="btn-primary" onclick="parseExcelData()">
-        Lưu dữ liệu
-      </button>
-
-      <button class="btn-danger" onclick="clearAllData()">
-        Xóa dữ liệu
-      </button>
-
-    </div>
-
     <div class="info" id="info"></div>
-  <input id="searchBox" style="
+<div id="searchContainer" style="
     display:none;
-    width:100%;
-    padding:10px;
-    border:1px solid #cbd5e1;
-    border-radius:8px;
     margin-top:10px;
-  " placeholder="Tìm mã NV / tên / dữ liệu..." onkeydown="handleSearchEnter(event)">
+    gap:6px;
+">
+
+<input
+    id="searchBox"
+    style="
+        flex:1;
+        padding:10px;
+        border:1px solid #cbd5e1;
+        border-radius:8px;
+    "
+    placeholder="Tìm mã NV / tên / dữ liệu..."
+    onkeydown="handleSearchEnter(event)">
+
+<button
+    id="btnNextSearch"
+    onclick="nextDrugResult()"
+    style="
+        min-width:90px;
+        height:42px;
+        padding:0 15px;
+        background:#2563eb;
+        color:white;
+        border:none;
+        border-radius:8px;
+        cursor:pointer;
+        font-size:15px;
+        font-weight:bold;
+    "
+    title="Kết quả tiếp theo">
+    🔍 Tìm
+</button>
+
+<button
+    id="btnUpdateDrug"
+    class="btn-primary"
+    onclick="parseExcelData()"
+    style="display:none;">
+    Cập nhật dữ liệu
+</button>
+
+</div>
+  
 
     <div id="excelTable" style="
     width:100%;
@@ -924,28 +973,54 @@ button{
 <input type="file" id="vxFile" accept=".xlsx,.xls" onchange="importVXFile(event)" style="margin-bottom:10px;">
     <textarea id="vxInput" placeholder="Paste dữ liệu DATA_VX vào đây..."></textarea>
 
-    <div class="btn-group">
-
-      <button class="btn-primary" onclick="parseVXData()">
-        Lưu dữ liệu
-      </button>
-
-      <button class="btn-danger" onclick="clearVXData()">
-        Xóa dữ liệu
-      </button>
-
-    </div>
 
 <div class="info" id="vxInfo"></div>
 
-<input id="vxSearchBox" style="
+<div id="vxSearchContainer" style="
     display:none;
-    width:100%;
-    padding:10px;
-    border:1px solid #cbd5e1;
-    border-radius:8px;
     margin-top:10px;
-  " placeholder="Tìm mã NV / tên / dữ liệu..." onkeydown="handleVXSearchEnter(event)">
+    gap:6px;
+    align-items:center;
+">
+
+<input
+    id="vxSearchBox"
+    style="
+        flex:1;
+        padding:10px;
+        border:1px solid #cbd5e1;
+        border-radius:8px;
+    "
+    placeholder="Tìm mã NV / tên / dữ liệu..."
+    onkeydown="handleVXSearchEnter(event)">
+
+<button
+    id="btnNextVXSearch"
+    onclick="nextVXResult()"
+    style="
+        min-width:90px;
+        height:42px;
+        padding:0 15px;
+        background:#2563eb;
+        color:white;
+        border:none;
+        border-radius:8px;
+        cursor:pointer;
+        font-size:15px;
+        font-weight:bold;
+    ">
+    🔍 Tìm
+</button>
+
+<button
+    id="btnUpdateVX"
+    class="btn-primary"
+    onclick="parseVXData()"
+    style="display:none; min-width:150px;">
+    Cập nhật dữ liệu
+</button>
+
+</div>
 
 <div id="vxExcelTable" style="
     width:100%;
@@ -2925,17 +3000,22 @@ function importTargetExcel(event){
         'hot'
       ]);
 
-    const colTyTrong =
-      findColumn([
-        'tỉ trọng',
-        'ty trong'
-      ]);
+const colTyTrong =
+  findColumn([
+    'tỉ trọng',
+    'ty trong',
+    'tt thuốc',
+    'tt thuoc'
+  ]);
 
-    const colLuotKhach =
-      findColumn([
-        'lượt khách',
-        'luot khach'
-      ]);
+const colLuotKhach =
+  findColumn([
+    'lượt khách',
+    'luot khach',
+    '↑↓ khách',
+    'khách',
+    'khach'
+  ]);
 
     const colCanDate =
       findColumn([
@@ -3465,6 +3545,8 @@ const rows = XLSX.utils.sheet_to_json(
     //
 
     parseExcelData();
+	// hiện nút cập nhật
+document.getElementById("btnUpdateDrug").style.display = "inline-block";
 
   };
 
@@ -3725,6 +3807,19 @@ const headers = [
 
 ];
 
+function syncExcelInput() {
+
+  if (!hot) return;
+
+  const data = hot.getData();
+
+  document.getElementById("excelInput").value =
+    data
+      .map(row => row.map(cell => cell ?? "").join("\t"))
+      .join("\n");
+
+}
+
 function parseExcelData(){
 
   const input = document
@@ -3810,8 +3905,9 @@ const rows = rawRows;
   document.getElementById('info')
     .innerHTML =
     `Tổng dòng: <b>${rows.length}</b>`;
-	document.getElementById('searchBox')
-  .style.display = 'block';
+	document.getElementById("searchContainer").style.display="flex";
+
+alert("✅ Đã cập nhật DATA THUỐC thành công!");
 }
 
 function renderTable(rows){
@@ -4079,9 +4175,17 @@ function renderTable(rows){
         'drugData updated:',
         drugData
       );
+	  syncExcelInput();
     }
+	
 
   });
+  
+  container.addEventListener("focusout", function () {
+
+    setTimeout(syncExcelInput, 50);
+
+});
 
 }
 
@@ -4286,6 +4390,8 @@ const filteredRows = rows
     document.getElementById(
       'vxInput'
     ).value = text;
+	
+	document.getElementById("btnUpdateVX").style.display = "inline-block";
 
     //
     // AUTO PARSE
@@ -4312,6 +4418,29 @@ const vxHeaders = [
   '%HT Target Doanh thu KPI'
 ];
 
+function syncVXInput() {
+
+  if (!vxHot) return;
+
+  const data = vxHot.getData();
+
+  const text = data.map(row => {
+
+    return [
+      `${row[0] || ""}-${row[1] || ""}`, // ghép lại MãNV-TênNV
+      row[2] ?? "",
+      row[3] ?? "",
+      row[4] ?? "",
+      row[5] ?? "",
+      row[6] ?? ""
+    ].join("\t");
+
+  }).join("\n");
+
+  document.getElementById("vxInput").value = text;
+
+}
+
 function parseVXData(){
 
   const input = document
@@ -4337,8 +4466,8 @@ function parseVXData(){
   document.getElementById('vxInfo')
     .innerHTML =
     `Tổng dòng: <b>${rows.length}</b>`;
-	document.getElementById('vxSearchBox')
-  .style.display = 'block';
+	document.getElementById("vxSearchContainer").style.display="flex";
+  alert("✅ Đã cập nhật DATA_VX thành công!");
 }
 
 function renderVXTable(rows){
@@ -4530,9 +4659,16 @@ function renderVXTable(rows){
         'VX saved',
         allData
       );
+	  
+	  syncVXInput();
     }
 
   });
+  vxHot.addHook('afterSelectionEnd', function () {
+
+    setTimeout(syncVXInput, 50);
+
+});
 
 }
 
@@ -9213,12 +9349,43 @@ window.addEventListener('load', () => {
 
 });
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+let drugSearchResults = [];
+let drugSearchIndex = -1;
+let drugLastKeyword = "";
+
 function handleSearchEnter(event){
 
-  if(event.key === 'Enter'){
+    if(event.key !== "Enter") return;
 
-    searchTable(event.target.value);
-  }
+    const keyword = event.target.value.trim();
+
+    if(keyword === "") return;
+
+    if(keyword !== drugLastKeyword){
+
+        drugLastKeyword = keyword;
+
+        searchTable(keyword);
+
+        return;
+    }
+
+    if(drugSearchResults.length === 0) return;
+
+    drugSearchIndex++;
+
+    if(drugSearchIndex >= drugSearchResults.length){
+
+        drugSearchIndex = 0;
+
+    }
+
+    const item = drugSearchResults[drugSearchIndex];
+
+    hot.selectCell(item.row, item.col);
+
+    hot.render();
+
 }
 
 function searchTable(query){
@@ -9236,20 +9403,21 @@ function searchTable(query){
     return;
   }
 
-  const result =
-    searchPlugin.query(query);
+drugSearchResults = searchPlugin.query(query);
 
-  hot.render();
+hot.render();
 
-  if(result.length === 0){
+if(drugSearchResults.length === 0){
     return;
-  }
+}
 
-  const first = result[0];
+drugSearchIndex = 0;
 
-  hot.selectCell(first.row, first.col);
+const first = drugSearchResults[drugSearchIndex];
 
-  hot.render();
+hot.selectCell(first.row, first.col);
+
+hot.render();
 
   requestAnimationFrame(() => {
 
@@ -9284,12 +9452,43 @@ holder.scrollLeft += offsetX;
   });
 }
 
+let vxSearchResults = [];
+let vxSearchIndex = -1;
+let vxLastKeyword = "";
+
 function handleVXSearchEnter(event){
 
-  if(event.key === 'Enter'){
+    if(event.key !== "Enter") return;
 
-    searchVXTable(event.target.value);
-  }
+    const keyword = event.target.value.trim();
+
+    if(keyword === "") return;
+
+    if(keyword !== vxLastKeyword){
+
+        vxLastKeyword = keyword;
+
+        searchVXTable(keyword);
+
+        return;
+    }
+
+    if(vxSearchResults.length === 0) return;
+
+    vxSearchIndex++;
+
+    if(vxSearchIndex >= vxSearchResults.length){
+
+        vxSearchIndex = 0;
+
+    }
+
+    const item = vxSearchResults[vxSearchIndex];
+
+    vxHot.selectCell(item.row, item.col);
+
+    vxHot.render();
+
 }
 
 function searchVXTable(query){
@@ -9307,20 +9506,23 @@ function searchVXTable(query){
     return;
   }
 
-  const result =
+vxSearchResults =
     searchPlugin.query(query);
 
-  vxHot.render();
+vxHot.render();
 
-  if(result.length === 0){
+if(vxSearchResults.length === 0){
     return;
-  }
+}
 
-  const first = result[0];
+vxSearchIndex = 0;
 
-  vxHot.selectCell(first.row, first.col);
+const first =
+    vxSearchResults[vxSearchIndex];
 
-  vxHot.render();
+vxHot.selectCell(first.row, first.col);
+
+vxHot.render();
 
   requestAnimationFrame(() => {
 
@@ -9709,7 +9911,126 @@ document.addEventListener('keydown', function(e){
   }
 
 });
+function exportTargetExcel(){
 
+    const table = document.getElementById("targetTable");
+
+    let data = [];
+
+    // Lấy tiêu đề (bỏ cột cuối)
+    let headers = [];
+
+    table.querySelectorAll("thead th").forEach((th,index)=>{
+
+        if(index === table.rows[0].cells.length-1) return;
+
+        headers.push(th.innerText.trim());
+
+    });
+
+    data.push(headers);
+
+    // Lấy dữ liệu
+    table.querySelectorAll("tbody tr").forEach(tr=>{
+
+        // Bỏ dòng tổng
+        if(tr.classList.contains("total-row")) return;
+
+        let row=[];
+
+        tr.querySelectorAll("td").forEach((td,index)=>{
+
+            // Bỏ cột nút Thêm/Xóa
+            if(index===tr.cells.length-1) return;
+
+            row.push(td.innerText.trim());
+
+        });
+
+        data.push(row);
+
+    });
+
+    const ws = XLSX.utils.aoa_to_sheet(data);
+
+    const wb = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(wb,ws,"TARGET");
+
+    XLSX.writeFile(wb,"Target.xlsx");
+
+}
+
+function nextDrugResult(){
+
+    const keyword =
+        document.getElementById("searchBox").value.trim();
+
+    if(keyword==="") return;
+
+    if(keyword!==drugLastKeyword){
+
+        drugLastKeyword=keyword;
+
+        searchTable(keyword);
+
+        return;
+
+    }
+
+    if(drugSearchResults.length===0) return;
+
+    drugSearchIndex++;
+
+    if(drugSearchIndex>=drugSearchResults.length){
+
+        drugSearchIndex=0;
+
+    }
+
+    const item=drugSearchResults[drugSearchIndex];
+
+    hot.selectCell(item.row,item.col);
+
+    hot.render();
+
+}
+
+function nextVXResult(){
+
+    const keyword=
+        document.getElementById("vxSearchBox").value.trim();
+
+    if(keyword==="") return;
+
+    if(keyword!==vxLastKeyword){
+
+        vxLastKeyword=keyword;
+
+        searchVXTable(keyword);
+
+        return;
+
+    }
+
+    if(vxSearchResults.length===0) return;
+
+    vxSearchIndex++;
+
+    if(vxSearchIndex>=vxSearchResults.length){
+
+        vxSearchIndex=0;
+
+    }
+
+    const item=
+        vxSearchResults[vxSearchIndex];
+
+    vxHot.selectCell(item.row,item.col);
+
+    vxHot.render();
+
+}
 </script>
 <script src="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
