@@ -161,12 +161,6 @@ button{
   min-width:140px;
 }
 
-    .save-btn{
-      background:#2563eb;
-      color:white;
-    }
-	
-
 
     .add-btn{
       background:#059669;
@@ -328,6 +322,7 @@ button{
 .btn-primary{
   background:#2563eb;
   color:white;
+  width: 400px;
 }
   
   
@@ -368,7 +363,7 @@ button{
     display:inline-flex;
     align-items:center;
     justify-content:center;
-    width:120px;          /* Hai nút rộng bằng nhau */
+    width:160px;          /* Hai nút rộng bằng nhau */
     height:42px;          /* Cao bằng nhau */
     padding:0;
     margin-right:10px;
@@ -381,6 +376,7 @@ button{
     font-weight:600;
     text-decoration:none;
     box-sizing:border-box;
+
 }
   </style>
   
@@ -407,7 +403,6 @@ button{
 <button class="menu-btn" onclick="openKPIPopup('sheetKPIs', this)">
   KPIs
 </button>
-
 </div>
 
 <!-- SHEET TARGET -->
@@ -944,10 +939,17 @@ button{
 
 <button
     id="btnUpdateDrug"
-    class="btn-primary"
+    class="save-btn"
     onclick="parseExcelData()"
     style="display:none;">
-    Cập nhật dữ liệu
+    🔄 Cập nhật dữ liệu
+</button>
+<button
+    id="drugDuplicateBtn"
+    onclick="showDrugDuplicatePopup()"
+    class="save-btn"
+    style="display:none;background:#dc2626;">
+    ⚠ Có 0 Mã NV bị trùng
 </button>
 
 </div>
@@ -1014,10 +1016,17 @@ button{
 
 <button
     id="btnUpdateVX"
-    class="btn-primary"
+    class="save-btn"
     onclick="parseVXData()"
     style="display:none; min-width:150px;">
-    Cập nhật dữ liệu
+   🔄 Cập nhật dữ liệu
+</button>
+<button
+    id="vxDuplicateBtn"
+    onclick="showVXDuplicatePopup()"
+    class="save-btn"
+    style="display:none;background:#dc2626;">
+    ⚠ Có 0 Mã NV bị trùng
 </button>
 
 </div>
@@ -1033,6 +1042,83 @@ button{
 
 </div>
 
+<div id="duplicatePopup" style="
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.45);
+z-index:99999;
+align-items:center;
+justify-content:center;
+">
+
+<div style="
+background:#fff;
+width:900px;
+max-width:95%;
+height:80vh;
+border-radius:14px;
+display:flex;
+flex-direction:column;
+overflow:hidden;
+">
+
+<div style="
+padding:15px;
+background:#dc2626;
+color:#fff;
+font-size:20px;
+font-weight:bold;
+display:flex;
+justify-content:space-between;
+align-items:center;
+">
+
+<span id="duplicateTitle">
+Danh sách Mã NV bị trùng
+</span>
+
+<button
+onclick="closeDuplicatePopup()"
+style="
+background:white;
+border:none;
+padding:6px 12px;
+border-radius:8px;
+cursor:pointer;
+font-weight:bold;
+">
+Đóng
+</button>
+
+</div>
+
+<div style="padding:15px;">
+
+
+
+</div>
+
+<div
+id="duplicateBody"
+style="
+flex:1;
+overflow:auto;
+padding:15px;
+">
+</div>
+
+<div style="
+padding:15px;
+border-top:1px solid #ddd;
+text-align:right;
+">
+
+</div>
+
+</div>
+
+</div>
 <!-- KPI POPUP -->
 
 <div id="kpiPopup" style="
@@ -3906,6 +3992,8 @@ const rows = rawRows;
     .innerHTML =
     `Tổng dòng: <b>${rows.length}</b>`;
 	document.getElementById("searchContainer").style.display="flex";
+	
+	checkDrugDuplicate();
 
 alert("✅ Đã cập nhật DATA THUỐC thành công!");
 }
@@ -4467,6 +4555,7 @@ function parseVXData(){
     .innerHTML =
     `Tổng dòng: <b>${rows.length}</b>`;
 	document.getElementById("vxSearchContainer").style.display="flex";
+	checkVXDuplicate();
   alert("✅ Đã cập nhật DATA_VX thành công!");
 }
 
@@ -10029,6 +10118,225 @@ function nextVXResult(){
     vxHot.selectCell(item.row,item.col);
 
     vxHot.render();
+
+}
+
+let drugDuplicates = [];
+let vxDuplicates = [];
+
+/* ===========================
+   Lấy danh sách Mã NV TARGET
+===========================*/
+function getTargetMaNVSet() {
+
+    const set = new Set();
+
+    document.querySelectorAll("#targetTable tbody tr:not(.total-row)")
+        .forEach(tr => {
+
+            const td = tr.querySelectorAll("td");
+            if(td.length < 1) return;
+
+            const ma = normalizeMaNV(td[0].innerText);
+
+            if(ma) set.add(ma);
+
+        });
+
+    return set;
+
+}
+
+/* ===========================
+   DATA THUỐC
+===========================*/
+function checkDrugDuplicate(){
+
+    drugDuplicates = [];
+
+    const targetSet = getTargetMaNVSet();
+
+    const map = {};
+
+    drugData.forEach((r,index)=>{
+
+        const ma = normalizeMaNV(r.maNV);
+
+        if(!ma) return;
+
+        // Chỉ kiểm tra Mã NV có trong TARGET
+        if(!targetSet.has(ma)) return;
+
+        if(!map[ma]){
+
+            map[ma]={
+                ma:ma,
+                ten:r.tenNV||"",
+                rows:[]
+            };
+
+        }
+
+        map[ma].rows.push(index+1);
+
+    });
+
+    drugDuplicates = Object.values(map)
+        .filter(x=>x.rows.length>1);
+
+    const btn =
+        document.getElementById("drugDuplicateBtn");
+
+    if(drugDuplicates.length){
+
+        btn.style.display="inline-block";
+        btn.innerHTML=`⚠ ${drugDuplicates.length} Mã NV trùng`;
+
+    }else{
+
+        btn.style.display="none";
+
+    }
+
+}
+
+
+/* ===========================
+   DATA VX
+===========================*/
+function checkVXDuplicate(){
+
+    vxDuplicates = [];
+
+    const targetSet = getTargetMaNVSet();
+
+    const map = {};
+
+    vxData.forEach((r,index)=>{
+
+const ma =
+    normalizeMaNV(
+        String(r[0] || "").split("-")[0]
+    );
+
+        if(!ma) return;
+
+        if(!targetSet.has(ma)) return;
+
+        if(!map[ma]){
+
+            map[ma]={
+                ma:ma,
+                ten:String(r[0] || "").split("-").slice(1).join("-"),
+                rows:[]
+            };
+
+        }
+
+        map[ma].rows.push(index+1);
+
+    });
+
+    vxDuplicates = Object.values(map)
+        .filter(x=>x.rows.length>1);
+
+    const btn =
+        document.getElementById("vxDuplicateBtn");
+
+    if(vxDuplicates.length){
+
+        btn.style.display="inline-block";
+        btn.innerHTML=`⚠ ${vxDuplicates.length} Mã NV trùng`;
+
+    }else{
+
+        btn.style.display="none";
+
+    }
+
+}
+
+function showDrugDuplicatePopup(){
+
+    document.getElementById("duplicatePopup").style.display="flex";
+    document.getElementById("duplicateTitle").innerText="DATA THUỐC - Mã NV bị trùng";
+
+    renderDuplicateTable(drugDuplicates);
+
+}
+
+function showVXDuplicatePopup(){
+
+    document.getElementById("duplicatePopup").style.display="flex";
+    document.getElementById("duplicateTitle").innerText="DATA_VX - Mã NV bị trùng";
+
+    renderDuplicateTable(vxDuplicates);
+
+}
+let currentDuplicateData = [];
+
+function renderDuplicateTable(data){
+
+    currentDuplicateData = data;
+
+    let html=`
+<table id="duplicateTable"
+style="
+width:100%;
+border-collapse:collapse;
+font-size:14px;
+">
+
+<thead>
+
+<tr style="background:#f2f2f2;">
+
+<th style="border:1px solid #ddd;padding:8px;">Mã NV</th>
+
+<th style="border:1px solid #ddd;padding:8px;">Tên NV</th>
+
+<th style="border:1px solid #ddd;padding:8px;">Số lần</th>
+
+<th style="border:1px solid #ddd;padding:8px;">Dòng</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+`;
+
+    data.forEach(item=>{
+
+        html+=`
+<tr>
+
+<td style="border:1px solid #ddd;padding:8px;">${item.ma}</td>
+
+<td style="border:1px solid #ddd;padding:8px;">${item.ten}</td>
+
+<td style="border:1px solid #ddd;padding:8px;text-align:center;">
+${item.rows.length}
+</td>
+
+<td style="border:1px solid #ddd;padding:8px;">
+${item.rows.join(", ")}
+</td>
+
+</tr>
+`;
+
+    });
+
+    html+="</tbody></table>";
+
+    document.getElementById("duplicateBody").innerHTML=html;
+
+}
+
+function closeDuplicatePopup(){
+
+    document.getElementById("duplicatePopup").style.display="none";
 
 }
 </script>
