@@ -158,7 +158,6 @@ button{
   cursor:pointer;
   font-weight:bold;
   font-size:14px;
-  min-width:140px;
 }
 
 
@@ -363,7 +362,7 @@ button{
     display:inline-flex;
     align-items:center;
     justify-content:center;
-    width:160px;          /* Hai nút rộng bằng nhau */
+    width:100px;          /* Hai nút rộng bằng nhau */
     height:42px;          /* Cao bằng nhau */
     padding:0;
     margin-right:10px;
@@ -879,7 +878,7 @@ button{
       ➕ Thêm nhân viên
     </button>
 
-    <button class="save-btn" onclick="calculateTarget()">
+    <button class="add-btn" onclick="calculateTarget()">
       📈 Tính Target
     </button>
 
@@ -942,14 +941,14 @@ button{
     class="save-btn"
     onclick="parseExcelData()"
     style="display:none;">
-    🔄 Cập nhật dữ liệu
+    🔄 Cập nhật
 </button>
 <button
     id="drugDuplicateBtn"
     onclick="showDrugDuplicatePopup()"
     class="save-btn"
     style="display:none;background:#dc2626;">
-    ⚠ Có 0 Mã NV bị trùng
+    ⚠ Cảnh báo
 </button>
 
 </div>
@@ -1026,7 +1025,7 @@ button{
     onclick="showVXDuplicatePopup()"
     class="save-btn"
     style="display:none;background:#dc2626;">
-    ⚠ Có 0 Mã NV bị trùng
+    ⚠ Cảnh báo
 </button>
 
 </div>
@@ -10190,7 +10189,7 @@ function checkDrugDuplicate(){
     if(drugDuplicates.length){
 
         btn.style.display="inline-block";
-        btn.innerHTML=`⚠ ${drugDuplicates.length} Mã NV trùng`;
+        btn.innerHTML=`⚠ Cảnh báo`;
 
     }else{
 
@@ -10246,7 +10245,7 @@ const ma =
     if(vxDuplicates.length){
 
         btn.style.display="inline-block";
-        btn.innerHTML=`⚠ ${vxDuplicates.length} Mã NV trùng`;
+        btn.innerHTML=`⚠ Cảnh báo`;
 
     }else{
 
