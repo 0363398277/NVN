@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Ôn tập đơn thuốc</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"Arial",sans-serif;
+}
+
+
+body{
+    background:#f1f5f9;
+    padding:15px;
+}
+
+
+.container{
+    max-width:500px;
+    margin:auto;
+}
+
+
+/* CARD */
+
+.card{
+
+    background:white;
+    border-radius:22px;
+    padding:25px;
+
+    box-shadow:
+    0 10px 30px rgba(0,0,0,.08);
+
+}
+
+
+
+/* TITLE */
+
+.logo{
+
+    text-align:center;
+    font-size:32px;
+    margin-bottom:5px;
+
+}
+
+
+h1{
+
+    text-align:center;
+    color:#2563eb;
+    font-size:25px;
+    margin-bottom:25px;
+
+}
+
+
+.section-title{
+
+    font-size:18px;
+    font-weight:bold;
+    margin-bottom:12px;
+
+}
+
+
+
+/* BUTTON GROUP */
+
+.group-buttons{
+
+    display:flex;
+    gap:10px;
+    margin-bottom:25px;
+
+}
+
+
+.group-btn{
+
+    flex:1;
+
+    padding:13px;
+
+    border-radius:14px;
+
+    border:2px solid #ddd;
+
+    background:white;
+
+    font-size:16px;
+
+    cursor:pointer;
+
+}
+
+
+.group-btn.active{
+
+    background:#2563eb;
+
+    color:white;
+
+    border-color:#2563eb;
+
+}
+
+
+
+
+/* SELECT BOX */
+
+
+.select-box{
+
+    border:2px solid #e2e8f0;
+
+    border-radius:15px;
+
+    padding:15px;
+
+    cursor:pointer;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:10px;
+
+}
+
+
+.select-box span{
+
+    color:#64748b;
+
+}
+
+
+
+.arrow{
+
+    font-size:20px;
+
+}
+
+
+
+/* LIST */
+
+.list{
+
+    display:none;
+
+    border:1px solid #ddd;
+
+    border-radius:15px;
+
+    max-height:220px;
+
+    overflow-y:auto;
+
+    margin-bottom:15px;
+
+}
+
+
+
+
+
+.list.show{
+
+    display:block;
+
+}
+
+
+.search{
+
+    width:100%;
+
+    padding:12px;
+
+    border-radius:12px;
+
+    border:1px solid #ddd;
+
+    margin-bottom:10px;
+
+    font-size:16px;
+
+}
+
+
+
+.item{
+
+    padding:12px;
+
+    border-bottom:1px solid #eee;
+
+}
+
+
+
+.item:last-child{
+
+    border:none;
+
+}
+
+
+
+/* BUTTON */
+
+
+button.main{
+
+    width:100%;
+
+    border:none;
+
+    padding:15px;
+
+    border-radius:15px;
+
+    color:white;
+
+    background:#16a34a;
+
+    font-size:18px;
+
+    cursor:pointer;
+
+}
+
+
+
+
+/* LEARNING CARD */
+
+
+.learn{
+
+    margin-top:20px;
+
+}
+
+
+
+.progress{
+
+    height:10px;
+
+    background:#e5e7eb;
+
+    border-radius:10px;
+
+    overflow:hidden;
+
+}
+
+
+.progress-bar{
+
+    width:0%;
+
+    height:100%;
+
+    background:#2563eb;
+
+    transition:width .3s ease;
+
+}
+
+
+.question{
+
+    margin-top:20px;
+
+    background:#f8fafc;
+
+    padding:25px;
+
+    border-radius:15px;
+
+    text-align:center;
+
+}
+
+
+
+.group-name{
+
+    color:#2563eb;
+
+    font-weight:bold;
+
+}
+
+
+
+.question-title{
+
+    font-size:24px;
+
+    font-weight:bold;
+
+    margin-top:10px;
+
+}
+
+
+
+.answer{
+
+    margin-top:15px;
+
+    background:#fff7ed;
+
+    padding:15px;
+
+    border-radius:12px;
+
+}
+
+
+
+
+.action{
+
+    display:flex;
+
+    gap:10px;
+
+    margin-top:15px;
+
+}
+
+
+
+.action button{
+
+    flex:1;
+
+    padding:13px;
+
+    border:none;
+
+    border-radius:12px;
+
+    color:white;
+
+    font-size:16px;
+
+}
+
+
+.show-answer{
+
+    background:#ea580c;
+
+}
+
+
+.next{
+
+    background:#2563eb;
+
+}
+
+
+
+
+
+@media(max-width:500px){
+
+    .card{
+
+        padding:20px;
+
+    }
+
+
+    .question-title{
+
+        font-size:21px;
+
+    }
+
+}
+
+.setting-btn{
+
+    width:100%;
+
+    padding:12px;
+
+    border:none;
+
+    border-radius:15px;
+
+    background:#64748b;
+
+    color:white;
+
+    font-size:16px;
+
+    cursor:pointer;
+
+    margin-bottom:15px;
+
+}
+
+
+/* hộp thiết lập */
+
+.setting-card{
+
+    display:none;
+
+    position:fixed;
+
+    top:20px;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    width:90%;
+
+    max-width:500px;
+
+    max-height:90vh;
+
+    overflow:hidden;
+
+    z-index:1000;
+
+}
+
+
+
+.setting-card.show{
+
+    display:block;
+
+}
+
+
+/* nền mờ */
+
+.overlay{
+
+    display:none;
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.35);
+
+    z-index:999;
+
+}
+
+
+.overlay.show{
+
+    display:block;
+
+}
+
+.button-control{
+
+    display:flex;
+
+    gap:10px;
+
+    margin-bottom:15px;
+
+}
+
+
+
+.gray-btn{
+
+    flex:1;
+
+    padding:12px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#e2e8f0;
+
+    color:#333;
+
+    font-size:15px;
+
+    cursor:pointer;
+
+}
+
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+
+<!-- =========================
+     MÀN HÌNH CHÍNH
+========================= -->
+
+
+<div class="card">
+
+
+<div class="logo">
+🩺
+</div>
+
+
+<h1>
+Ôn tập đơn thuốc
+</h1>
+
+
+
+<!-- NÚT THIẾT LẬP -->
+
+<button 
+id="settingBtn"
+class="setting-btn">
+
+⚙️ Thiết lập
+
+</button>
+
+
+
+</div>
+
+
+
+
+
+<!-- =========================
+     NỀN MỜ
+========================= -->
+
+
+<div 
+class="overlay"
+id="overlay">
+
+</div>
+
+
+
+
+
+<!-- =========================
+     HỘP THIẾT LẬP
+========================= -->
+
+
+<div 
+class="card setting-card"
+id="settingBox">
+
+
+
+<div class="section-title">
+
+Chọn nhóm
+
+</div>
+
+
+
+
+<div class="group-buttons">
+
+
+<button class="group-btn active">
+
+🧑 Người lớn
+
+</button>
+
+
+
+<button class="group-btn active">
+
+👶 Trẻ em
+
+</button>
+
+
+</div>
+
+
+
+
+
+<div class="section-title">
+
+Danh sách tiêu đề
+
+</div>
+
+
+
+
+
+<div class="select-box">
+
+
+<span>
+
+▼ Chọn tiêu đề (Tất cả)
+
+</span>
+
+
+<div class="arrow">
+
+⌄
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+<div 
+class="list" 
+id="titleList">
+
+
+<input
+
+id="searchInput"
+
+class="search"
+
+placeholder="🔍 Tìm tiêu đề">
+
+
+</div>
+
+
+
+
+
+
+<div class="button-control">
+
+
+<button 
+class="gray-btn"
+id="selectAllBtn">
+
+☑ Chọn tất cả
+
+</button>
+
+
+<button 
+class="gray-btn"
+id="clearAllBtn">
+
+☐ Bỏ chọn tất cả
+
+</button>
+
+
+</div>
+
+
+
+<button 
+class="main" 
+id="startBtn">
+
+BẮT ĐẦU HỌC
+
+</button>
+
+
+
+
+</div>
+
+
+
+
+
+
+
+<!-- =========================
+     PHẦN HỌC
+========================= -->
+
+
+<div class="card learn">
+
+
+
+<div 
+class="section-title"
+id="progressText">
+
+Tiến trình
+
+</div>
+
+
+
+
+
+
+<div class="progress">
+
+
+<div 
+class="progress-bar" 
+id="progressBar">
+
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+<div class="question">
+
+
+
+<div 
+class="group-name">
+
+🧑 Người lớn
+
+</div>
+
+
+
+
+<div 
+class="question-title">
+
+Cảm ho đờm
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+
+
+
+<div 
+class="answer" 
+id="answerBox" 
+style="display:none">
+
+
+<ul id="answerList">
+
+
+</ul>
+
+
+</div>
+
+
+
+
+
+
+
+<div class="action">
+
+
+<button 
+class="show-answer" 
+id="showAnswerBtn">
+
+Hiện đáp án
+
+</button>
+
+
+
+
+<button 
+class="next" 
+id="nextBtn">
+
+Câu tiếp
+
+</button>
+
+
+
+</div>
+
+
+
+
+
+</div>
+
+
+
+
+
+</div>
+
+<script src="catlieu.js"></script>
+
+
+<script>
+
+let currentGroup = "all";
+
+let selectedData = [];
+
+let studyList = [];
+
+let currentIndex = -1;
+
+
+// kiểm tra data.js
+
+console.log("Dữ liệu:", data);
+// Mặc định chọn tất cả
+selectedData = [...data];
+
+
+// hiển thị danh sách
+
+renderList();
+
+
+
+
+
+
+// ======================
+// MỞ / ĐÓNG DANH SÁCH
+// ======================
+
+
+document
+.querySelector(".select-box")
+.onclick=function(){
+
+
+    document
+    .querySelector(".list")
+    .classList.toggle("show");
+
+
+};
+
+
+
+
+
+
+
+// ======================
+// HIỂN THỊ DANH SÁCH
+// ======================
+
+
+function renderList(){
+
+
+    let list =
+    document.getElementById("titleList");
+
+
+    let keyword =
+    document.getElementById("searchInput")
+    ?.value
+    .toLowerCase()
+    ||
+    "";
+
+
+
+    list.innerHTML="";
+
+
+
+    let searchBox=document.createElement("input");
+
+    searchBox.id="searchInput";
+
+    searchBox.className="search";
+
+    searchBox.placeholder="🔍 Tìm tiêu đề...";
+
+    searchBox.value=keyword;
+
+
+    list.appendChild(searchBox);
+
+
+
+
+    data.forEach((item,index)=>{
+
+
+        if(
+            currentGroup!="all"
+            &&
+            item.group!=currentGroup
+        ){
+
+            return;
+
+        }
+
+
+
+        let text =
+        item.group
+        +" - "
+        +item.title;
+
+
+
+
+        if(
+            !text
+            .toLowerCase()
+            .includes(keyword)
+        ){
+
+            return;
+
+        }
+
+
+
+
+let checked =
+selectedData.some(
+    x =>
+    x.group === item.group &&
+    x.title === item.title
+)
+?
+"checked"
+:
+"";
+
+
+
+        let div=document.createElement("div");
+
+        div.className="item";
+
+
+
+        div.innerHTML=`
+
+        <label>
+
+        <input 
+        type="checkbox"
+        ${checked}
+        data-id="${index}">
+
+        ${text}
+
+        </label>
+
+        `;
+
+
+
+        list.appendChild(div);
+
+
+
+    });
+
+
+
+
+
+    // bắt sự kiện checkbox
+
+
+    list.querySelectorAll(
+        "input[type=checkbox]"
+    )
+    .forEach(box=>{
+
+
+        box.onchange=function(){
+
+
+            let id=this.dataset.id;
+
+
+            if(this.checked){
+
+
+                selectedData.push(
+                    data[id]
+                );
+
+
+            }
+            else{
+
+
+                selectedData =
+                selectedData.filter(
+                    item=>item!==data[id]
+                );
+
+
+            }
+
+
+
+            console.log(
+                "Đã chọn:",
+                selectedData
+            );
+
+
+        };
+
+
+    });
+
+
+
+
+
+    searchBox.addEventListener(
+        "input",
+        renderList
+    );
+
+
+}
+
+
+
+
+
+
+
+// ======================
+// CHỌN NHÓM
+// ======================
+
+
+let groupButtons =
+document.querySelectorAll(".group-btn");
+
+
+
+groupButtons.forEach(btn=>{
+
+
+    btn.onclick=function(){
+
+
+        btn.classList.toggle("active");
+
+
+
+        let groups=[];
+
+
+
+        groupButtons.forEach(button=>{
+
+
+            if(button.classList.contains("active")){
+
+
+                if(
+                button.innerText.includes("Người lớn")
+                ){
+
+                    groups.push("Người lớn");
+
+                }
+
+
+
+                if(
+                button.innerText.includes("Trẻ em")
+                ){
+
+                    groups.push("Trẻ em");
+
+                }
+
+
+            }
+
+
+        });
+
+
+
+
+
+        if(groups.length==2){
+
+            currentGroup="all";
+
+        }
+
+        else if(groups.length==1){
+
+            currentGroup=groups[0];
+
+        }
+
+        else{
+
+            currentGroup="none";
+
+        }
+
+
+
+        renderList();
+
+
+    };
+
+
+});
+
+document
+.getElementById("startBtn")
+.onclick=function(){
+
+
+
+    if(selectedData.length==0){
+
+        alert("Bạn chưa chọn tiêu đề nào");
+
+        return;
+
+    }
+
+
+
+    studyList =
+    shuffle(selectedData);
+
+
+
+    currentIndex=-1;
+
+
+
+    nextQuestion();
+	
+	// đóng thiết lập
+
+document
+.getElementById("settingBox")
+.classList.remove("show");
+
+
+document
+.getElementById("overlay")
+.classList.remove("show");
+
+
+
+};
+
+function shuffle(array){
+
+    let arr=[...array];
+
+
+    for(
+        let i=arr.length-1;
+        i>0;
+        i--
+    ){
+
+        let j=Math.floor(
+            Math.random()*(i+1)
+        );
+
+
+        [
+            arr[i],
+            arr[j]
+        ]
+        =
+        [
+            arr[j],
+            arr[i]
+        ];
+
+    }
+
+
+    return arr;
+
+}
+
+function nextQuestion(){
+
+
+    currentIndex++;
+
+
+
+    if(currentIndex >= studyList.length){
+
+
+        alert(
+        "🎉 Đã hoàn thành tất cả!"
+        );
+
+
+        return;
+
+    }
+
+
+
+    let item =
+    studyList[currentIndex];
+
+
+
+    document.querySelector(
+    ".group-name"
+    )
+    .innerHTML =
+    item.group=="Người lớn"
+    ?
+    "🧑 "+item.group
+    :
+    "👶 "+item.group;
+
+
+
+    document.querySelector(
+    ".question-title"
+    )
+    .innerHTML =
+    item.title;
+
+
+
+    // Ẩn đáp án khi sang câu mới
+
+    document
+    .getElementById("answerBox")
+    .style.display="none";
+
+
+    document
+    .getElementById("answerList")
+    .innerHTML="";
+
+
+
+    // cập nhật tiến trình
+
+    let percent =
+    (
+        (currentIndex+1)
+        /
+        studyList.length
+    )
+    *100;
+
+
+
+    document
+    .getElementById("progressBar")
+    .style.width =
+    percent+"%";
+
+
+
+    document.querySelector(
+    ".learn .section-title"
+    )
+    .innerHTML =
+    `
+    Tiến trình
+    <br>
+    Câu ${currentIndex+1}/${studyList.length}
+    `;
+
+
+}
+
+document
+.getElementById("nextBtn")
+.onclick=function(){
+
+    nextQuestion();
+
+};
+
+document
+.getElementById("showAnswerBtn")
+.onclick=function(){
+
+
+    if(currentIndex < 0){
+
+        alert(
+        "Hãy bấm BẮT ĐẦU HỌC trước"
+        );
+
+        return;
+
+    }
+
+
+
+    let item =
+    studyList[currentIndex];
+
+
+
+    document
+    .getElementById("answerList")
+    .innerHTML =
+    item.lessons
+    .map(
+        x=>`<li>${x}</li>`
+    )
+    .join("");
+
+
+
+    document
+    .getElementById("answerBox")
+    .style.display="block";
+
+
+};
+
+const settingBtn =
+document.getElementById("settingBtn");
+
+
+const settingBox =
+document.getElementById("settingBox");
+
+
+const overlay =
+document.getElementById("overlay");
+
+
+
+settingBtn.onclick=function(){
+
+
+    settingBox.classList.add("show");
+
+    overlay.classList.add("show");
+
+
+};
+
+
+
+
+// bấm nền ngoài để đóng
+
+overlay.onclick=function(){
+
+
+    settingBox.classList.remove("show");
+
+    overlay.classList.remove("show");
+
+
+};
+
+document
+.getElementById("selectAllBtn")
+.onclick=function(){
+
+
+    selectedData=[...data];
+
+
+    renderList();
+
+
+};
+
+document
+.getElementById("clearAllBtn")
+.onclick=function(){
+
+
+    selectedData=[];
+
+
+    renderList();
+
+
+};
+
+</script>
+
+
+</body>
+
+</html>
