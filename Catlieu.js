@@ -220,4 +220,153 @@ const data = [
     "Hạ sốt, giảm đau"
   ]
 },
-]  
+{
+  "group": "Trẻ em",
+  "title": "Cảm sốt ho đờm sổ mũi (không buồn ngủ)",
+  "lessons": [
+    "Kháng sinh",
+    "Kháng viêm",
+	"Hạ sốt, giảm đau",
+    "Giảm ho đờm",	
+    "Kháng H1"
+  ]
+},
+{
+  "group": "Trẻ em",
+  "title": "Cảm sốt ho đờm sổ mũi (buồn ngủ)",
+  "lessons": [
+    "Kháng sinh",
+    "Kháng viêm",
+	"Hạ sốt, giảm đau + Kháng H1",
+    "Giảm ho đờm"
+  ]
+},
+{
+  "group": "Trẻ em",
+  "title": "Cảm sốt ho đờm",
+  "lessons": [
+    "Kháng sinh",
+    "Kháng viêm",
+	"Hạ sốt, giảm đau",
+    "Giảm ho đờm"
+  ]
+},
+{
+  "group": "Trẻ em",
+  "title": "Đau răng",
+  "lessons": [
+    "Kháng sinh",
+    "Kháng viêm",
+	"Hạ sốt, giảm đau",
+    "Vitamin C"
+  ]
+},
+{
+  "group": "Trẻ em",
+  "title": "U nhọt",
+  "lessons": [
+    "Kháng sinh",
+    "Kháng viêm",
+	"Hạ sốt, giảm đau",
+    "Khoáng chất - Kẽm"
+  ]
+},
+{
+  "group": "Trẻ em",
+  "title": "Trầy xước – nhiễm trùng",
+  "lessons": [
+    "Kháng sinh",
+    "Kháng viêm",
+	"Hạ sốt, giảm đau",
+    "Vitamin C"
+  ]
+},
+{
+  "group": "Trẻ em",
+  "title": "Dị ứng",
+  "lessons": [
+    "Kháng viêm",
+    "Kháng H1",
+	"Giải độc gan",
+    "Khoáng chất - Kẽm"
+  ]
+},
+{
+  "group": "Trẻ em",
+  "title": "Cảm sốt sổ mũi",
+  "lessons": [
+    "Kháng viêm",
+    "Kháng H1",
+	"Hạ sốt, giảm đau",
+    "Vitamin C"
+  ]
+},
+{
+  "group": "Trẻ em",
+  "title": "Nhiệt miệng",
+  "lessons": [
+    "Oracortia",
+    "Hạ sốt, giảm đau",
+	"Khoáng chất - Kẽm",
+    "Vitamin B2"
+  ]
+},
+{
+  "group": "Trẻ em",
+  "title": "Đau mắt",
+  "lessons": [
+    "Nhỏ mắt",
+    "Hạ sốt, giảm đau",
+	"Kháng H1",
+    "Vitamin C"
+  ]
+},
+{
+  "group": "Trẻ em",
+  "title": "Tay chân miệng",
+  "lessons": [
+    "Varogel",
+    "Hạ sốt, giảm đau",
+	"Khoáng chất - Kẽm",
+    "Vitamin C"
+  ]
+},
+{
+  "group": "Trẻ em",
+  "title": "Tiêu chảy",
+  "lessons": [
+    "Cầm tiêu chảy",
+    "Bổ sung điện giải",
+	"Bổ sung mem vi sinh",
+    "Khoáng chất - Kẽm"
+  ]
+},
+{
+  "group": "Trẻ em",
+  "title": "Cảm sốt sổ mũi ho (không đờm) không buồn ngủ",
+  "lessons": [
+    "Hạ sốt, giảm đau",
+    "Ho astex",
+	"Kháng H1",
+    "Vitamin C"
+  ]
+},
+{
+  "group": "Trẻ em",
+  "title": "Cảm sốt sổ mũi ho (không đờm) buồn ngủ",
+  "lessons": [
+    "Hạ sốt, giảm đau + Kháng H1",
+    "Ho astex",
+    "Vitamin C"
+  ]
+},
+{
+  "group": "Trẻ em",
+  "title": "Cảm sốt ho (không đờm) ",
+  "lessons": [
+    "Hạ sốt, giảm đau",
+    "Ho astex",
+    "Vitamin C"
+  ]
+}
+]     
