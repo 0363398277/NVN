@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Chuyển đổi data thuốc</title>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+
+    font-family:"Segoe UI",Arial,sans-serif;
+    background:#edf2f7;
+    color:#333;
+    padding:25px;
+}
+
+/*==========================
+    Tiêu đề
+==========================*/
+
+h1{
+
+    font-size:30px;
+    color:#1976d2;
+    margin-bottom:25px;
+    font-weight:700;
+}
+
+h2{
+
+    font-size:20px;
+    color:#444;
+    margin-bottom:15px;
+}
+
+hr{
+
+    border:none;
+    height:1px;
+    background:#d9dde4;
+    margin:25px 0;
+}
+
+/*==========================
+    Card
+==========================*/
+
+.card{
+
+    background:#fff;
+    border-radius:12px;
+    padding:20px;
+    margin-bottom:25px;
+
+    box-shadow:
+    0 3px 12px rgba(0,0,0,.08);
+}
+
+/*==========================
+    Toolbar
+==========================*/
+
+.toolbar{
+
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:10px;
+}
+
+/*==========================
+    Input
+==========================*/
+
+input[type=file]{
+
+    padding:8px;
+    border:1px solid #d6dce5;
+    border-radius:8px;
+    background:white;
+}
+
+input[type=text]{
+
+    width:220px;
+
+    padding:10px 12px;
+
+    border:1px solid #cfd6df;
+
+    border-radius:8px;
+
+    outline:none;
+
+    transition:.2s;
+}
+
+input[type=text]:focus{
+
+    border-color:#1976d2;
+
+    box-shadow:0 0 0 3px rgba(25,118,210,.15);
+}
+
+/*==========================
+    Button
+==========================*/
+
+button{
+
+    padding:10px 18px;
+
+    border:none;
+
+    border-radius:8px;
+
+    background:#1976d2;
+
+    color:white;
+
+    cursor:pointer;
+
+    font-size:14px;
+
+    transition:.2s;
+}
+
+button:hover{
+
+    background:#1565c0;
+
+    transform:translateY(-2px);
+}
+
+/*==========================
+    Table
+==========================*/
+
+table{
+
+    border-collapse:collapse;
+
+    width:max-content;
+
+    min-width:100%;
+
+    background:white;
+}
+
+th{
+
+    background:#1976d2;
+
+    color:white;
+
+    position:sticky;
+
+    top:0;
+
+    z-index:5;
+
+    padding:9px;
+
+    font-size:13px;
+
+    border:1px solid #1976d2;
+}
+
+td{
+
+    padding:7px 9px;
+
+    border:1px solid #e2e8f0;
+
+    font-size:13px;
+
+    white-space:nowrap;
+}
+
+tbody tr:nth-child(even){
+
+    background:#f8fbff;
+}
+
+tbody tr:hover{
+
+    background:#eaf4ff;
+}
+
+/*==========================
+    Khung bảng
+==========================*/
+
+#tableContainer,
+#resultContainer{
+
+    max-height:520px;
+
+    overflow:auto;
+
+    border:1px solid #d9dde4;
+
+    border-radius:10px;
+
+    background:white;
+}
+
+/*==========================
+    Scrollbar
+==========================*/
+
+::-webkit-scrollbar{
+
+    width:10px;
+
+    height:10px;
+}
+
+::-webkit-scrollbar-thumb{
+
+    background:#b8c2cc;
+
+    border-radius:20px;
+}
+
+::-webkit-scrollbar-thumb:hover{
+
+    background:#90a4ae;
+}
+
+::-webkit-scrollbar-track{
+
+    background:#f2f4f7;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>💊 Chuyển đổi dữ liệu Data Thuốc</h1>
+
+<div class="card">
+
+<div class="toolbar">
+
+<input type="file" id="excelFile">
+
+<input
+type="text"
+id="shopFilter"
+placeholder="🔍 Nhập Mã shop">
+
+<button onclick="filterShop()">Lọc</button>
+
+<button onclick="clearFilter()">Hiện tất cả</button>
+
+<button onclick="convertTo2A()">Chuyển đổi</button>
+
+<button onclick="exportExcel()">Xuất Excel</button>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>📄 Dữ liệu gốc</h2>
+
+<div id="tableContainer"></div>
+
+</div>
+
+<div class="card">
+
+<h2>✅ Dữ liệu sau chuyển đổi</h2>
+
+<div id="resultContainer"></div>
+
+</div>
+
+<script>
+
+let data2B = [];        // Toàn bộ dữ liệu
+let currentData = [];   // Dữ liệu đang hiển thị
+let data2A = [];
+
+document.getElementById("excelFile").addEventListener("change",readExcel);
+
+function readExcel(e){
+
+    const file=e.target.files[0];
+
+    const reader=new FileReader();
+
+    reader.onload=function(evt){
+
+        const data=new Uint8Array(evt.target.result);
+
+        const workbook=XLSX.read(data,{type:'array'});
+
+        const sheet=workbook.Sheets[workbook.SheetNames[0]];
+
+data2B = XLSX.utils.sheet_to_json(sheet);
+
+// Làm tròn TB Bill đến hàng đơn vị
+data2B.forEach(row => {
+    if (row["TB Bill"] !== undefined && row["TB Bill"] !== "") {
+
+        const value = Number(row["TB Bill"]);
+
+        if (!isNaN(value)) {
+            row["TB Bill"] = Math.round(value);
+        }
+
+    }
+});
+
+// Ban đầu hiển thị toàn bộ
+currentData = [...data2B];
+
+renderTable(currentData,"tableContainer");
+
+    }
+
+    reader.readAsArrayBuffer(file);
+
+}
+
+function renderTable(data,id){
+
+    if(data.length==0) return;
+
+    let html="<table>";
+
+    html+="<tr>";
+
+    Object.keys(data[0]).forEach(col=>{
+
+        html+="<th>"+col+"</th>";
+
+    });
+
+    html+="</tr>";
+
+    data.forEach(r=>{
+
+        html+="<tr>";
+
+        Object.values(r).forEach(v=>{
+
+            html+="<td>"+(v??"")+"</td>";
+
+        });
+
+        html+="</tr>";
+
+    });
+
+    html+="</table>";
+
+    document.getElementById(id).innerHTML=html;
+
+}
+
+function percentValue(value){
+
+    if(value === undefined || value === null || value === "")
+        return "";
+
+    // Nếu là chuỗi có dấu %
+    if(typeof value === "string" && value.includes("%")){
+        return parseFloat(value.replace("%",""));
+    }
+
+    // Nếu là số
+    const num = Number(value);
+
+    if(isNaN(num)) return value;
+
+    // Nếu Excel đọc thành 0.5 thì đổi thành 50
+    if(num <= 1){
+        return Math.round(num * 10000) / 100;
+    }
+
+    // Nếu đã là 50 thì giữ nguyên
+    return num;
+}
+
+function convertTo2A(){
+
+    data2A = [];
+
+    currentData.forEach(r=>{
+
+let obj = {
+
+    //=====================
+    // THÔNG TIN CHUNG
+    //=====================
+
+    "Vùng"                    : "",
+    "ASM"                     : "",
+    "Mã shop"                 : r["Mã shop"] ?? "",
+    "Tên Shop"                : r["Tên shop"] ?? "",
+    "Phân loại shop vệ tinh"  : "",
+
+    "Mã NV"                   : r["Mã nhân viên"] ?? "",
+    "Tên nhân viên"           : r["Tên nhân viên"] ?? "",
+
+    "Ngày làm việc"           : r["Ngày làm việc"] ?? "",
+    "Lượt khách"              : r["Lượt khách"] ?? "",
+    "Tỷ lệ FS+App"            : percentValue(r["Tỷ lệ FS+App"]),
+    "Tỷ lệ cài App"           : percentValue(r["Tỷ lệ cài App"]),
+    "Tỷ trọng DS thuốc"       : percentValue(r["Tỷ trọng DS Thuốc"]),
+    "Tỷ trọng DS TPCN"        : percentValue(r["Tỷ trọng DS TPCN"]),
+
+    //=====================
+    // DOANH THU TỔNG
+    //=====================
+
+    "Target DS"               : r["Target DS (NV)"] ?? "",
+    "DS MTD"                  : r["DS MTD (NV)"] ?? "",
+    "% HT DS"                 : percentValue(r["% HT DS (NV)"]),
+    "Tỷ trọng DS/Shop"        : percentValue(r["Tỷ trọng DS/shop"]),
+    "% EST DS"                : percentValue(r["EST %HT DS (NV)"]),
+    "TB Bill"                 : r["TB Bill"] ?? "",
+
+    //=====================
+    // HÀNG HOT
+    //=====================
+
+    "Chỉ tiêu HOT"            : r["Target HOT (NV)"] ?? "",
+    "DS HOT"                  : "",
+    "% HT Hot"                : percentValue(r["% HT HOT"]),
+    "% EST HOT"               : percentValue(r["%EST HOT"]),
+    "Tỷ lệ HOT"               : percentValue(r["Tỷ lệ HOT"]),
+
+    //=====================
+    // CẬN DATE
+    //=====================
+
+    "Target Cận Date"         : "",
+    "Cận Date MTD"            : "",
+    "% HT Cận date"           : "",
+    "% EST Cận Date"          : "",
+
+    //=====================
+    // CẮT LIỀU
+    //=====================
+
+    "Cắt liều MTD"            : r["DS cắt liều MTD (NV)"] ?? ""
+
+};
+
+        data2A.push(obj);
+
+    });
+
+    renderTable(data2A,"resultContainer");
+
+}
+
+function exportExcel(){
+
+    // Luôn tạo lại data2A theo dữ liệu đang hiển thị
+    convertTo2A();
+
+    if(data2A.length==0){
+
+        alert("Chưa có dữ liệu.");
+
+        return;
+
+    }
+
+    let ws = XLSX.utils.json_to_sheet(data2A);
+
+    let wb = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(wb, ws, "2A");
+
+    XLSX.writeFile(wb, "2A.xlsx");
+
+}
+
+function filterShop(){
+
+    const keyword = document.getElementById("shopFilter").value.trim().toLowerCase();
+
+    if(keyword===""){
+
+        renderTable(data2B,"tableContainer");
+
+        return;
+
+    }
+
+    const result = data2B.filter(r=>{
+
+        return String(r["Mã shop"] ?? "")
+                .toLowerCase()
+                .includes(keyword);
+
+    });
+
+    currentData = result;
+
+renderTable(currentData,"tableContainer");
+
+}
+
+function clearFilter(){
+
+    document.getElementById("shopFilter").value="";
+
+currentData = [...data2B];
+
+renderTable(currentData,"tableContainer");
+
+}
+
+</script>
+
+</body>
+</html>
