@@ -1,5 +1,6 @@
 <html lang="vi"><head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Đánh Giá</title>
 
   <style>
@@ -157,7 +158,14 @@ button{
   cursor:pointer;
   font-weight:bold;
   font-size:14px;
+  min-width:140px;
 }
+
+    .save-btn{
+      background:#2563eb;
+      color:white;
+    }
+	
 
 
     .add-btn{
@@ -239,12 +247,7 @@ button{
 }
 
 
-/* ẨN TEXTAREA */
 
-#excelInput,
-#vxInput{
-  display:none  !important;
-}
 
 
 .delete-btn-wrap{
@@ -320,7 +323,7 @@ button{
 .btn-primary{
   background:#2563eb;
   color:white;
-  width: 400px;
+    width:400px;
 }
   
   
@@ -361,7 +364,7 @@ button{
     display:inline-flex;
     align-items:center;
     justify-content:center;
-    width:100px;          /* Hai nút rộng bằng nhau */
+    width:120px;          /* Hai nút rộng bằng nhau */
     height:42px;          /* Cao bằng nhau */
     padding:0;
     margin-right:10px;
@@ -374,7 +377,6 @@ button{
     font-weight:600;
     text-decoration:none;
     box-sizing:border-box;
-
 }
   </style>
   
@@ -401,6 +403,12 @@ button{
 <button class="menu-btn" onclick="openKPIPopup('sheetKPIs', this)">
   KPIs
 </button>
+
+<button class="menu-btn"
+        onclick="location.href='Chuyen_Doi_DATA_Thuoc.html'">
+    CÔNG CỤ
+</button>
+
 </div>
 
 <!-- SHEET TARGET -->
@@ -877,7 +885,7 @@ button{
       ➕ Thêm nhân viên
     </button>
 
-    <button class="add-btn" onclick="calculateTarget()">
+    <button class="save-btn" onclick="calculateTarget()">
       📈 Tính Target
     </button>
 
@@ -898,60 +906,27 @@ button{
 <input type="file" id="excelFile" accept=".xlsx,.xls" onchange="importExcelFile(event)" style="margin-bottom:10px;">
     <textarea id="excelInput" placeholder="Paste dữ liệu Excel vào đây..."></textarea>
 
+    <div class="btn-group">
+
+      <button class="btn-primary" onclick="parseExcelData()">
+        Lưu dữ liệu
+      </button>
+
+      <button class="btn-danger" onclick="clearAllData()">
+        Xóa dữ liệu
+      </button>
+
+    </div>
+
     <div class="info" id="info"></div>
-<div id="searchContainer" style="
+  <input id="searchBox" style="
     display:none;
+    width:100%;
+    padding:10px;
+    border:1px solid #cbd5e1;
+    border-radius:8px;
     margin-top:10px;
-    gap:6px;
-">
-
-<input
-    id="searchBox"
-    style="
-        flex:1;
-        padding:10px;
-        border:1px solid #cbd5e1;
-        border-radius:8px;
-    "
-    placeholder="Tìm mã NV / tên / dữ liệu..."
-    onkeydown="handleSearchEnter(event)">
-
-<button
-    id="btnNextSearch"
-    onclick="nextDrugResult()"
-    style="
-        min-width:90px;
-        height:42px;
-        padding:0 15px;
-        background:#2563eb;
-        color:white;
-        border:none;
-        border-radius:8px;
-        cursor:pointer;
-        font-size:15px;
-        font-weight:bold;
-    "
-    title="Kết quả tiếp theo">
-    🔍 Tìm
-</button>
-
-<button
-    id="btnUpdateDrug"
-    class="save-btn"
-    onclick="parseExcelData()"
-    style="display:none;">
-    🔄 Cập nhật
-</button>
-<button
-    id="drugDuplicateBtn"
-    onclick="showDrugDuplicatePopup()"
-    class="save-btn"
-    style="display:none;background:#dc2626;">
-    ⚠ Cảnh báo
-</button>
-
-</div>
-  
+  " placeholder="Tìm mã NV / tên / dữ liệu..." onkeydown="handleSearchEnter(event)">
 
     <div id="excelTable" style="
     width:100%;
@@ -973,61 +948,28 @@ button{
 <input type="file" id="vxFile" accept=".xlsx,.xls" onchange="importVXFile(event)" style="margin-bottom:10px;">
     <textarea id="vxInput" placeholder="Paste dữ liệu DATA_VX vào đây..."></textarea>
 
+    <div class="btn-group">
+
+      <button class="btn-primary" onclick="parseVXData()">
+        Lưu dữ liệu
+      </button>
+
+      <button class="btn-danger" onclick="clearVXData()">
+        Xóa dữ liệu
+      </button>
+
+    </div>
 
 <div class="info" id="vxInfo"></div>
 
-<div id="vxSearchContainer" style="
+<input id="vxSearchBox" style="
     display:none;
+    width:100%;
+    padding:10px;
+    border:1px solid #cbd5e1;
+    border-radius:8px;
     margin-top:10px;
-    gap:6px;
-    align-items:center;
-">
-
-<input
-    id="vxSearchBox"
-    style="
-        flex:1;
-        padding:10px;
-        border:1px solid #cbd5e1;
-        border-radius:8px;
-    "
-    placeholder="Tìm mã NV / tên / dữ liệu..."
-    onkeydown="handleVXSearchEnter(event)">
-
-<button
-    id="btnNextVXSearch"
-    onclick="nextVXResult()"
-    style="
-        min-width:90px;
-        height:42px;
-        padding:0 15px;
-        background:#2563eb;
-        color:white;
-        border:none;
-        border-radius:8px;
-        cursor:pointer;
-        font-size:15px;
-        font-weight:bold;
-    ">
-    🔍 Tìm
-</button>
-
-<button
-    id="btnUpdateVX"
-    class="save-btn"
-    onclick="parseVXData()"
-    style="display:none; min-width:150px;">
-   🔄 Cập nhật dữ liệu
-</button>
-<button
-    id="vxDuplicateBtn"
-    onclick="showVXDuplicatePopup()"
-    class="save-btn"
-    style="display:none;background:#dc2626;">
-    ⚠ Cảnh báo
-</button>
-
-</div>
+  " placeholder="Tìm mã NV / tên / dữ liệu..." onkeydown="handleVXSearchEnter(event)">
 
 <div id="vxExcelTable" style="
     width:100%;
@@ -1040,83 +982,6 @@ button{
 
 </div>
 
-<div id="duplicatePopup" style="
-display:none;
-position:fixed;
-inset:0;
-background:rgba(0,0,0,.45);
-z-index:99999;
-align-items:center;
-justify-content:center;
-">
-
-<div style="
-background:#fff;
-width:900px;
-max-width:95%;
-height:80vh;
-border-radius:14px;
-display:flex;
-flex-direction:column;
-overflow:hidden;
-">
-
-<div style="
-padding:15px;
-background:#dc2626;
-color:#fff;
-font-size:20px;
-font-weight:bold;
-display:flex;
-justify-content:space-between;
-align-items:center;
-">
-
-<span id="duplicateTitle">
-Danh sách Mã NV bị trùng
-</span>
-
-<button
-onclick="closeDuplicatePopup()"
-style="
-background:white;
-border:none;
-padding:6px 12px;
-border-radius:8px;
-cursor:pointer;
-font-weight:bold;
-">
-Đóng
-</button>
-
-</div>
-
-<div style="padding:15px;">
-
-
-
-</div>
-
-<div
-id="duplicateBody"
-style="
-flex:1;
-overflow:auto;
-padding:15px;
-">
-</div>
-
-<div style="
-padding:15px;
-border-top:1px solid #ddd;
-text-align:right;
-">
-
-</div>
-
-</div>
-
-</div>
 <!-- KPI POPUP -->
 
 <div id="kpiPopup" style="
@@ -3629,8 +3494,6 @@ const rows = XLSX.utils.sheet_to_json(
     //
 
     parseExcelData();
-	// hiện nút cập nhật
-document.getElementById("btnUpdateDrug").style.display = "inline-block";
 
   };
 
@@ -3891,19 +3754,6 @@ const headers = [
 
 ];
 
-function syncExcelInput() {
-
-  if (!hot) return;
-
-  const data = hot.getData();
-
-  document.getElementById("excelInput").value =
-    data
-      .map(row => row.map(cell => cell ?? "").join("\t"))
-      .join("\n");
-
-}
-
 function parseExcelData(){
 
   const input = document
@@ -3989,11 +3839,8 @@ const rows = rawRows;
   document.getElementById('info')
     .innerHTML =
     `Tổng dòng: <b>${rows.length}</b>`;
-	document.getElementById("searchContainer").style.display="flex";
-	
-	checkDrugDuplicate();
-
-alert("✅ Đã cập nhật DATA THUỐC thành công!");
+	document.getElementById('searchBox')
+  .style.display = 'block';
 }
 
 function renderTable(rows){
@@ -4261,17 +4108,9 @@ function renderTable(rows){
         'drugData updated:',
         drugData
       );
-	  syncExcelInput();
     }
-	
 
   });
-  
-  container.addEventListener("focusout", function () {
-
-    setTimeout(syncExcelInput, 50);
-
-});
 
 }
 
@@ -4476,8 +4315,6 @@ const filteredRows = rows
     document.getElementById(
       'vxInput'
     ).value = text;
-	
-	document.getElementById("btnUpdateVX").style.display = "inline-block";
 
     //
     // AUTO PARSE
@@ -4504,29 +4341,6 @@ const vxHeaders = [
   '%HT Target Doanh thu KPI'
 ];
 
-function syncVXInput() {
-
-  if (!vxHot) return;
-
-  const data = vxHot.getData();
-
-  const text = data.map(row => {
-
-    return [
-      `${row[0] || ""}-${row[1] || ""}`, // ghép lại MãNV-TênNV
-      row[2] ?? "",
-      row[3] ?? "",
-      row[4] ?? "",
-      row[5] ?? "",
-      row[6] ?? ""
-    ].join("\t");
-
-  }).join("\n");
-
-  document.getElementById("vxInput").value = text;
-
-}
-
 function parseVXData(){
 
   const input = document
@@ -4552,9 +4366,8 @@ function parseVXData(){
   document.getElementById('vxInfo')
     .innerHTML =
     `Tổng dòng: <b>${rows.length}</b>`;
-	document.getElementById("vxSearchContainer").style.display="flex";
-	checkVXDuplicate();
-  alert("✅ Đã cập nhật DATA_VX thành công!");
+	document.getElementById('vxSearchBox')
+  .style.display = 'block';
 }
 
 function renderVXTable(rows){
@@ -4746,16 +4559,9 @@ function renderVXTable(rows){
         'VX saved',
         allData
       );
-	  
-	  syncVXInput();
     }
 
   });
-  vxHot.addHook('afterSelectionEnd', function () {
-
-    setTimeout(syncVXInput, 50);
-
-});
 
 }
 
@@ -9436,43 +9242,12 @@ window.addEventListener('load', () => {
 
 });
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-let drugSearchResults = [];
-let drugSearchIndex = -1;
-let drugLastKeyword = "";
-
 function handleSearchEnter(event){
 
-    if(event.key !== "Enter") return;
+  if(event.key === 'Enter'){
 
-    const keyword = event.target.value.trim();
-
-    if(keyword === "") return;
-
-    if(keyword !== drugLastKeyword){
-
-        drugLastKeyword = keyword;
-
-        searchTable(keyword);
-
-        return;
-    }
-
-    if(drugSearchResults.length === 0) return;
-
-    drugSearchIndex++;
-
-    if(drugSearchIndex >= drugSearchResults.length){
-
-        drugSearchIndex = 0;
-
-    }
-
-    const item = drugSearchResults[drugSearchIndex];
-
-    hot.selectCell(item.row, item.col);
-
-    hot.render();
-
+    searchTable(event.target.value);
+  }
 }
 
 function searchTable(query){
@@ -9490,21 +9265,20 @@ function searchTable(query){
     return;
   }
 
-drugSearchResults = searchPlugin.query(query);
+  const result =
+    searchPlugin.query(query);
 
-hot.render();
+  hot.render();
 
-if(drugSearchResults.length === 0){
+  if(result.length === 0){
     return;
-}
+  }
 
-drugSearchIndex = 0;
+  const first = result[0];
 
-const first = drugSearchResults[drugSearchIndex];
+  hot.selectCell(first.row, first.col);
 
-hot.selectCell(first.row, first.col);
-
-hot.render();
+  hot.render();
 
   requestAnimationFrame(() => {
 
@@ -9539,43 +9313,12 @@ holder.scrollLeft += offsetX;
   });
 }
 
-let vxSearchResults = [];
-let vxSearchIndex = -1;
-let vxLastKeyword = "";
-
 function handleVXSearchEnter(event){
 
-    if(event.key !== "Enter") return;
+  if(event.key === 'Enter'){
 
-    const keyword = event.target.value.trim();
-
-    if(keyword === "") return;
-
-    if(keyword !== vxLastKeyword){
-
-        vxLastKeyword = keyword;
-
-        searchVXTable(keyword);
-
-        return;
-    }
-
-    if(vxSearchResults.length === 0) return;
-
-    vxSearchIndex++;
-
-    if(vxSearchIndex >= vxSearchResults.length){
-
-        vxSearchIndex = 0;
-
-    }
-
-    const item = vxSearchResults[vxSearchIndex];
-
-    vxHot.selectCell(item.row, item.col);
-
-    vxHot.render();
-
+    searchVXTable(event.target.value);
+  }
 }
 
 function searchVXTable(query){
@@ -9593,23 +9336,20 @@ function searchVXTable(query){
     return;
   }
 
-vxSearchResults =
+  const result =
     searchPlugin.query(query);
 
-vxHot.render();
+  vxHot.render();
 
-if(vxSearchResults.length === 0){
+  if(result.length === 0){
     return;
-}
+  }
 
-vxSearchIndex = 0;
+  const first = result[0];
 
-const first =
-    vxSearchResults[vxSearchIndex];
+  vxHot.selectCell(first.row, first.col);
 
-vxHot.selectCell(first.row, first.col);
-
-vxHot.render();
+  vxHot.render();
 
   requestAnimationFrame(() => {
 
@@ -10048,295 +9788,6 @@ function exportTargetExcel(){
 
 }
 
-function nextDrugResult(){
-
-    const keyword =
-        document.getElementById("searchBox").value.trim();
-
-    if(keyword==="") return;
-
-    if(keyword!==drugLastKeyword){
-
-        drugLastKeyword=keyword;
-
-        searchTable(keyword);
-
-        return;
-
-    }
-
-    if(drugSearchResults.length===0) return;
-
-    drugSearchIndex++;
-
-    if(drugSearchIndex>=drugSearchResults.length){
-
-        drugSearchIndex=0;
-
-    }
-
-    const item=drugSearchResults[drugSearchIndex];
-
-    hot.selectCell(item.row,item.col);
-
-    hot.render();
-
-}
-
-function nextVXResult(){
-
-    const keyword=
-        document.getElementById("vxSearchBox").value.trim();
-
-    if(keyword==="") return;
-
-    if(keyword!==vxLastKeyword){
-
-        vxLastKeyword=keyword;
-
-        searchVXTable(keyword);
-
-        return;
-
-    }
-
-    if(vxSearchResults.length===0) return;
-
-    vxSearchIndex++;
-
-    if(vxSearchIndex>=vxSearchResults.length){
-
-        vxSearchIndex=0;
-
-    }
-
-    const item=
-        vxSearchResults[vxSearchIndex];
-
-    vxHot.selectCell(item.row,item.col);
-
-    vxHot.render();
-
-}
-
-let drugDuplicates = [];
-let vxDuplicates = [];
-
-/* ===========================
-   Lấy danh sách Mã NV TARGET
-===========================*/
-function getTargetMaNVSet() {
-
-    const set = new Set();
-
-    document.querySelectorAll("#targetTable tbody tr:not(.total-row)")
-        .forEach(tr => {
-
-            const td = tr.querySelectorAll("td");
-            if(td.length < 1) return;
-
-            const ma = normalizeMaNV(td[0].innerText);
-
-            if(ma) set.add(ma);
-
-        });
-
-    return set;
-
-}
-
-/* ===========================
-   DATA THUỐC
-===========================*/
-function checkDrugDuplicate(){
-
-    drugDuplicates = [];
-
-    const targetSet = getTargetMaNVSet();
-
-    const map = {};
-
-    drugData.forEach((r,index)=>{
-
-        const ma = normalizeMaNV(r.maNV);
-
-        if(!ma) return;
-
-        // Chỉ kiểm tra Mã NV có trong TARGET
-        if(!targetSet.has(ma)) return;
-
-        if(!map[ma]){
-
-            map[ma]={
-                ma:ma,
-                ten:r.tenNV||"",
-                rows:[]
-            };
-
-        }
-
-        map[ma].rows.push(index+1);
-
-    });
-
-    drugDuplicates = Object.values(map)
-        .filter(x=>x.rows.length>1);
-
-    const btn =
-        document.getElementById("drugDuplicateBtn");
-
-    if(drugDuplicates.length){
-
-        btn.style.display="inline-block";
-        btn.innerHTML=`⚠ Cảnh báo`;
-
-    }else{
-
-        btn.style.display="none";
-
-    }
-
-}
-
-
-/* ===========================
-   DATA VX
-===========================*/
-function checkVXDuplicate(){
-
-    vxDuplicates = [];
-
-    const targetSet = getTargetMaNVSet();
-
-    const map = {};
-
-    vxData.forEach((r,index)=>{
-
-const ma =
-    normalizeMaNV(
-        String(r[0] || "").split("-")[0]
-    );
-
-        if(!ma) return;
-
-        if(!targetSet.has(ma)) return;
-
-        if(!map[ma]){
-
-            map[ma]={
-                ma:ma,
-                ten:String(r[0] || "").split("-").slice(1).join("-"),
-                rows:[]
-            };
-
-        }
-
-        map[ma].rows.push(index+1);
-
-    });
-
-    vxDuplicates = Object.values(map)
-        .filter(x=>x.rows.length>1);
-
-    const btn =
-        document.getElementById("vxDuplicateBtn");
-
-    if(vxDuplicates.length){
-
-        btn.style.display="inline-block";
-        btn.innerHTML=`⚠ Cảnh báo`;
-
-    }else{
-
-        btn.style.display="none";
-
-    }
-
-}
-
-function showDrugDuplicatePopup(){
-
-    document.getElementById("duplicatePopup").style.display="flex";
-    document.getElementById("duplicateTitle").innerText="DATA THUỐC - Mã NV bị trùng";
-
-    renderDuplicateTable(drugDuplicates);
-
-}
-
-function showVXDuplicatePopup(){
-
-    document.getElementById("duplicatePopup").style.display="flex";
-    document.getElementById("duplicateTitle").innerText="DATA_VX - Mã NV bị trùng";
-
-    renderDuplicateTable(vxDuplicates);
-
-}
-let currentDuplicateData = [];
-
-function renderDuplicateTable(data){
-
-    currentDuplicateData = data;
-
-    let html=`
-<table id="duplicateTable"
-style="
-width:100%;
-border-collapse:collapse;
-font-size:14px;
-">
-
-<thead>
-
-<tr style="background:#f2f2f2;">
-
-<th style="border:1px solid #ddd;padding:8px;">Mã NV</th>
-
-<th style="border:1px solid #ddd;padding:8px;">Tên NV</th>
-
-<th style="border:1px solid #ddd;padding:8px;">Số lần</th>
-
-<th style="border:1px solid #ddd;padding:8px;">Dòng</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-`;
-
-    data.forEach(item=>{
-
-        html+=`
-<tr>
-
-<td style="border:1px solid #ddd;padding:8px;">${item.ma}</td>
-
-<td style="border:1px solid #ddd;padding:8px;">${item.ten}</td>
-
-<td style="border:1px solid #ddd;padding:8px;text-align:center;">
-${item.rows.length}
-</td>
-
-<td style="border:1px solid #ddd;padding:8px;">
-${item.rows.join(", ")}
-</td>
-
-</tr>
-`;
-
-    });
-
-    html+="</tbody></table>";
-
-    document.getElementById("duplicateBody").innerHTML=html;
-
-}
-
-function closeDuplicatePopup(){
-
-    document.getElementById("duplicatePopup").style.display="none";
-
-}
 </script>
 <script src="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
