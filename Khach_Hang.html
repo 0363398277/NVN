@@ -1,0 +1,1736 @@
+<!DOCTYPE html>
+
+<html lang="vi">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Quản lý khách hàng</title>
+
+
+<style>
+
+/* ========================================
+   CÀI ĐẶT CHUNG
+======================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+
+html {
+    width: 100%;
+}
+
+
+body {
+
+    margin: 0;
+
+    padding: 30px 15px;
+
+    width: 100%;
+
+    min-height: 100vh;
+
+    font-family: Arial, sans-serif;
+
+    background: #f5f6f8;
+
+}
+
+
+/* ========================================
+   KHUNG CHÍNH
+======================================== */
+
+.container {
+
+    width: 100%;
+
+    max-width: 800px;
+
+    margin: 0 auto;
+
+    background: white;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 4px 20px rgba(0,0,0,0.08);
+
+    overflow: hidden;
+
+}
+
+
+/* ========================================
+   THANH TAB
+======================================== */
+
+.tabs {
+
+    display: flex;
+
+    width: 100%;
+
+    border-bottom: 1px solid #ddd;
+
+    background: #fafafa;
+
+}
+
+
+.tab-button {
+
+    flex: 1;
+
+    min-width: 0;
+
+    padding: 15px 10px;
+
+    border: none;
+
+    background: transparent;
+
+    color: #666;
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s,
+        color 0.2s;
+
+}
+
+
+.tab-button:hover {
+
+    background: #f0f0f0;
+
+}
+
+
+.tab-button.active {
+
+    background: white;
+
+    color: #4285f4;
+
+    border-bottom: 3px solid #4285f4;
+
+}
+
+
+/* ========================================
+   NỘI DUNG TAB
+======================================== */
+
+.tab-content {
+
+    display: none;
+
+    width: 100%;
+
+    padding: 25px;
+
+}
+
+
+.tab-content.active {
+
+    display: block;
+
+}
+
+
+/* ========================================
+   TIÊU ĐỀ
+======================================== */
+
+h2 {
+
+    margin-top: 0;
+
+    margin-bottom: 25px;
+
+    text-align: center;
+
+}
+
+
+/* ========================================
+   FORM THÊM KHÁCH HÀNG
+======================================== */
+
+.form-group {
+
+    width: 100%;
+
+    margin-bottom: 15px;
+
+}
+
+
+label {
+
+    display: block;
+
+    margin-bottom: 6px;
+
+    font-weight: bold;
+
+}
+
+
+input {
+
+    width: 100%;
+
+    min-width: 0;
+
+    padding: 12px;
+
+    border: 1px solid #ccc;
+
+    border-radius: 6px;
+
+    font-size: 16px;
+
+    outline: none;
+
+}
+
+
+input:focus {
+
+    border-color: #4285f4;
+
+}
+
+
+/* ========================================
+   HÀNG NÚT LƯU + LÀM MỚI
+======================================== */
+
+.button-row {
+
+    display: flex;
+
+    align-items: stretch;
+
+    gap: 10px;
+
+    width: 100%;
+
+}
+
+
+/* ========================================
+   NÚT LƯU DỮ LIỆU
+======================================== */
+
+.save-button {
+
+    flex: 1;
+
+    min-width: 0;
+
+    padding: 13px 10px;
+
+    border: none;
+
+    border-radius: 6px;
+
+    background: #4285f4;
+
+    color: white;
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+}
+
+
+.save-button:hover {
+
+    background: #3367d6;
+
+}
+
+
+.save-button:active {
+
+    background: #285abc;
+
+}
+
+
+.save-button:disabled {
+
+    background: #aaa;
+
+    cursor: not-allowed;
+
+}
+
+
+/* ========================================
+   NÚT LÀM MỚI
+======================================== */
+
+.clear-button {
+
+    flex: 1;
+
+    min-width: 0;
+
+    padding: 13px 10px;
+
+    border: none;
+
+    border-radius: 6px;
+
+    background: #dc3545;
+
+    color: white;
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+}
+
+
+.clear-button:hover {
+
+    background: #bb2d3b;
+
+}
+
+
+.clear-button:active {
+
+    background: #a71d2a;
+
+}
+
+
+/* ========================================
+   TRẠNG THÁI LƯU
+======================================== */
+
+#saveStatus {
+
+    margin-top: 20px;
+
+    text-align: center;
+
+    font-weight: bold;
+
+}
+
+
+/* ========================================
+   KHU VỰC TRA CỨU
+======================================== */
+
+.search-box {
+
+    display: flex;
+
+    align-items: stretch;
+
+    gap: 10px;
+
+    width: 100%;
+
+    margin-bottom: 25px;
+
+}
+
+
+/* ========================================
+   Ô NHẬP MÃ SẢN PHẨM
+======================================== */
+
+#productCode {
+
+    flex: 1;
+
+    min-width: 0;
+
+    width: auto;
+
+}
+
+
+/* ========================================
+   NÚT TRA CỨU
+======================================== */
+
+.search-button {
+
+    flex: 0 0 120px;
+
+    width: 120px;
+
+    padding: 12px 15px;
+
+    border: none;
+
+    border-radius: 6px;
+
+    background: #4285f4;
+
+    color: white;
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+}
+
+
+.search-button:hover {
+
+    background: #3367d6;
+
+}
+
+
+.search-button:active {
+
+    background: #285abc;
+
+}
+
+
+.search-button:disabled {
+
+    background: #aaa;
+
+    cursor: not-allowed;
+
+}
+
+
+/* ========================================
+   TRẠNG THÁI TRA CỨU
+======================================== */
+
+#searchStatus {
+
+    margin-bottom: 20px;
+
+    font-weight: bold;
+
+}
+
+
+/* ========================================
+   KẾT QUẢ KHÁCH HÀNG
+======================================== */
+
+.customer {
+
+    width: 100%;
+
+    border: 1px solid #ddd;
+
+    border-radius: 8px;
+
+    padding: 15px;
+
+    margin-bottom: 12px;
+
+    background: #fff;
+
+}
+
+
+.customer-name {
+
+    font-size: 18px;
+
+    font-weight: bold;
+
+    margin-bottom: 8px;
+
+}
+
+
+.customer-info {
+
+    margin: 5px 0;
+
+    word-break: break-word;
+
+}
+
+
+.no-result {
+
+    padding: 20px;
+
+    text-align: center;
+
+    color: #777;
+
+    border: 1px dashed #ccc;
+
+    border-radius: 8px;
+
+}
+
+
+/* ========================================
+   IFRAME ẨN
+======================================== */
+
+.hidden-frame {
+
+    display: none;
+
+}
+
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 600px) {
+
+
+    body {
+
+        padding: 15px 10px;
+
+    }
+
+
+    .container {
+
+        border-radius: 10px;
+
+    }
+
+
+    .tab-content {
+
+        padding: 20px 15px;
+
+    }
+
+
+    .tab-button {
+
+        padding: 14px 5px;
+
+        font-size: 14px;
+
+    }
+
+
+    h2 {
+
+        font-size: 21px;
+
+        margin-bottom: 20px;
+
+    }
+
+
+    /* ====================================
+       INPUT MOBILE
+    ==================================== */
+
+    input {
+
+        padding: 13px;
+
+        font-size: 16px;
+
+    }
+
+
+    /* ====================================
+       LƯU + LÀM MỚI
+    ==================================== */
+
+    .button-row {
+
+        flex-direction: row;
+
+        gap: 8px;
+
+    }
+
+
+    .save-button,
+    .clear-button {
+
+        flex: 1;
+
+        width: auto;
+
+        padding: 13px 8px;
+
+        font-size: 15px;
+
+    }
+
+
+    /* ====================================
+       TRA CỨU MOBILE
+       VẪN CÙNG MỘT HÀNG
+    ==================================== */
+
+    .search-box {
+
+        display: flex;
+
+        flex-direction: row;
+
+        align-items: stretch;
+
+        gap: 8px;
+
+    }
+
+
+    #productCode {
+
+        flex: 1;
+
+        min-width: 0;
+
+        width: auto;
+
+    }
+
+
+    .search-button {
+
+        flex: 0 0 100px;
+
+        width: 100px;
+
+        padding: 13px 8px;
+
+        font-size: 15px;
+
+    }
+
+
+    /* ====================================
+       KẾT QUẢ MOBILE
+    ==================================== */
+
+    .customer {
+
+        padding: 14px;
+
+    }
+
+
+    .customer-name {
+
+        font-size: 17px;
+
+    }
+
+
+    .customer-info {
+
+        font-size: 15px;
+
+    }
+
+}
+
+
+/* ========================================
+   MOBILE RẤT NHỎ
+======================================== */
+
+@media (max-width: 360px) {
+
+
+    body {
+
+        padding: 10px 6px;
+
+    }
+
+
+    .tab-content {
+
+        padding: 18px 12px;
+
+    }
+
+
+    .tab-button {
+
+        font-size: 13px;
+
+        padding: 13px 3px;
+
+    }
+
+
+    .button-row {
+
+        gap: 6px;
+
+    }
+
+
+    .save-button,
+    .clear-button {
+
+        padding: 12px 5px;
+
+        font-size: 14px;
+
+    }
+
+
+    .search-box {
+
+        gap: 6px;
+
+    }
+
+
+    .search-button {
+
+        flex: 0 0 90px;
+
+        width: 90px;
+
+        padding: 12px 5px;
+
+        font-size: 14px;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <!-- ==================================
+         THANH TAB
+    =================================== -->
+
+    <div class="tabs">
+
+
+        <button
+
+            class="tab-button active"
+
+            onclick="openTab('addTab', this)"
+        >
+
+            ➕ Thêm khách hàng
+
+        </button>
+
+
+        <button
+
+            class="tab-button"
+
+            onclick="openTab('searchTab', this)"
+        >
+
+            🔎 Tra cứu
+
+        </button>
+
+
+    </div>
+
+
+
+    <!-- ==================================
+         TAB 1: THÊM KHÁCH HÀNG
+    =================================== -->
+
+    <div
+        id="addTab"
+        class="tab-content active"
+    >
+
+
+        <h2>
+
+            Thêm khách hàng
+
+        </h2>
+
+
+        <form
+
+            id="customerForm"
+
+            action="https://script.google.com/macros/s/AKfycbxUTGFxxbG1X0QNhp6LPi745nKazae0EDWF5TR0wld7-qscGnsY3RiVWRECIlmLaCji/exec"
+
+            method="POST"
+
+            target="submitFrame"
+
+            onsubmit="return submitForm(event)"
+        >
+
+
+            <!-- TÊN -->
+
+            <div class="form-group">
+
+                <label>
+
+                    Tên khách hàng
+
+                </label>
+
+
+                <input
+
+                    id="name"
+
+                    type="text"
+
+                    placeholder="Nhập tên khách hàng"
+
+                    autocomplete="off"
+
+                >
+
+            </div>
+
+
+
+            <!-- SỐ ĐIỆN THOẠI -->
+
+            <div class="form-group">
+
+                <label>
+
+                    Số điện thoại
+
+                </label>
+
+
+                <input
+
+                    id="phone"
+
+                    type="text"
+
+                    placeholder="Nhập số điện thoại"
+
+                    autocomplete="off"
+
+                >
+
+            </div>
+
+
+
+            <!-- ĐỊA CHỈ -->
+
+            <div class="form-group">
+
+                <label>
+
+                    Địa chỉ
+
+                </label>
+
+
+                <input
+
+                    id="address"
+
+                    type="text"
+
+                    placeholder="Nhập địa chỉ"
+
+                    autocomplete="off"
+
+                >
+
+            </div>
+
+
+
+            <!-- SẢN PHẨM -->
+
+            <div class="form-group">
+
+                <label>
+
+                    Sản phẩm
+
+                </label>
+
+
+                <input
+
+                    id="product"
+
+                    type="text"
+
+                    placeholder="Nhập mã sản phẩm"
+
+                    autocomplete="off"
+
+                >
+
+            </div>
+
+
+
+            <!-- DỮ LIỆU ẨN -->
+
+            <input
+
+                type="hidden"
+
+                name="data"
+
+                id="data"
+
+            >
+
+
+
+<!-- NÚT LƯU + LÀM MỚI -->
+
+<div class="button-row">
+
+    <button
+        id="saveButton"
+        class="save-button"
+        type="submit"
+    >
+        Lưu dữ liệu
+    </button>
+
+    <button
+        type="button"
+        class="clear-button"
+        onclick="clearCustomerForm()"
+    >
+        🧹 Làm mới
+    </button>
+
+</div>
+
+
+        </form>
+
+
+        <div id="saveStatus"></div>
+
+
+    </div>
+
+
+
+    <!-- ==================================
+         TAB 2: TRA CỨU
+    =================================== -->
+
+    <div
+
+        id="searchTab"
+
+        class="tab-content"
+
+    >
+
+
+        <h2>
+
+            Tra cứu khách hàng
+
+        </h2>
+
+
+        <div class="search-box">
+
+
+            <input
+
+                id="productCode"
+
+                type="text"
+
+                placeholder="Nhập mã sản phẩm"
+
+                autocomplete="off"
+
+            >
+
+
+            <button
+
+                id="searchButton"
+
+                class="search-button"
+
+                onclick="searchProduct()"
+
+            >
+
+                Tra cứu
+
+            </button>
+
+
+        </div>
+
+
+        <div id="searchStatus"></div>
+
+
+        <div id="results"></div>
+
+
+    </div>
+
+
+</div>
+
+
+
+<!-- ==================================
+     IFRAME ẨN CHO FORM POST
+=================================== -->
+
+<iframe
+
+    name="submitFrame"
+
+    class="hidden-frame"
+
+></iframe>
+
+
+
+<script>
+
+
+/* ========================================
+   URL GOOGLE APPS SCRIPT
+======================================== */
+
+const API =
+
+"https://script.google.com/macros/s/AKfycbxUTGFxxbG1X0QNhp6LPi745nKazae0EDWF5TR0wld7-qscGnsY3RiVWRECIlmLaCji/exec";
+
+
+
+/* ========================================
+   CHUYỂN TAB
+======================================== */
+
+function openTab(tabId, button) {
+
+
+    // Ẩn tất cả tab
+
+    const tabs =
+
+        document.querySelectorAll(
+            ".tab-content"
+        );
+
+
+    tabs.forEach(function(tab) {
+
+        tab.classList.remove("active");
+
+    });
+
+
+    // Bỏ active tất cả button
+
+    const buttons =
+
+        document.querySelectorAll(
+            ".tab-button"
+        );
+
+
+    buttons.forEach(function(btn) {
+
+        btn.classList.remove("active");
+
+    });
+
+
+    // Hiện tab được chọn
+
+    document
+
+        .getElementById(tabId)
+
+        .classList.add("active");
+
+
+    // Active button
+
+    button.classList.add("active");
+
+}
+
+
+
+/* ========================================
+   GHI KHÁCH HÀNG
+======================================== */
+
+function submitForm(event) {
+
+
+    // ==========================
+    // LẤY DỮ LIỆU
+    // ==========================
+
+    const name =
+
+        document
+
+        .getElementById("name")
+
+        .value
+
+        .trim();
+
+
+    const phone =
+
+        document
+
+        .getElementById("phone")
+
+        .value
+
+        .trim();
+
+
+    const address =
+
+        document
+
+        .getElementById("address")
+
+        .value
+
+        .trim();
+
+
+    const product =
+
+        document
+
+        .getElementById("product")
+
+        .value
+
+        .trim();
+
+
+
+    // ==========================
+    // KIỂM TRA
+    // ==========================
+
+    if (!name) {
+
+        alert(
+            "Vui lòng nhập tên khách hàng"
+        );
+
+        event.preventDefault();
+
+        return false;
+
+    }
+
+
+    if (!phone) {
+
+        alert(
+            "Vui lòng nhập số điện thoại"
+        );
+
+        event.preventDefault();
+
+        return false;
+
+    }
+
+
+    if (!product) {
+
+        alert(
+            "Vui lòng nhập sản phẩm"
+        );
+
+        event.preventDefault();
+
+        return false;
+
+    }
+
+
+
+    // ==========================
+    // ĐÓNG GÓI DỮ LIỆU
+    // ==========================
+
+    const data = {
+
+        name: name,
+
+        phone: phone,
+
+        address: address,
+
+        product: product
+
+    };
+
+
+    document
+
+        .getElementById("data")
+
+        .value =
+
+        JSON.stringify(data);
+
+
+
+    // ==========================
+    // KHÓA NÚT
+    // ==========================
+
+    const button =
+
+        document
+
+        .getElementById(
+            "saveButton"
+        );
+
+
+    button.disabled = true;
+
+
+    button.innerText =
+
+        "Đang lưu...";
+
+
+    document
+
+        .getElementById(
+            "saveStatus"
+        )
+
+        .innerText =
+
+        "Đang gửi dữ liệu...";
+
+
+
+    // ==========================
+    // SUBMIT
+    // ==========================
+
+    setTimeout(function() {
+
+
+        button.disabled = false;
+
+
+        button.innerText =
+
+            "Lưu dữ liệu";
+
+
+        document
+
+            .getElementById(
+                "saveStatus"
+            )
+
+            .innerText =
+
+            "✅ Đã gửi dữ liệu";
+
+
+        /*
+            Sau khi thêm xong,
+            xóa sản phẩm.
+
+            Giữ lại thông tin khách hàng.
+        */
+
+        document
+
+            .getElementById(
+                "product"
+            )
+
+            .value = "";
+
+
+        document
+
+            .getElementById(
+                "product"
+            )
+
+            .focus();
+
+
+    }, 1000);
+
+
+    return true;
+
+}
+
+
+
+/* ========================================
+   TRA CỨU SẢN PHẨM
+======================================== */
+
+function searchProduct() {
+
+
+    const product =
+
+        document
+
+        .getElementById(
+            "productCode"
+        )
+
+        .value
+
+        .trim();
+
+
+
+    if (!product) {
+
+        alert(
+            "Vui lòng nhập mã sản phẩm"
+        );
+
+        return;
+
+    }
+
+
+
+    document
+
+        .getElementById(
+            "searchStatus"
+        )
+
+        .innerText =
+
+        "🔍 Đang tra cứu...";
+
+
+    document
+
+        .getElementById(
+            "results"
+        )
+
+        .innerHTML = "";
+
+
+    const searchButton =
+
+        document
+
+        .getElementById(
+            "searchButton"
+        );
+
+
+    searchButton.disabled = true;
+
+
+
+    // ==========================
+    // TẠO CALLBACK
+    // ==========================
+
+    const callbackName =
+
+        "searchCallback_" +
+
+        Date.now();
+
+
+
+    window[callbackName] =
+
+        function(data) {
+
+
+            console.log(data);
+
+
+            searchButton.disabled = false;
+
+
+
+            if (!data.success) {
+
+
+                document
+
+                    .getElementById(
+                        "searchStatus"
+                    )
+
+                    .innerText =
+
+                    "❌ " +
+
+                    data.message;
+
+
+                delete window[
+                    callbackName
+                ];
+
+
+                return;
+
+            }
+
+
+
+            document
+
+                .getElementById(
+                    "searchStatus"
+                )
+
+                .innerText =
+
+                "Tìm thấy " +
+
+                data.count +
+
+                " khách hàng";
+
+
+
+            displayCustomers(
+
+                data.customers
+
+            );
+
+
+
+            delete window[
+                callbackName
+            ];
+
+        };
+
+
+
+    // ==========================
+    // TẠO URL
+    // ==========================
+
+    const url =
+
+        API +
+
+        "?product=" +
+
+        encodeURIComponent(product) +
+
+        "&callback=" +
+
+        callbackName;
+
+
+
+    // ==========================
+    // JSONP
+    // ==========================
+
+    const script =
+
+        document.createElement(
+            "script"
+        );
+
+
+    script.src = url;
+
+
+
+    script.onerror =
+
+        function() {
+
+
+            searchButton.disabled =
+
+                false;
+
+
+            document
+
+                .getElementById(
+                    "searchStatus"
+                )
+
+                .innerText =
+
+                "❌ Không kết nối được Apps Script";
+
+
+            delete window[
+                callbackName
+            ];
+
+        };
+
+
+
+    document
+
+        .body
+
+        .appendChild(script);
+
+}
+
+
+
+/* ========================================
+   HIỂN THỊ KHÁCH HÀNG
+======================================== */
+
+function displayCustomers(
+    customers
+) {
+
+
+    const results =
+
+        document
+
+        .getElementById(
+            "results"
+        );
+
+
+    results.innerHTML = "";
+
+
+
+    if (
+        !customers ||
+        customers.length === 0
+    ) {
+
+
+        results.innerHTML = `
+
+            <div class="no-result">
+
+                Không tìm thấy khách hàng nào
+
+            </div>
+
+        `;
+
+
+        return;
+
+    }
+
+
+
+    customers.forEach(
+        function(customer) {
+
+
+            const div =
+
+                document.createElement(
+                    "div"
+                );
+
+
+            div.className =
+                "customer";
+
+
+            div.innerHTML = `
+
+                <div class="customer-name">
+
+                    ${escapeHtml(
+                        customer.name
+                    )}
+
+                </div>
+
+
+                <div class="customer-info">
+
+                    📞 ${escapeHtml(
+                        customer.phone
+                    )}
+
+                </div>
+
+
+                <div class="customer-info">
+
+                    📍 ${escapeHtml(
+                        customer.address
+                    )}
+
+                </div>
+
+            `;
+
+
+            results.appendChild(div);
+
+        }
+    );
+
+}
+
+
+
+/* ========================================
+   BẢO VỆ HTML
+======================================== */
+
+function escapeHtml(text) {
+
+
+    const div =
+
+        document.createElement(
+            "div"
+        );
+
+
+    div.textContent =
+        text || "";
+
+
+    return div.innerHTML;
+
+}
+
+
+
+/* ========================================
+   ENTER ĐỂ TRA CỨU
+======================================== */
+
+document
+
+    .getElementById(
+        "productCode"
+    )
+
+    .addEventListener(
+        "keydown",
+
+        function(event) {
+
+
+            if (
+                event.key ===
+                "Enter"
+            ) {
+
+                searchProduct();
+
+            }
+
+        }
+
+    );
+	
+	function clearCustomerForm() {
+
+    document.getElementById("name").value = "";
+
+    document.getElementById("phone").value = "";
+
+    document.getElementById("address").value = "";
+
+    document.getElementById("product").value = "";
+
+    document.getElementById("data").value = "";
+
+    document.getElementById("saveStatus").innerText = "";
+
+    document.getElementById("name").focus();
+
+}
+
+</script>
+
+
+</body>
+
+</html>
