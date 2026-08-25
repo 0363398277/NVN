@@ -3,6 +3,12 @@
   <title>Đánh Giá</title>
 
   <style>
+  /* ẨN TEXTAREA */
+
+#excelInput,
+#vxInput{
+  display:none  !important;
+}
 
     *{
       box-sizing:border-box;
@@ -239,12 +245,6 @@ button{
 }
 
 
-/* ẨN TEXTAREA */
-
-#excelInput,
-#vxInput{
-  display:none  !important;
-}
 
 
 .delete-btn-wrap{
@@ -376,6 +376,88 @@ button{
     box-sizing:border-box;
 
 }
+
+#loadSavedExcelBtn {
+
+    width:100%;
+
+    padding:12px 18px;
+
+    margin-bottom:10px;
+
+    border:none;
+
+    border-radius:10px;
+
+    background:#16a34a;
+
+    color:white;
+
+    font-size:15px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+}
+
+#loadSavedExcelBtn:hover {
+
+    background:#15803d;
+
+}
+
+#loadSavedExcelBtn:disabled {
+
+    background:#94a3b8;
+
+    cursor:not-allowed;
+
+}
+
+/* ================================
+   LỌC MÃ SHOP
+================================ */
+
+.shop-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0;
+  flex-wrap: wrap;
+}
+
+.shop-filter label {
+  font-weight: bold;
+}
+
+.shop-filter input {
+  width: 180px;
+  padding: 9px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+}
+
+.shop-filter input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.12);
+}
+
+.shop-filter button {
+  padding: 9px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #2563eb;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.shop-filter button:hover {
+  background: #1d4ed8;
+}
   </style>
   
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.css">
@@ -401,12 +483,6 @@ button{
 <button class="menu-btn" onclick="openKPIPopup('sheetKPIs', this)">
   KPIs
 </button>
-
-<button class="menu-btn"
-        onclick="location.href='Chuyen_Doi_DATA_Thuoc.html'">
-    CÔNG CỤ
-</button>
-
 </div>
 
 <!-- SHEET TARGET -->
@@ -902,6 +978,7 @@ button{
 
     <h1>📥 DATA_Thuốc</h1>
 <input type="file" id="excelFile" accept=".xlsx,.xls" onchange="importExcelFile(event)" style="margin-bottom:10px;">
+
     <textarea id="excelInput" placeholder="Paste dữ liệu Excel vào đây..."></textarea>
 
     <div class="info" id="info"></div>
@@ -967,7 +1044,24 @@ button{
   "></div>
 
   </div>
+<!-- LỌC MÃ SHOP - DATA THUỐC -->
+<div class="shop-filter">
+  <label for="drugShopFilter">Mã shop:</label>
 
+  <input
+    type="text"
+    id="drugShopFilter"
+    placeholder="Nhập mã shop..."
+    autocomplete="off"
+  >
+
+  <button
+    type="button"
+    onclick="filterDrugByShop()"
+  >
+    🔍 Lọc
+  </button>
+</div>
 </div>
 
 <!-- SHEET DATA_VX -->
@@ -1023,7 +1117,7 @@ button{
     class="save-btn"
     onclick="parseVXData()"
     style="display:none; min-width:150px;">
-   🔄 Cập nhật dữ liệu
+   🔄 Cập nhật
 </button>
 <button
     id="vxDuplicateBtn"
@@ -1043,7 +1137,24 @@ button{
   "></div>
 
   </div>
+<!-- LỌC MÃ SHOP - DATA VX -->
+<div class="shop-filter">
+  <label for="vxShopFilter">Mã shop:</label>
 
+  <input
+    type="text"
+    id="vxShopFilter"
+    placeholder="Nhập mã shop..."
+    autocomplete="off"
+  >
+
+  <button
+    type="button"
+    onclick="filterVXByShop()"
+  >
+    🔍 Lọc
+  </button>
+</div>
 </div>
 
 <div id="duplicatePopup" style="
@@ -3588,61 +3699,424 @@ function parseNumber(value){
   ) || 0;
 }
 
-function importExcelFile(event){
+// ============================================================
+// IMPORT EXCEL → CHUẨN HÓA → LƯU → TỰ ĐỘNG LOAD DATA THUỐC
+// ============================================================
 
-  const file = event.target.files[0];
+async function importExcelFile(event) {
 
-  if(!file) return;
+    const file =
+        event.target.files[0];
 
-  const reader = new FileReader();
+    if (!file) {
+        return;
+    }
 
-  reader.onload = function(e){
 
-    const data = new Uint8Array(e.target.result);
+    try {
 
-    const workbook = XLSX.read(data, {
-      type:'array'
-    });
+        console.log(
+            "📂 FILE ĐƯỢC CHỌN:",
+            file.name
+        );
 
-    const firstSheet =
-      workbook.Sheets[
-        workbook.SheetNames[0]
-      ];
 
-const rows = XLSX.utils.sheet_to_json(
-  firstSheet,
-  {
-    header:1,
-    raw:false,
-    defval:''
-  }
-);
+        // ----------------------------------------------------
+        // THÔNG BÁO
+        // ----------------------------------------------------
 
-    //
-    // convert to textarea format
-    //
+        const info =
+            document.getElementById("info");
 
-    const text = rows
-      .map(row => row.join('\t'))
-      .join('\n');
+        if (info) {
 
-    document.getElementById(
-      'excelInput'
-    ).value = text;
+            info.innerHTML =
+                "⏳ Đang chuẩn hóa Excel...";
 
-    //
-    // dùng luôn function cũ
-    //
+        }
 
-    parseExcelData();
-	// hiện nút cập nhật
-document.getElementById("btnUpdateDrug").style.display = "inline-block";
 
-  };
+        // ----------------------------------------------------
+        // ĐỌC FILE GỐC
+        // ----------------------------------------------------
 
-  reader.readAsArrayBuffer(file);
+        const data =
+            new Uint8Array(
+                await file.arrayBuffer()
+            );
+
+
+        const workbook =
+            XLSX.read(
+                data,
+                {
+                    type: "array",
+
+                    cellNF: true,
+
+                    cellStyles: true,
+
+                    cellDates: true,
+
+                    cellFormula: true
+                }
+            );
+
+
+        if (
+            !workbook.SheetNames ||
+            workbook.SheetNames.length === 0
+        ) {
+
+            throw new Error(
+                "File Excel không có Sheet."
+            );
+
+        }
+
+
+        // ----------------------------------------------------
+        // TẠO WORKBOOK ĐÃ CHUẨN HÓA
+        // ----------------------------------------------------
+
+        const newWorkbook =
+            XLSX.utils.book_new();
+
+
+        // ----------------------------------------------------
+        // DUYỆT TẤT CẢ SHEET
+        // ----------------------------------------------------
+
+        workbook.SheetNames.forEach(
+            function(sheetName) {
+
+                const oldSheet =
+                    workbook.Sheets[sheetName];
+
+
+                const range =
+                    oldSheet["!ref"];
+
+
+                // ------------------------------------------------
+                // SHEET RỖNG
+                // ------------------------------------------------
+
+                if (!range) {
+
+                    const emptySheet =
+                        XLSX.utils.aoa_to_sheet([]);
+
+
+                    XLSX.utils.book_append_sheet(
+                        newWorkbook,
+                        emptySheet,
+                        sheetName
+                    );
+
+
+                    return;
+
+                }
+
+
+                const decodedRange =
+                    XLSX.utils.decode_range(
+                        range
+                    );
+
+
+                const rows = [];
+
+
+                // ------------------------------------------------
+                // ĐỌC TỪNG Ô
+                // ------------------------------------------------
+
+                for (
+                    let r = decodedRange.s.r;
+                    r <= decodedRange.e.r;
+                    r++
+                ) {
+
+                    const row = [];
+
+
+                    for (
+                        let c = decodedRange.s.c;
+                        c <= decodedRange.e.c;
+                        c++
+                    ) {
+
+                        const address =
+                            XLSX.utils.encode_cell({
+                                r: r,
+                                c: c
+                            });
+
+
+                        const cell =
+                            oldSheet[address];
+
+
+                        if (
+                            cell &&
+                            cell.v !== undefined
+                        ) {
+
+                            row.push(cell.v);
+
+                        }
+                        else {
+
+                            row.push("");
+
+                        }
+
+                    }
+
+
+                    rows.push(row);
+
+                }
+
+
+                // ------------------------------------------------
+                // TẠO SHEET MỚI
+                // ------------------------------------------------
+
+                const newSheet =
+                    XLSX.utils.aoa_to_sheet(
+                        rows
+                    );
+
+
+                // ------------------------------------------------
+                // GIỮ ĐỘ RỘNG CỘT
+                // ------------------------------------------------
+
+                if (oldSheet["!cols"]) {
+
+                    newSheet["!cols"] =
+                        JSON.parse(
+                            JSON.stringify(
+                                oldSheet["!cols"]
+                            )
+                        );
+
+                }
+
+
+                // ------------------------------------------------
+                // GIỮ CHIỀU CAO DÒNG
+                // ------------------------------------------------
+
+                if (oldSheet["!rows"]) {
+
+                    newSheet["!rows"] =
+                        JSON.parse(
+                            JSON.stringify(
+                                oldSheet["!rows"]
+                            )
+                        );
+
+                }
+
+
+                XLSX.utils.book_append_sheet(
+                    newWorkbook,
+                    newSheet,
+                    sheetName
+                );
+
+            }
+        );
+
+
+        // ----------------------------------------------------
+        // ĐẶT TÊN FILE CHUẨN HÓA
+        // ----------------------------------------------------
+
+        const fileName =
+            file.name.replace(
+                /\.[^/.]+$/,
+                ""
+            ) +
+            "_chuan_hoa.xlsx";
+
+
+        // ----------------------------------------------------
+        // WORKBOOK → XLSX BINARY
+        // ----------------------------------------------------
+
+        const excelData =
+            XLSX.write(
+                newWorkbook,
+                {
+                    bookType: "xlsx",
+
+                    type: "array",
+
+                    compression: true
+                }
+            );
+
+
+        console.log(
+            "✅ Đã chuẩn hóa Excel:",
+            fileName
+        );
+
+
+        // ----------------------------------------------------
+        // LƯU VÀO INDEXEDDB
+        // ----------------------------------------------------
+
+        await saveDrugExcelToBrowser({
+
+            id: "currentExcel",
+
+            fileName: fileName,
+
+            data: excelData,
+
+            savedAt:
+                new Date().toISOString()
+
+        });
+
+
+        console.log(
+            "✅ Đã lưu currentExcel vào IndexedDB"
+        );
+
+
+
+
+
+        // ----------------------------------------------------
+        // TỰ ĐỘNG LOAD LẠI FILE ĐÃ CHUẨN HÓA
+        // ----------------------------------------------------
+
+        if (info) {
+
+            info.innerHTML =
+                "⏳ Đang tải dữ liệu vào DATA_Thuốc...";
+
+        }
+
+
+        await loadSavedExcelFromBrowser();
+
+
+        // ----------------------------------------------------
+        // HOÀN TẤT
+        // ----------------------------------------------------
+
+        if (info) {
+
+            info.innerHTML =
+                "✅ Đã chuẩn hóa và tải dữ liệu thành công.";
+
+        }
+
+
+        console.log(
+            "🎉 IMPORT EXCEL HOÀN TẤT"
+        );
+
+    }
+    catch(error) {
+
+        console.error(
+            "❌ importExcelFile ERROR:",
+            error
+        );
+
+
+        if (info) {
+
+            info.innerHTML =
+                "❌ Lỗi: " +
+                error.message;
+
+        }
+
+
+        alert(
+            "❌ Không thể xử lý file Excel.\n\n" +
+            error.message
+        );
+
+
+        // Cho phép chọn lại file
+        event.target.value = "";
+
+    }
+
 }
 
+// ============================================================
+// LƯU EXCEL ĐÃ CHUẨN HÓA VÀO INDEXEDDB
+// ============================================================
+
+function saveDrugExcelToBrowser(record) {
+
+    return new Promise(
+        async function(resolve, reject) {
+
+            try {
+
+                const db =
+                    await openDrugBrowserDatabase();
+
+
+                const transaction =
+                    db.transaction(
+                        [
+                            DRUG_STORE_NAME
+                        ],
+                        "readwrite"
+                    );
+
+
+                const store =
+                    transaction.objectStore(
+                        DRUG_STORE_NAME
+                    );
+
+
+                store.put(record);
+
+
+                transaction.oncomplete =
+                    function() {
+
+                        resolve();
+
+                    };
+
+
+                transaction.onerror =
+                    function() {
+
+                        reject(
+                            transaction.error
+                        );
+
+                    };
+
+            }
+            catch(error) {
+
+                reject(error);
+
+            }
+
+        }
+    );
+
+}
 //
 // HIỆN / ẨN BOX
 //
@@ -3850,437 +4324,4814 @@ document.addEventListener("input", function(e){
 
 });
 
+// ============================================================
+// DATA THUỐC - FULL CODE
+// ============================================================
+//
+// LUỒNG:
+// Excel paste
+//     ↓
+// detectDrugColumns()
+//     ↓
+// DÒ TOÀN BỘ DỮ LIỆU TÌM ALIAS
+//     ↓
+// THẤY MATCH → LẤY NGAY CỘT ĐÓ
+//     ↓
+// xác định dòng HEADER gần nhất / có nhiều tên cột nhất
+//     ↓
+// hỏi thủ công nếu thiếu
+//     ↓
+// convert về cấu trúc DATA THUỐC chuẩn
+//     ↓
+// render Handsontable
+//     ↓
+// chỉnh sửa bảng
+//     ↓
+// cập nhật drugData + excelInput
+//
+// ============================================================
 
-//
-// DATA THUỐC
-//
+
+// ============================================================
+// 1A. CẤU HÌNH CỘT DATA THUỐC
+// ============================================================
+
+const DRUG_COLUMN_CONFIG = {
+
+  // ==========================================================
+  // THÔNG TIN SHOP / NHÂN VIÊN
+  // ==========================================================
+
+  vung: {
+    label: "Vùng",
+    names: [
+      "Vùng",
+      "Vung"
+    ]
+  },
+
+  asm: {
+    label: "ASM",
+    names: [
+      "ASM"
+    ]
+  },
+
+  maShop: {
+    label: "Mã shop",
+    names: [
+      "Mã shop",
+      "Ma shop",
+      "Mã cửa hàng",
+      "Ma cua hang"
+    ]
+  },
+
+  tenShop: {
+    label: "Tên Shop",
+    names: [
+      "Tên Shop",
+      "Ten Shop",
+      "Tên cửa hàng",
+      "Ten cua hang"
+    ]
+  },
+
+  phanLoaiShop: {
+    label: "Phân loại shop vệ tinh",
+    names: [
+      "Phân loại shop vệ tinh",
+      "Phan loai shop ve tinh",
+      "Phân loại shop",
+      "Phan loai shop"
+    ]
+  },
+
+  maNV: {
+    label: "Mã NV",
+    names: [
+      "Mã NV",
+      "Mã nhân viên",
+      "Ma NV",
+      "Ma nhan vien"
+    ]
+  },
+
+  tenNV: {
+    label: "Tên nhân viên",
+    names: [
+      "Tên nhân viên",
+      "Tên NV",
+      "Ten nhan vien",
+      "Ten NV"
+    ]
+  },
+
+  ngayLamViec: {
+    label: "Ngày làm việc",
+    names: [
+      "Ngày làm việc",
+      "Ngay lam viec"
+    ]
+  },
+
+
+  // ==========================================================
+  // KHÁCH / APP
+  // ==========================================================
+
+  luotKhach: {
+    label: "Lượt khách",
+    names: [
+      "Lượt khách",
+      "Khách",
+      "Lượt KH"
+    ]
+  },
+
+  fsApp: {
+    label: "Tỷ lệ FS+App",
+    names: [
+      "Tỷ lệ FS+App",
+      "FS+App",
+      "FS APP",
+      "Tỷ lệ FS App"
+    ]
+  },
+
+  tyLeCaiApp: {
+    label: "Tỷ lệ cài App",
+    names: [
+      "Tỷ lệ cài App",
+      "Ty le cai App",
+      "Tỷ lệ cài app",
+      "Tỷ lệ App",
+      "Ty le App"
+    ]
+  },
+
+  tyTrongThuoc: {
+    label: "Tỷ trọng DS thuốc",
+    names: [
+      "Tỷ trọng DS thuốc",
+      "Tỷ trọng thuốc",
+      "TT Thuốc"
+    ]
+  },
+
+  ttTPCN: {
+    label: "Tỷ trọng DS TPCN",
+    names: [
+      "Tỷ trọng DS TPCN",
+      "TT TPCN",
+      "Tỷ trọng TPCN"
+    ]
+  },
+
+
+  // ==========================================================
+  // DOANH THU TỔNG
+  // ==========================================================
+
+  targetDS: {
+    label: "Target DS",
+    names: [
+      "Target DS",
+      "Target doanh số",
+      "Chỉ tiêu doanh số",
+      "Target Doanh số",
+      "Target DS (NV)"
+    ]
+  },
+
+  dsMTD: {
+    label: "DS MTD",
+    names: [
+      "DS MTD",
+      "Doanh số MTD",
+      "Doanh thu MTD",
+      "DS MTD (NV)"
+    ]
+  },
+
+  htDS: {
+    label: "% HT DS",
+    names: [
+      "% HT DS",
+      "% HT Doanh số",
+      "% Hoàn thành DS",
+      "HT DS"
+    ]
+  },
+
+  tyTrongDSShop: {
+    label: "Tỷ trọng DS/Shop",
+    names: [
+      "Tỷ trọng DS/Shop",
+      "Tỷ trọng DS Shop",
+      "Ty trong DS/Shop"
+    ]
+  },
+
+  estDS: {
+    label: "% EST DS",
+    names: [
+      "% EST DS",
+      "% EST Doanh số",
+      "EST DS"
+    ]
+  },
+
+  tbBill: {
+    label: "TB Bill",
+    names: [
+      "TB Bill",
+      "TB/ Bill",
+      "TB/Bill",
+      "Trung bình Bill"
+    ]
+  },
+
+
+  // ==========================================================
+  // HOT
+  // ==========================================================
+
+  chiTieuHOT: {
+    label: "Chỉ tiêu HOT",
+    names: [
+      "Chỉ tiêu HOT",
+      "Chi tieu HOT",
+      "Target HOT",
+      "Target Hot"
+    ]
+  },
+
+  dsHOT: {
+    label: "DS HOT",
+    names: [
+      "DS HOT",
+      "Doanh số HOT"
+    ]
+  },
+
+  htHOT: {
+    label: "% HT Hot",
+    names: [
+      "% HT Hot",
+      "% HT HOT",
+      "% Hoàn thành HOT"
+    ]
+  },
+
+  estHOT: {
+    label: "% EST HOT",
+    names: [
+      "% EST HOT",
+      "EST HOT"
+    ]
+  },
+
+  tyLeHOT: {
+    label: "Tỷ lệ HOT",
+    names: [
+      "Tỷ lệ HOT",
+      "Ty le HOT"
+    ]
+  },
+
+
+  // ==========================================================
+  // CẬN DATE
+  // ==========================================================
+
+  targetCanDate: {
+    label: "Target Cận Date",
+    names: [
+      "Target Cận Date",
+      "Target Can Date"
+    ]
+  },
+
+  canDate: {
+    label: "Cận Date MTD",
+    names: [
+      "Cận Date MTD",
+      "Cận Date",
+      "Can Date MTD"
+    ]
+  },
+
+  htCanDate: {
+    label: "% HT Cận date",
+    names: [
+      "% HT Cận date",
+      "% HT Cận Date",
+      "% Hoàn thành Cận Date"
+    ]
+  },
+
+  estCanDate: {
+    label: "% EST Cận Date",
+    names: [
+      "% EST Cận Date",
+      "% EST Cận date",
+      "EST Cận Date"
+    ]
+  },
+
+
+  // ==========================================================
+  // CẮT LIỀU
+  // ==========================================================
+
+  catLieu: {
+    label: "Cắt liều MTD",
+    names: [
+      "Cắt liều MTD",
+      "Cắt liều",
+      "Cat lieu MTD",
+      "DS cắt liều MTD (NV)"
+    ]
+  }
+
+};
+
+// ============================================================
+// 1B. HIỂN THỊ TRÊN Bảng thiếu cột
+// ============================================================
+const DRUG_REQUIRED_COLUMNS = [
+  "maShop",
+  "maNV",
+  "tenNV",
+  "luotKhach:",
+  "fsApp",
+  "tyTrongThuoc",
+  "dsMTD",
+  "tbBill",
+  "dsHOT",
+  "canDate",
+  "catLieu"
+];
+
+
+// ============================================================
+// 2. HEADER HIỂN THỊ TRÊN TABLE
+// ============================================================
 
 const headers = [
 
-  'Vùng',                     // A
-  'ASM',                      // B
-  'Mã shop',                  // C
-  'Tên Shop',                 // D
-  'Phân loại shop vệ tinh',   // E
-  'Mã NV',                    // F
-  'Tên nhân viên',            // G
-  'Ngày làm việc',            // H
-  'Lượt khách',               // I
-  'Tỷ lệ FS+App',             // J
-  'Tỷ lệ cài App',            // K
-  'Tỷ trọng DS thuốc',        // L
-  'Tỷ trọng DS TPCN',         // M
+  "Vùng",                     // A
+  "ASM",                      // B
+  "Mã shop",                  // C
+  "Tên Shop",                 // D
+  "Phân loại shop vệ tinh",   // E
+  "Mã NV",                    // F
+  "Tên nhân viên",            // G
+  "Ngày làm việc",            // H
+  "Lượt khách",               // I
+  "Tỷ lệ FS+App",             // J
+  "Tỷ lệ cài App",            // K
+  "Tỷ trọng DS thuốc",        // L
+  "Tỷ trọng DS TPCN",         // M
 
   // DOANH THU TỔNG
-  'Target DS',                // N
-  'DS MTD',                   // O
-  '% HT DS',                  // P
-  'Tỷ trọng DS/Shop',         // Q
-  '% EST DS',                 // R
-  'TB Bill',                  // S
+  "Target DS",                // N
+  "DS MTD",                   // O
+  "% HT DS",                  // P
+  "Tỷ trọng DS/Shop",         // Q
+  "% EST DS",                 // R
+  "TB Bill",                  // S
 
   // HÀNG HOT
-  'Chỉ tiêu HOT',             // T
-  'DS HOT',                   // U
-  '% HT Hot',                 // V
-  '% EST HOT',                // W
-  'Tỷ lệ HOT',                // X
+  "Chỉ tiêu HOT",             // T
+  "DS HOT",                   // U
+  "% HT Hot",                 // V
+  "% EST HOT",                // W
+  "Tỷ lệ HOT",                // X
 
   // CẬN DATE
-  'Target Cận Date',          // Y
-  'Cận Date MTD',             // Z
-  '% HT Cận date',            // AA
-  '% EST Cận Date',           // AB
+  "Target Cận Date",          // Y
+  "Cận Date MTD",             // Z
+  "% HT Cận date",            // AA
+  "% EST Cận Date",           // AB
 
   // CẮT LIỀU
-  'Cắt liều MTD'              // AC
+  "Cắt liều MTD",             // AC
+
 
 ];
 
-function syncExcelInput() {
 
-  if (!hot) return;
+// ============================================================
+// 3. CÁC CỘT %
+// ============================================================
 
-  const data = hot.getData();
+const DRUG_PERCENT_COLUMNS = [
 
-  document.getElementById("excelInput").value =
-    data
-      .map(row => row.map(cell => cell ?? "").join("\t"))
-      .join("\n");
+  9,   // Tỷ lệ FS+App
+  10,  // Tỷ lệ cài App
+  11,  // Tỷ trọng DS thuốc
+  12,  // Tỷ trọng DS TPCN
+
+  15,  // % HT DS
+  16,  // Tỷ trọng DS/Shop
+  17,  // % EST DS
+
+  21,  // % HT Hot
+  22,  // % EST HOT
+  23,  // Tỷ lệ HOT
+
+  26,  // % HT Cận date
+  27   // % EST Cận Date
+
+];
+
+
+// ============================================================
+// 4A. CỘT TEXT
+// ============================================================
+
+const DRUG_TEXT_COLUMNS = [
+
+  0,  // Vùng
+  1,  // ASM
+  2,  // Mã shop
+  3,  // Tên Shop
+  4,  // Phân loại shop vệ tinh
+  5,  // Mã NV
+  6,  // Tên NV
+  7   // Ngày làm việc
+
+];
+
+// ============================================================
+// 4B. CỘT Number
+// ============================================================
+
+const DRUG_ROUND_NUMBER_COLUMNS = [
+  8,   // I  - Lượt khách
+  13,  // N  - Target DS
+  14,  // O  - DS MTD
+  18,  // S  - TB Bill
+  19,  // T  - Chỉ tiêu HOT
+  20,  // U  - DS HOT
+  24,  // Y  - Target Cận Date
+  25,  // Z  - Cận Date MTD
+  28   // AC - Cắt liều MTD
+];
+
+
+
+// ============================================================
+// 5. CHUẨN HÓA HEADER
+// ============================================================
+
+function normalizeDrugHeader(value) {
+
+  return String(value ?? "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/[^a-z0-9]/g, "");
 
 }
 
-function parseExcelData(){
 
-  const input = document
-    .getElementById('excelInput')
-    .value
+// ============================================================
+// 6. CHUẨN HÓA TEXT
+// ============================================================
+
+function normalizeDrugText(value) {
+
+  return String(value ?? "")
+    .replace(/\u00A0/g, " ")
     .trim();
 
-  if(!input){
-
-    alert('Vui lòng paste dữ liệu Excel');
-
-    return;
-  }
-
-  //
-  // SPLIT ROW
-  //
-
-  const rawRows = input
-    .split('\n')
-    .map(row => row.split('\t'));
-
-const rows = rawRows;
-
-  //
-  // OBJECT DATA
-  //
-
-  drugData = rows.map(row => {
-
-    return {
-
-      maNV: normalizeMaNV(row[5]),
-
-      tenNV:
-        row[6] || '',
-
-      targetDS:
-        row[13] || '0',
-
-      dsMTD:
-        row[14] || '0',
-
-      tbBill:
-        row[18] || '0',
-
-      dsHOT:
-        row[20] || '0',
-
-      canDate:
-        row[25] || '0',
-
-      catLieu:
-        row[28] || '0',
-		
-	  tyTrongThuoc:
-		row[11] || '0',
-		
-	  luotKhach:
-		row[8] || '0',
-		
-	  fsApp:
-		row[9] || '0',
-
-	  ttTPCN:
-		row[12] || '0',
-		
-	  vaccine:
-		row[24] || '0',
-
-
-    };
-
-  });
-
-
-  //
-  // RENDER TABLE
-  //
-
-  renderTable(rawRows);
-
-  document.getElementById('info')
-    .innerHTML =
-    `Tổng dòng: <b>${rows.length}</b>`;
-	document.getElementById("searchContainer").style.display="flex";
-	
-	checkDrugDuplicate();
-
-alert("✅ Đã cập nhật DATA THUỐC thành công!");
 }
 
-function renderTable(rows){
+// ============================================================
+// CHUẨN HÓA GIÁ TRỊ % TỪ EXCEL
+// ============================================================
+//
+// Quy tắc:
+//
+// 0.5      → 50
+// 0.25     → 25
+// 0.1234   → 12.34
+//
+// "50%"     → 50
+// "12.5%"   → 12.5
+//
+// 50       → 50
+// 25       → 25
+//
+// Mục đích:
+// Đưa dữ liệu về dạng mà bảng DATA THUỐC đang sử dụng:
+//     50 = 50%
+// ============================================================
 
-  const container =
-    document.getElementById('excelTable');
+function normalizeDrugPercentValue(value) {
 
-  //
-  // DESTROY TABLE CŨ
-  //
-
-  if(hot){
-    hot.destroy();
+  if (
+    value === null ||
+    value === undefined
+  ) {
+    return "";
   }
 
+
+  let str =
+    String(value)
+      .trim();
+
+
+  if (str === "") {
+    return "";
+  }
+
+
+  // ----------------------------------------------------------
+  // Có dấu %
+  // ----------------------------------------------------------
+
+  const hasPercent =
+    str.includes("%");
+
+
+  str =
+    str
+      .replace(/%/g, "")
+      .trim();
+
+
+  if (!str) {
+    return "";
+  }
+
+
+  // ----------------------------------------------------------
+  // Chuẩn hóa số
+  // ----------------------------------------------------------
+
+  let number;
+
+
+  // Ví dụ:
+  // 1.234,56
+  // 1,234.56
+
+  if (
+    str.includes(",") &&
+    str.includes(".")
+  ) {
+
+    const lastComma =
+      str.lastIndexOf(",");
+
+    const lastDot =
+      str.lastIndexOf(".");
+
+
+    if (lastComma > lastDot) {
+
+      // 1.234,56
+      str =
+        str
+          .replace(/\./g, "")
+          .replace(",", ".");
+
+    } else {
+
+      // 1,234.56
+      str =
+        str.replace(/,/g, "");
+
+    }
+
+  }
+
+  else if (str.includes(",")) {
+
+    // 12,5 → 12.5
+    str =
+      str.replace(",", ".");
+
+  }
+
+
+  number =
+    Number(str);
+
+
+  if (
+    !Number.isFinite(number)
+  ) {
+
+    return value;
+
+  }
+
+
+  // ----------------------------------------------------------
+  // Nếu Excel lưu dạng decimal:
   //
-  // CÁC CỘT %
+  // 0.5   → 50
+  // 0.25  → 25
   //
+  // Nếu có dấu % thì KHÔNG nhân thêm.
+  // ----------------------------------------------------------
 
-  const percentColumns = [
-    9,   // Tỷ lệ FS+App
-    10,  // Tỷ lệ cài App
-    11,  // Tỷ trọng DS thuốc
-    12,  // Tỷ trọng DS TPCN
-    15,  // % HT DS
-    16,  // Tỷ trọng DS/Shop
-    17,  // % EST DS
-    21,  // % HT Hot
-    22,  // % EST HOT
-    23,  // Tỷ lệ HOT
-    26,  // % HT Cận date
-    27   // % EST Cận Date
-  ];
+  if (
+    !hasPercent &&
+    number >= 0 &&
+    number <= 1
+  ) {
 
-  //
-  // FORMAT DATA
-  //
+    number =
+      number * 100;
 
-  const formattedRows = rows.map(row => {
+  }
 
-    return headers.map((h,index) => {
 
-      let value = row[index] || '';
+  // ----------------------------------------------------------
+  // Làm tròn tối đa 2 số thập phân
+  // ----------------------------------------------------------
 
-      value = String(value).trim();
+  number =
+    Math.round(
+      number * 100
+    ) / 100;
 
-      //
-      // FORMAT %
-      //
 
- if(percentColumns.includes(index)){
+  return number;
 
-  //
-  // GIỮ NGUYÊN GIÁ TRỊ EXCEL
-  //
-
-  return value;
 }
 
-      //
-      // TEXT COLUMN
-      //
 
-      const textColumns = [
-        0,1,2,3,4,5,6
-      ];
+// ============================================================
+// 7. ĐỔI INDEX → A, B, C... AA...
+// ============================================================
 
-      //
-      // NUMBER FORMAT
-      //
+function drugColumnToLetter(index) {
 
-      if(!textColumns.includes(index)){
+  index = Number(index);
 
-        const clean =
-          value.replace(/,/g,'');
+  if (!Number.isInteger(index) || index < 0) {
+    return "";
+  }
 
-        if(
-          clean !== '' &&
-          !isNaN(clean)
-        ){
-          return Number(clean);
-        }
+  let result = "";
+
+  while (index >= 0) {
+
+    result =
+      String.fromCharCode(
+        (index % 26) + 65
+      ) + result;
+
+    index =
+      Math.floor(index / 26) - 1;
+  }
+
+  return result;
+}
+
+
+// ============================================================
+// 8. ĐỔI A, B, C... AA → INDEX
+// ============================================================
+
+function drugLetterToColumn(letter) {
+
+  letter =
+    String(letter ?? "")
+      .trim()
+      .toUpperCase();
+
+  if (!/^[A-Z]+$/.test(letter)) {
+    return -1;
+  }
+
+  let number = 0;
+
+  for (let i = 0; i < letter.length; i++) {
+
+    number =
+      number * 26 +
+      (letter.charCodeAt(i) - 64);
+
+  }
+
+  return number - 1;
+
+}
+
+
+// ============================================================
+// 9. CHUYỂN GIÁ TRỊ EXCEL → NUMBER
+// ============================================================
+
+function parseDrugNumber(value) {
+
+  if (
+    value === null ||
+    value === undefined ||
+    value === ""
+  ) {
+    return 0;
+  }
+
+  let str =
+    String(value)
+      .trim()
+      .replace(/\s/g, "");
+
+  if (!str) {
+    return 0;
+  }
+
+  str =
+    str.replace(/%/g, "");
+
+
+  // ----------------------------------------------------------
+  // 1.234.567
+  // 1,234,567
+  // ----------------------------------------------------------
+
+  if (
+    /^\d{1,3}([.,]\d{3})+$/.test(str)
+  ) {
+
+    str =
+      str.replace(/[.,]/g, "");
+
+  }
+
+  // ----------------------------------------------------------
+  // 12,5
+  // 12.5
+  // 1.234,56
+  // 1,234.56
+  // ----------------------------------------------------------
+
+  else {
+
+    if (
+      str.includes(",") &&
+      str.includes(".")
+    ) {
+
+      const lastComma =
+        str.lastIndexOf(",");
+
+      const lastDot =
+        str.lastIndexOf(".");
+
+      if (lastComma > lastDot) {
+
+        str =
+          str
+            .replace(/\./g, "")
+            .replace(",", ".");
+
+      } else {
+
+        str =
+          str.replace(/,/g, "");
+
       }
 
-      return value;
+    }
+
+    else if (str.includes(",")) {
+
+      str =
+        str.replace(",", ".");
+
+    }
+
+  }
+
+
+  const number =
+    Number(str);
+
+  return Number.isFinite(number)
+    ? number
+    : 0;
+
+}
+
+
+// ============================================================
+// 10. CHUẨN HÓA %
+// ============================================================
+
+function normalizeDrugPercent(value) {
+
+  return normalizeDrugPercentValue(value);
+
+}
+
+// ============================================================
+// CHUẨN HÓA TOÀN BỘ EXCEL TRƯỚC KHI DETECT / RENDER
+// ============================================================
+//
+// Hàm này KHÔNG thay đổi:
+// - thứ tự cột
+// - tên header
+// - cấu trúc Excel
+//
+// Chỉ chuẩn hóa GIÁ TRỊ DATA.
+//
+// Các cột %:
+//     0.5  → 50
+//     0.25 → 25
+//     50   → 50
+//
+// Các cột số:
+//     giữ nguyên
+//
+// ============================================================
+
+function normalizeDrugExcelData(data) {
+
+  if (!Array.isArray(data)) {
+    return [];
+  }
+
+
+  // ----------------------------------------------------------
+  // Tìm toàn bộ cột % dựa vào HEADER / ALIAS
+  // ----------------------------------------------------------
+
+  const percentColumnIndexes =
+    new Set();
+
+
+  const normalizedPercentAliases = [];
+
+
+  // Lấy alias của các field %
+  const percentKeys = [
+
+    "fsApp",
+    "tyLeCaiApp",
+    "tyTrongThuoc",
+    "ttTPCN",
+
+    "htDS",
+    "tyTrongDSShop",
+    "estDS",
+
+    "htHOT",
+    "estHOT",
+    "tyLeHOT",
+
+    "htCanDate",
+    "estCanDate"
+
+  ];
+
+
+  percentKeys.forEach(key => {
+
+    const config =
+      DRUG_COLUMN_CONFIG[key];
+
+
+    if (!config) {
+      return;
+    }
+
+
+    config.names.forEach(name => {
+
+      normalizedPercentAliases.push(
+        normalizeDrugHeader(name)
+      );
 
     });
 
   });
 
-  //
-  // HANDSONTABLE
-  //
 
-  hot = new Handsontable(container, {
+  // ----------------------------------------------------------
+  // QUÉT TOÀN BỘ DATA tìm cột %
+  // ----------------------------------------------------------
 
-    data: formattedRows,
+  data.forEach(row => {
 
-    colHeaders: headers,
-
-    rowHeaders: true,
-
-    search: true,
-
-    height: '75vh',
-
-    width: '100%',
-
-    stretchH: 'all',
-
-    licenseKey:
-      'non-commercial-and-evaluation',
-
-    manualColumnResize: true,
-
-    manualRowResize: true,
-
-    contextMenu: true,
-
-    filters: true,
-
-    dropdownMenu: true,
-
-    columnSorting: true,
-
-    copyPaste: true,
-
-    fillHandle: true,
-
-    undo: true,
-
-    redo: true,
-
-    navigableHeaders: true,
-
-    selectionMode: 'multiple',
-
-    autoWrapRow: true,
-
-    autoWrapCol: true,
-
-    wordWrap: false,
-
-    comments: true,
-
-    fixedRowsTop: 0,
-
-    fixedColumnsStart: 0,
-
-    //
-    // CELL CONFIG
-    //
-
-    cells(row,col){
-
-      const cellProperties = {};
-
-      //
-      // CỘT %
-      //
-
-      if(percentColumns.includes(col)){
-
-        //
-        // QUAN TRỌNG:
-        // KHÔNG ĐỂ numeric
-        //
-
-        cellProperties.type = 'text';
-
-        cellProperties.className =
-          'htCenter';
-
-        return cellProperties;
-      }
-
-      //
-      // NUMBER COLUMN
-      //
-
-      if(col >= 7){
-
-        cellProperties.type = 'numeric';
-
-        cellProperties.numericFormat = {
-          pattern:'0,0.00'
-        };
-
-        cellProperties.className =
-          'htRight';
-      }
-
-      //
-      // TEXT COLUMN
-      //
-
-      else{
-
-        cellProperties.className =
-          'htLeft';
-      }
-
-      return cellProperties;
-    },
-
-    //
-    // AUTO UPDATE
-    //
-
-    afterChange(changes, source){
-
-      if(
-        source === 'loadData' ||
-        !changes
-      ){
-        return;
-      }
-
-      const allData =
-        hot.getData();
-
-      drugData = allData.map(row => ({
-
-        maNV:
-          normalizeMaNV(row[5]),
-
-        tenNV:
-          String(row[6] || '').trim(),
-
-        targetDS:
-          Number(row[13]) || 0,
-
-        dsMTD:
-          Number(row[14]) || 0,
-
-        tbBill:
-          Number(row[18]) || 0,
-
-        dsHOT:
-          Number(row[20]) || 0,
-
-        canDate:
-          Number(row[25]) || 0,
-
-        catLieu:
-          Number(row[28]) || 0,
-		  
-		luotKhach:
-			Number(row[8]) || 0,
-
-        //
-        // % -> NUMBER
-        //
-
-        tyTrongThuoc:
-          parseFloat(
-            String(row[11] || '')
-              .replace('%','')
-              .replace(',','.')
-          ) || 0
-
-      }));
-
-      console.log(
-        'drugData updated:',
-        drugData
-      );
-	  syncExcelInput();
+    if (!Array.isArray(row)) {
+      return;
     }
-	
+
+
+    row.forEach((cell, colIndex) => {
+
+      const normalized =
+        normalizeDrugHeader(cell);
+
+
+      if (
+        normalized &&
+        normalizedPercentAliases.includes(
+          normalized
+        )
+      ) {
+
+        percentColumnIndexes.add(
+          colIndex
+        );
+
+      }
+
+    });
 
   });
-  
-  container.addEventListener("focusout", function () {
 
-    setTimeout(syncExcelInput, 50);
 
-});
+  console.log(
+    "Các cột % phát hiện:",
+    [...percentColumnIndexes].map(
+      index =>
+        drugColumnToLetter(index)
+    )
+  );
+
+
+  // ----------------------------------------------------------
+  // Xác định dòng HEADER
+  // ----------------------------------------------------------
+
+  const headerRows =
+    new Set();
+
+
+  data.forEach(row => {
+
+    if (!Array.isArray(row)) {
+      return;
+    }
+
+
+    row.forEach(cell => {
+
+      const normalized =
+        normalizeDrugHeader(cell);
+
+
+      if (
+        normalized &&
+        normalizedPercentAliases.includes(
+          normalized
+        )
+      ) {
+
+        // tìm row sau
+        // xử lý ở bước dưới
+
+      }
+
+    });
+
+  });
+
+
+  // ----------------------------------------------------------
+  // TẠO COPY
+  // ----------------------------------------------------------
+
+  const result =
+    data.map(row => {
+
+      if (!Array.isArray(row)) {
+        return row;
+      }
+
+
+      return [...row];
+
+    });
+
+
+  // ----------------------------------------------------------
+  // XÁC ĐỊNH HEADER CELL
+  // ----------------------------------------------------------
+
+  const headerCellIndexes =
+    new Set();
+
+
+  result.forEach(row => {
+
+    if (!Array.isArray(row)) {
+      return;
+    }
+
+
+    row.forEach((cell, colIndex) => {
+
+      const normalized =
+        normalizeDrugHeader(cell);
+
+
+      if (
+        normalized &&
+        normalizedPercentAliases.includes(
+          normalized
+        )
+      ) {
+
+        headerCellIndexes.add(
+          `${result.indexOf(row)}:${colIndex}`
+        );
+
+      }
+
+    });
+
+  });
+
+
+  // ----------------------------------------------------------
+  // CHUẨN HÓA CÁC CỘT %
+  // ----------------------------------------------------------
+
+  result.forEach((row, rowIndex) => {
+
+    if (!Array.isArray(row)) {
+      return;
+    }
+
+
+    percentColumnIndexes.forEach(
+      colIndex => {
+
+        // Không đụng vào header
+        const isHeader =
+          headerCellIndexes.has(
+            `${rowIndex}:${colIndex}`
+          );
+
+
+        if (isHeader) {
+          return;
+        }
+
+
+        if (
+          colIndex >= row.length
+        ) {
+          return;
+        }
+
+
+        const value =
+          row[colIndex];
+
+
+        if (
+          value === null ||
+          value === undefined ||
+          String(value).trim() === ""
+        ) {
+
+          return;
+
+        }
+
+
+        row[colIndex] =
+          normalizeDrugPercentValue(
+            value
+          );
+
+      }
+    );
+
+  });
+
+
+  return result;
 
 }
 
+
+
+// ============================================================
+// 11. TÌM TẤT CẢ MATCH TRONG TOÀN BỘ DATA
+// ============================================================
+//
+// QUAN TRỌNG:
+//
+// Không còn giới hạn theo một dòng HEADER.
+//
+// Ví dụ:
+//
+// Dòng 1:
+// Vùng | ASM | Mã shop
+//
+// Dòng 3:
+// Mã NV | Tên nhân viên | DS MTD
+//
+// Dòng 5:
+// Target DS | DS HOT
+//
+// Chương trình sẽ quét TẤT CẢ.
+//
+// Thấy:
+// Mã NV      → lấy cột đó
+// Tên NV     → lấy cột đó
+// Target DS  → lấy cột đó
+// DS MTD     → lấy cột đó
+//
+// Không cần các field phải nằm chung một dòng.
+//
+
+function findAllDrugColumnMatches(data) {
+
+  const allMatches = {};
+
+
+  // ----------------------------------------------------------
+  // Khởi tạo
+  // ----------------------------------------------------------
+
+  Object.keys(
+    DRUG_COLUMN_CONFIG
+  ).forEach(key => {
+
+    allMatches[key] = [];
+
+  });
+
+
+  // ----------------------------------------------------------
+  // Chuẩn hóa alias trước
+  // ----------------------------------------------------------
+
+  const normalizedConfig = {};
+
+
+  Object.entries(
+    DRUG_COLUMN_CONFIG
+  ).forEach(([key, config]) => {
+
+    normalizedConfig[key] =
+      config.names.map(
+        name =>
+          normalizeDrugHeader(name)
+      );
+
+  });
+
+
+  // ----------------------------------------------------------
+  // QUÉT TOÀN BỘ DATA
+  // ----------------------------------------------------------
+
+  for (
+    let rowIndex = 0;
+    rowIndex < data.length;
+    rowIndex++
+  ) {
+
+    const row =
+      data[rowIndex];
+
+
+    if (!Array.isArray(row)) {
+      continue;
+    }
+
+
+    for (
+      let colIndex = 0;
+      colIndex < row.length;
+      colIndex++
+    ) {
+
+      const cell =
+        row[colIndex];
+
+
+      const normalizedValue =
+        normalizeDrugHeader(
+          cell
+        );
+
+
+      if (!normalizedValue) {
+        continue;
+      }
+
+
+      // ------------------------------------------------------
+      // So với tất cả alias
+      // ------------------------------------------------------
+
+      for (
+        const [key, aliases]
+        of Object.entries(
+          normalizedConfig
+        )
+      ) {
+
+        if (
+          aliases.includes(
+            normalizedValue
+          )
+        ) {
+
+          allMatches[key].push({
+
+            key: key,
+
+            row: rowIndex,
+
+            col: colIndex,
+
+            value: cell,
+
+            columnLetter:
+              drugColumnToLetter(
+                colIndex
+              )
+
+          });
+
+        }
+
+      }
+
+    }
+
+  }
+
+
+  return allMatches;
+
+}
+
+
+// ============================================================
+// 12. CHỌN MATCH ĐẦU TIÊN CHO TỪNG FIELD
+// ============================================================
+//
+// Không chấm điểm nữa.
+//
+// Mỗi field:
+//
+// thấy match đầu tiên
+//      ↓
+// lấy cột đó
+//      ↓
+// bỏ qua các match tiếp theo.
+//
+// Ví dụ:
+//
+// Mã NV xuất hiện:
+//
+// F3 = Mã NV
+// F10 = Mã NV
+//
+// → lấy F.
+//
+//
+// Nếu cùng tên xuất hiện ở nhiều CỘT khác nhau:
+//
+// F3 = Mã NV
+// K3 = Mã NV
+//
+// → lấy F (match đầu tiên).
+//
+// ============================================================
+
+function buildDrugColumnIndexes(
+  allMatches
+) {
+
+  const columns = {};
+
+
+  Object.keys(
+    DRUG_COLUMN_CONFIG
+  ).forEach(key => {
+
+    columns[key] = -1;
+
+  });
+
+
+  Object.entries(
+    allMatches
+  ).forEach(([key, matches]) => {
+
+    if (
+      !Array.isArray(matches) ||
+      matches.length === 0
+    ) {
+
+      return;
+
+    }
+
+
+    // --------------------------------------------------------
+    // Lấy match đầu tiên
+    // --------------------------------------------------------
+
+    const firstMatch =
+      matches[0];
+
+
+    columns[key] =
+      firstMatch.col;
+
+  });
+
+
+  return columns;
+
+}
+
+
+// ============================================================
+// 13. TÌM DÒNG HEADER THAM KHẢO
+// ============================================================
+//
+// Phần này KHÔNG còn dùng để quyết định cột.
+//
+// Chỉ dùng để biết:
+// "Header nằm khoảng dòng nào"
+// và xác định nơi bắt đầu DATA.
+//
+// Nếu nhiều field nằm cùng một dòng,
+// ưu tiên dòng có nhiều field.
+//
+// ============================================================
+
+function findDrugHeaderReferenceRow(
+  allMatches
+) {
+
+  const rowScores = {};
+
+
+  Object.values(
+    allMatches
+  ).forEach(matches => {
+
+    if (!Array.isArray(matches)) {
+      return;
+    }
+
+
+    matches.forEach(match => {
+
+      if (
+        !rowScores[match.row]
+      ) {
+
+        rowScores[match.row] = {
+
+          row: match.row,
+
+          score: 0
+
+        };
+
+      }
+
+
+      rowScores[match.row].score++;
+
+    });
+
+  });
+
+
+  const rows =
+    Object.values(
+      rowScores
+    );
+
+
+  if (rows.length === 0) {
+    return null;
+  }
+
+
+  rows.sort((a, b) => {
+
+    if (
+      b.score !== a.score
+    ) {
+
+      return b.score - a.score;
+
+    }
+
+    return a.row - b.row;
+
+  });
+
+
+  return rows[0];
+
+}
+
+
+// ============================================================
+// 14. DETECT CỘT DATA THUỐC
+// ============================================================
+//
+// ĐÂY LÀ PHẦN ĐÃ THAY ĐỔI.
+//
+// Không còn:
+//
+// scoreDrugHeaderRows()
+// findBestDrugHeaderRow()
+//
+// Không còn yêu cầu các tên cột phải nằm trên
+// cùng một dòng.
+//
+// Chỉ cần tìm thấy nội dung khớp alias
+// ở bất kỳ ô nào → lấy cột đó.
+//
+// ============================================================
+
+function detectDrugColumns(data) {
+
+  const allMatches =
+    findAllDrugColumnMatches(
+      data
+    );
+
+
+  // ----------------------------------------------------------
+  // Lấy cột theo match đầu tiên
+  // ----------------------------------------------------------
+
+  const columns =
+    buildDrugColumnIndexes(
+      allMatches
+    );
+
+
+  // ----------------------------------------------------------
+  // Tìm dòng HEADER tham khảo
+  // ----------------------------------------------------------
+
+  const headerReference =
+    findDrugHeaderReferenceRow(
+      allMatches
+    );
+
+
+  // ----------------------------------------------------------
+  // Các field bị thiếu
+  // ----------------------------------------------------------
+
+  const missingColumns = [];
+
+
+  Object.entries(
+    DRUG_COLUMN_CONFIG
+  ).forEach(([key, config]) => {
+
+    if (
+      columns[key] === -1
+    ) {
+
+      missingColumns.push({
+
+        key: key,
+
+        label: config.label,
+
+        names: config.names
+
+      });
+
+    }
+
+  });
+
+
+  // ----------------------------------------------------------
+  // Đếm số field tìm được
+  // ----------------------------------------------------------
+
+  const foundCount =
+    Object.values(columns)
+      .filter(
+        index => index >= 0
+      )
+      .length;
+
+
+  // ----------------------------------------------------------
+  // DEBUG
+  // ----------------------------------------------------------
+
+  console.log(
+    "========== DRUG COLUMN DETECTION =========="
+  );
+
+
+  console.log(
+    "Cách dò:",
+    "DÒ TOÀN BỘ DATA - KHÔNG CHẤM ĐIỂM HEADER"
+  );
+
+
+  console.log(
+    "Header reference row:",
+    headerReference
+      ? headerReference.row + 1
+      : "KHÔNG CÓ"
+  );
+
+
+  console.log(
+    "Found count:",
+    foundCount
+  );
+
+
+  Object.entries(
+    columns
+  ).forEach(([key, index]) => {
+
+    console.log(
+
+      key,
+
+      "=>",
+
+      index >= 0
+        ? drugColumnToLetter(index)
+        : "KHÔNG TÌM THẤY"
+
+    );
+
+  });
+
+
+  console.log(
+    "Missing:",
+    missingColumns
+  );
+
+
+  console.log(
+    "All matches:",
+    allMatches
+  );
+
+
+  console.log(
+    "==========================================="
+  );
+
+
+  // ----------------------------------------------------------
+  // Không tìm thấy field nào
+  // ----------------------------------------------------------
+
+  if (foundCount === 0) {
+
+    return {
+
+      success: false,
+
+      message:
+        "Không tìm thấy bất kỳ tên cột DATA THUỐC nào.",
+
+      columns:
+        columns,
+
+      missingColumns:
+        missingColumns,
+
+      allMatches:
+        allMatches,
+
+      foundCount:
+        0,
+
+      headerRow:
+        headerReference
+          ? headerReference.row
+          : -1
+
+    };
+
+  }
+
+
+  // ----------------------------------------------------------
+  // Thành công
+  // ----------------------------------------------------------
+
+  return {
+
+    success: true,
+
+    headerRow:
+      headerReference
+        ? headerReference.row
+        : 0,
+
+    score:
+      headerReference
+        ? headerReference.score
+        : foundCount,
+
+    columns:
+      columns,
+
+    missingColumns:
+      missingColumns,
+
+    allMatches:
+      allMatches,
+
+    foundCount:
+      foundCount
+
+  };
+
+}
+
+
+// ============================================================
+// 15. HỎI NHẬP CỘT BỊ THIẾU
+// ============================================================
+
+function askMissingDrugColumns(
+  missingColumns,
+  data
+) {
+
+  // ============================================================
+  // TÍNH SỐ CỘT THỰC TẾ CỦA FILE EXCEL
+  // ============================================================
+
+  const maxColumns =
+    data.reduce(
+      (max, row) => {
+
+        if (!Array.isArray(row)) {
+          return max;
+        }
+
+        return Math.max(
+          max,
+          row.length
+        );
+
+      },
+      0
+    );
+
+
+  // ============================================================
+  // PHÂN LOẠI CỘT THIẾU
+  // ============================================================
+
+  // Cột nằm trong danh sách ưu tiên
+  const priorityMissingColumns =
+    missingColumns.filter(item =>
+      DRUG_REQUIRED_COLUMNS.includes(
+        item.key
+      )
+    );
+
+
+  // Cột thiếu nhưng KHÔNG nằm trong danh sách ưu tiên
+  const extraMissingColumns =
+    missingColumns.filter(item =>
+      !DRUG_REQUIRED_COLUMNS.includes(
+        item.key
+      )
+    );
+
+
+  return new Promise(resolve => {
+
+
+    // ==========================================================
+    // XÓA POPUP CŨ NẾU CÓ
+    // ==========================================================
+
+    const oldBox =
+      document.getElementById(
+        "missingDrugColumnsBox"
+      );
+
+
+    if (oldBox) {
+      oldBox.remove();
+    }
+
+
+    // ==========================================================
+    // TẠO POPUP
+    // ==========================================================
+
+    const box =
+      document.createElement("div");
+
+
+    box.id =
+      "missingDrugColumnsBox";
+
+
+    box.style.cssText = `
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.60);
+      z-index:99999;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    `;
+
+
+    // ==========================================================
+    // HTML BAN ĐẦU
+    // ==========================================================
+
+    let html = `
+
+      <div style="
+        background:white;
+        width:min(950px,100%);
+        max-height:90vh;
+        overflow:auto;
+        border-radius:16px;
+        padding:24px;
+        box-shadow:0 25px 80px rgba(0,0,0,.35);
+        font-family:Arial,sans-serif;
+      ">
+
+        <h2 style="
+          margin:0 0 10px;
+          color:#dc2626;
+        ">
+          ⚠️ Không tìm thấy một số cột
+        </h2>
+
+
+        <p style="
+          color:#475569;
+          line-height:1.6;
+          margin-bottom:8px;
+        ">
+          Chương trình đã dò toàn bộ dữ liệu.
+          Một số dữ liệu chưa tìm được tên cột.
+        </p>
+
+
+        <p style="
+          color:#475569;
+          line-height:1.6;
+          margin-top:0;
+        ">
+          Các cột quan trọng được hiển thị trước.
+          Bạn có thể bấm
+          <b>▼ Tất cả</b>
+          để xem các cột thiếu khác.
+        </p>
+
+
+        <p style="
+          color:#475569;
+          line-height:1.6;
+        ">
+          Hãy nhập vị trí cột Excel,
+          ví dụ:
+          <b>F</b>,
+          <b>G</b>,
+          <b>AA</b>,
+          <b>AB</b>...
+        </p>
+
+
+        <!-- ==================================================
+             BẢNG
+             ================================================== -->
+
+        <div style="
+          overflow:auto;
+          border:1px solid #e2e8f0;
+          border-radius:10px;
+        ">
+
+          <table style="
+            width:100%;
+            border-collapse:collapse;
+          ">
+
+            <thead>
+
+              <tr>
+
+                <th style="
+                  border-bottom:1px solid #cbd5e1;
+                  padding:12px;
+                  background:#007fff;
+                  text-align:left;
+                  position:sticky;
+                  top:0;
+                  z-index:2;
+                ">
+                  Dữ liệu
+                </th>
+
+
+                <th style="
+                  border-bottom:1px solid #cbd5e1;
+                  padding:12px;
+                  background:#007fff;
+                  text-align:left;
+                  position:sticky;
+                  top:0;
+                  z-index:2;
+                ">
+                  Alias
+                </th>
+
+
+                <th style="
+                  border-bottom:1px solid #cbd5e1;
+                  padding:12px;
+                  background:#007fff;
+                  text-align:center;
+                  position:sticky;
+                  top:0;
+                  z-index:2;
+                ">
+                  Cột Excel
+                </th>
+
+              </tr>
+
+            </thead>
+
+
+            <tbody>
+    `;
+
+
+    // ==========================================================
+    // HÀM TẠO 1 DÒNG
+    // ==========================================================
+
+    function renderMissingDrugRow(
+      item,
+      isPriority
+    ) {
+
+      return `
+
+        <tr
+          class="missing-drug-row"
+          data-priority="${
+            isPriority
+              ? "true"
+              : "false"
+          }"
+          style="
+            ${
+              isPriority
+                ? ""
+                : "display:none;"
+            }
+          "
+        >
+
+          <td style="
+            border-bottom:1px solid #e2e8f0;
+            padding:12px;
+            font-weight:bold;
+          ">
+
+            ${item.label}
+
+          </td>
+
+
+          <td style="
+            border-bottom:1px solid #e2e8f0;
+            padding:12px;
+            color:#64748b;
+            font-size:13px;
+          ">
+
+            ${item.names.join(" / ")}
+
+          </td>
+
+
+          <td style="
+            border-bottom:1px solid #e2e8f0;
+            padding:12px;
+            text-align:center;
+          ">
+
+            <input
+              type="text"
+              class="missing-drug-column"
+              data-key="${item.key}"
+              placeholder="VD: F"
+              maxlength="3"
+              autocomplete="off"
+              style="
+                width:90px;
+                padding:10px;
+                text-align:center;
+                text-transform:uppercase;
+                border:1px solid #94a3b8;
+                border-radius:8px;
+                font-weight:bold;
+                font-size:15px;
+                outline:none;
+                box-sizing:border-box;
+              "
+            >
+
+          </td>
+
+        </tr>
+
+      `;
+    }
+
+
+    // ==========================================================
+    // 1. HIỂN THỊ CỘT ƯU TIÊN
+    // ==========================================================
+
+    priorityMissingColumns.forEach(
+      item => {
+
+        html +=
+          renderMissingDrugRow(
+            item,
+            true
+          );
+
+      }
+    );
+
+
+    // ==========================================================
+    // 2. HIỂN THỊ CỘT KHÁC
+    // Mặc định display:none
+    // ==========================================================
+
+    extraMissingColumns.forEach(
+      item => {
+
+        html +=
+          renderMissingDrugRow(
+            item,
+            false
+          );
+
+      }
+    );
+
+
+    // ==========================================================
+    // KẾT THÚC BẢNG
+    // ==========================================================
+
+    html += `
+
+            </tbody>
+
+          </table>
+
+        </div>
+    `;
+
+
+    // ==========================================================
+    // NÚT TẤT CẢ / THU GỌN
+    // Chỉ xuất hiện nếu thật sự có cột ngoài danh sách ưu tiên
+    // ==========================================================
+
+    if (
+      extraMissingColumns.length > 0
+    ) {
+
+      html += `
+
+        <div style="
+          margin-top:12px;
+          display:flex;
+          justify-content:center;
+        ">
+
+          <button
+            type="button"
+            id="toggleAllMissingDrugColumns"
+            style="
+              padding:10px 20px;
+              border:none;
+              border-radius:9px;
+              background:#2563eb;
+              color:white;
+              cursor:pointer;
+              font-weight:bold;
+              font-size:14px;
+              box-shadow:0 3px 8px rgba(37,99,235,.25);
+            "
+          >
+            ▼ Tất cả
+          </button>
+
+        </div>
+
+      `;
+
+    }
+
+
+    // ==========================================================
+    // THÔNG TIN SỐ CỘT
+    // ==========================================================
+
+    html += `
+
+        <div style="
+          margin-top:20px;
+          padding:12px;
+          background:#f8fafc;
+          border-radius:10px;
+          color:#475569;
+          font-size:13px;
+        ">
+
+          Tổng số cột Excel phát hiện:
+          <b>${maxColumns}</b>
+
+          &nbsp;|&nbsp;
+
+          Cột cuối:
+          <b>
+            ${drugColumnToLetter(
+              maxColumns - 1
+            )}
+          </b>
+
+        </div>
+
+
+        <!-- ==================================================
+             NÚT HỦY / XÁC NHẬN
+             ================================================== -->
+
+        <div style="
+          margin-top:20px;
+          display:flex;
+          gap:10px;
+          justify-content:flex-end;
+        ">
+
+
+          <button
+            id="cancelMissingDrugColumns"
+            style="
+              padding:11px 20px;
+              border:0;
+              border-radius:8px;
+              background:#64748b;
+              color:white;
+              cursor:pointer;
+              font-weight:bold;
+            "
+          >
+            Hủy
+          </button>
+
+
+          <button
+            id="confirmMissingDrugColumns"
+            style="
+              padding:11px 20px;
+              border:0;
+              border-radius:8px;
+              background:#2563eb;
+              color:white;
+              cursor:pointer;
+              font-weight:bold;
+            "
+          >
+            ✅ Xác nhận
+          </button>
+
+
+        </div>
+
+
+      </div>
+
+    `;
+
+
+    // ==========================================================
+    // ĐƯA HTML VÀO POPUP
+    // ==========================================================
+
+    box.innerHTML =
+      html;
+
+
+    document.body.appendChild(
+      box
+    );
+
+
+    // ==========================================================
+    // NÚT TẤT CẢ / THU GỌN
+    // ==========================================================
+
+    const toggleButton =
+      box.querySelector(
+        "#toggleAllMissingDrugColumns"
+      );
+
+
+    if (toggleButton) {
+
+      let expanded =
+        false;
+
+
+      toggleButton.onclick =
+        function () {
+
+          expanded =
+            !expanded;
+
+
+          const extraRows =
+            box.querySelectorAll(
+              '.missing-drug-row[data-priority="false"]'
+            );
+
+
+          extraRows.forEach(
+            row => {
+
+              row.style.display =
+                expanded
+                  ? ""
+                  : "none";
+
+            }
+          );
+
+
+          toggleButton.textContent =
+            expanded
+              ? "▲ Thu gọn"
+              : "▼ Tất cả";
+
+        };
+
+    }
+
+
+    // ==========================================================
+    // FOCUS Ô ĐẦU TIÊN
+    // ==========================================================
+
+    const firstInput =
+      box.querySelector(
+        ".missing-drug-column"
+      );
+
+
+    if (firstInput) {
+
+      firstInput.focus();
+
+    }
+
+
+    // ==========================================================
+    // HỦY
+    // ==========================================================
+
+    const cancelButton =
+      box.querySelector(
+        "#cancelMissingDrugColumns"
+      );
+
+
+    cancelButton.onclick =
+      function () {
+
+        box.remove();
+
+        resolve(null);
+
+      };
+
+
+    // ==========================================================
+    // XÁC NHẬN
+    // ==========================================================
+
+    const confirmButton =
+      box.querySelector(
+        "#confirmMissingDrugColumns"
+      );
+
+
+    confirmButton.onclick =
+      function () {
+
+
+        // ======================================================
+        // KẾT QUẢ
+        // ======================================================
+
+        const result = {};
+
+
+        // ======================================================
+        // LẤY TOÀN BỘ INPUT
+        //
+        // QUAN TRỌNG:
+        //
+        // Dù dòng đang ẩn hay đang hiện,
+        // querySelectorAll vẫn lấy được toàn bộ input.
+        // ======================================================
+
+        const inputs =
+          box.querySelectorAll(
+            ".missing-drug-column"
+          );
+
+
+        let error =
+          false;
+
+
+        // ======================================================
+        // 1. ĐỌC CÁC CỘT NGƯỜI DÙNG NHẬP
+        // ======================================================
+
+        inputs.forEach(
+          input => {
+
+
+            const key =
+              input.dataset.key;
+
+
+            const letter =
+              input.value
+                .trim()
+                .toUpperCase();
+
+
+            // Reset viền
+
+            input.style.border =
+              "1px solid #94a3b8";
+
+
+            // ==================================================
+            // ĐỂ TRỐNG
+            // ==================================================
+
+            if (!letter) {
+
+              result[key] =
+                -1;
+
+              return;
+
+            }
+
+
+            // ==================================================
+            // CHUYỂN A / B / AA / AB...
+            // SANG INDEX
+            // ==================================================
+
+            const index =
+              drugLetterToColumn(
+                letter
+              );
+
+
+            // ==================================================
+            // CỘT KHÔNG HỢP LỆ
+            // ==================================================
+
+            if (index < 0) {
+
+              input.style.border =
+                "2px solid #dc2626";
+
+              error =
+                true;
+
+              return;
+
+            }
+
+
+            // ==================================================
+            // VƯỢT QUÁ SỐ CỘT EXCEL
+            // ==================================================
+
+            if (
+              index >= maxColumns
+            ) {
+
+              input.style.border =
+                "2px solid #dc2626";
+
+              error =
+                true;
+
+              return;
+
+            }
+
+
+            // ==================================================
+            // HỢP LỆ
+            // ==================================================
+
+            result[key] =
+              index;
+
+          }
+        );
+
+
+        // ======================================================
+        // 2. KIỂM TRA TRÙNG CỘT
+        // ======================================================
+
+        const usedColumns =
+          new Map();
+
+
+        Object.entries(
+          result
+        ).forEach(
+          ([key, index]) => {
+
+
+            // Bỏ qua field không có dữ liệu
+
+            if (index < 0) {
+
+              return;
+
+            }
+
+
+            // ==================================================
+            // NẾU ĐÃ CÓ FIELD KHÁC DÙNG CỘT NÀY
+            // ==================================================
+
+            if (
+              usedColumns.has(
+                index
+              )
+            ) {
+
+
+              const input =
+                box.querySelector(
+                  `.missing-drug-column[data-key="${key}"]`
+                );
+
+
+              if (input) {
+
+                input.style.border =
+                  "2px solid #dc2626";
+
+              }
+
+
+              error =
+                true;
+
+
+            } else {
+
+              usedColumns.set(
+                index,
+                key
+              );
+
+            }
+
+          }
+        );
+
+
+        // ======================================================
+        // 3. CÓ LỖI
+        // ======================================================
+
+        if (error) {
+
+          alert(
+            "❌ Có cột nhập chưa đúng.\n\n" +
+
+            "Bạn có thể:\n" +
+
+            "- Nhập A, B, C... Z, AA, AB...\n" +
+
+            "- Không được nhập vượt quá cột cuối của Excel.\n" +
+
+            "- Không được nhập trùng cùng một cột cho nhiều dữ liệu.\n" +
+
+            "- Hoặc để trống nếu Excel không có dữ liệu."
+          );
+
+
+          return;
+
+        }
+
+
+        // ======================================================
+        // 4. XÁC NHẬN
+        // ======================================================
+
+        box.remove();
+
+
+        resolve(
+          result
+        );
+
+      };
+
+
+  });
+
+}
+
+
+// ============================================================
+// 16. LẤY GIÁ TRỊ THEO CỘT
+// ============================================================
+
+function getDrugCell(
+  row,
+  columnIndexes,
+  key
+) {
+
+  const index =
+    columnIndexes[key];
+
+  if (
+    index === undefined ||
+    index === null ||
+    index < 0
+  ) {
+
+    return "";
+
+  }
+
+  return row[index] ?? "";
+
+}
+
+
+// ============================================================
+// 17. CHUYỂN MỘT DÒNG EXCEL → DÒNG TABLE CHUẨN
+// ============================================================
+
+function convertDrugRow(
+  row,
+  columnIndexes
+) {
+
+  const result =
+    new Array(headers.length)
+      .fill("");
+
+
+  // ==========================================================
+  // HÀM LẤY + CHUẨN HÓA
+  // ==========================================================
+
+  function text(key) {
+
+    return normalizeDrugText(
+      getDrugCell(
+        row,
+        columnIndexes,
+        key
+      )
+    );
+
+  }
+
+
+  function percent(key) {
+
+    return normalizeDrugPercent(
+      getDrugCell(
+        row,
+        columnIndexes,
+        key
+      )
+    );
+
+  }
+
+
+  function raw(key) {
+
+    return getDrugCell(
+      row,
+      columnIndexes,
+      key
+    );
+
+  }
+
+
+  // ==========================================================
+  // THÔNG TIN SHOP
+  // ==========================================================
+
+  // A - Vùng
+  result[0] = text("vung");
+
+  // B - ASM
+  result[1] = text("asm");
+
+  // C - Mã shop
+  result[2] = text("maShop");
+
+  // D - Tên Shop
+  result[3] = text("tenShop");
+
+  // E - Phân loại shop vệ tinh
+  result[4] = text("phanLoaiShop");
+
+  // F - Mã NV
+  result[5] = text("maNV");
+
+  // G - Tên nhân viên
+  result[6] = text("tenNV");
+
+  // H - Ngày làm việc
+  result[7] = text("ngayLamViec");
+
+
+  // ==========================================================
+  // KHÁCH / APP
+  // ==========================================================
+
+  // I - Lượt khách
+  result[8] = raw("luotKhach");
+
+  // J - Tỷ lệ FS+App
+  result[9] = percent("fsApp");
+
+  // K - Tỷ lệ cài App
+  result[10] = percent("tyLeCaiApp");
+
+  // L - Tỷ trọng DS thuốc
+  result[11] = percent("tyTrongThuoc");
+
+  // M - Tỷ trọng DS TPCN
+  result[12] = percent("ttTPCN");
+
+
+  // ==========================================================
+  // DOANH THU TỔNG
+  // ==========================================================
+
+  // N - Target DS
+  result[13] = raw("targetDS");
+
+  // O - DS MTD
+  result[14] = raw("dsMTD");
+
+  // P - % HT DS
+  result[15] = percent("htDS");
+
+  // Q - Tỷ trọng DS/Shop
+  result[16] = percent("tyTrongDSShop");
+
+  // R - % EST DS
+  result[17] = percent("estDS");
+
+  // S - TB Bill
+  result[18] = raw("tbBill");
+
+
+  // ==========================================================
+  // HOT
+  // ==========================================================
+
+  // T - Chỉ tiêu HOT
+  result[19] = raw("chiTieuHOT");
+
+  // U - DS HOT
+  result[20] = raw("dsHOT");
+
+  // V - % HT Hot
+  result[21] = percent("htHOT");
+
+  // W - % EST HOT
+  result[22] = percent("estHOT");
+
+  // X - Tỷ lệ HOT
+  result[23] = percent("tyLeHOT");
+
+
+  // ==========================================================
+  // CẬN DATE
+  // ==========================================================
+
+  // Y - Target Cận Date
+  result[24] = raw("targetCanDate");
+
+  // Z - Cận Date MTD
+  result[25] = raw("canDate");
+
+  // AA - % HT Cận date
+  result[26] = percent("htCanDate");
+
+  // AB - % EST Cận Date
+  result[27] = percent("estCanDate");
+
+
+  // ==========================================================
+  // CẮT LIỀU
+  // ==========================================================
+
+  // AC - Cắt liều MTD
+  result[28] = raw("catLieu");
+
+
+  // ==========================================================
+  // QUAN TRỌNG
+  // ==========================================================
+  //
+  // KHÔNG CÓ:
+  //
+  // result[29] = ...
+  //
+  // vì VACCINE đã được bỏ khỏi bảng.
+  //
+  // ==========================================================
+
+
+  return result;
+
+}
+
+
+// ============================================================
+// 18. KIỂM TRA DÒNG DATA CÓ THỰC SỰ CÓ DỮ LIỆU
+// ============================================================
+
+function isValidDrugDataRow(
+  row,
+  columnIndexes
+) {
+
+  if (!Array.isArray(row)) {
+    return false;
+  }
+
+
+  const importantKeys = [
+
+    "maNV",
+    "tenNV",
+    "targetDS",
+    "dsMTD",
+    "luotKhach"
+
+  ];
+
+
+  let count = 0;
+
+
+  importantKeys.forEach(key => {
+
+    const value =
+      getDrugCell(
+        row,
+        columnIndexes,
+        key
+      );
+
+
+    if (
+      String(value ?? "")
+        .trim() !== ""
+    ) {
+
+      count++;
+
+    }
+
+  });
+
+
+  return count >= 1;
+
+}
+
+
+// ============================================================
+// 19. TẠO drugData TỪ TABLE
+// ============================================================
+
+function buildDrugDataFromTable() {
+
+  if (!hot) {
+    return [];
+  }
+
+
+  const allData =
+    hot.getData();
+
+
+  return allData
+
+    .filter(row => {
+
+      return row.some(
+        cell =>
+          String(cell ?? "")
+            .trim() !== ""
+      );
+
+    })
+
+    .map(row => {
+
+      return {
+
+        maNV:
+          normalizeMaNV(
+            row[5]
+          ),
+
+        tenNV:
+          normalizeDrugText(
+            row[6]
+          ),
+
+        targetDS:
+          parseDrugNumber(
+            row[13]
+          ),
+
+        dsMTD:
+          parseDrugNumber(
+            row[14]
+          ),
+
+        tbBill:
+          parseDrugNumber(
+            row[18]
+          ),
+
+        dsHOT:
+          parseDrugNumber(
+            row[20]
+          ),
+
+        canDate:
+          parseDrugNumber(
+            row[25]
+          ),
+
+        catLieu:
+          parseDrugNumber(
+            row[28]
+          ),
+
+        luotKhach:
+          parseDrugNumber(
+            row[8]
+          ),
+
+        fsApp:
+          normalizeDrugPercent(
+            row[9]
+          ),
+
+        tyTrongThuoc:
+          normalizeDrugPercent(
+            row[11]
+          ),
+
+        ttTPCN:
+          normalizeDrugPercent(
+            row[12]
+          ),
+
+        vaccine:
+          normalizeDrugPercent(
+            row[29]
+          )
+
+      };
+
+    });
+
+}
+
+
+// ============================================================
+// 20. ĐỒNG BỘ TABLE → EXCEL INPUT
+// ============================================================
+
+function syncExcelInput() {
+
+  if (!hot) {
+    return;
+  }
+
+
+  const input =
+    document.getElementById(
+      "excelInput"
+    );
+
+
+  if (!input) {
+    return;
+  }
+
+
+  const data =
+    hot.getData();
+
+
+  input.value =
+    data
+      .map(row =>
+        row
+          .map(cell =>
+            cell === null ||
+            cell === undefined
+              ? ""
+              : String(cell)
+          )
+          .join("\t")
+      )
+      .join("\n");
+
+}
+
+
+// ============================================================
+// 21. PARSE EXCEL DATA
+// ============================================================
+
+async function parseExcelData() {
+
+  try {
+  
+	    // ==========================================================
+    // CẬP NHẬT TỪ excelTable
+    // ==========================================================
+    // Khi excelTable đã tồn tại thì KHÔNG parse lại excelInput.
+    // excelTable chính là cấu trúc chuẩn.
+    // ==========================================================
+
+    if (hot) {
+
+      console.log(
+        "🔄 CẬP NHẬT TỪ excelTable..."
+      );
+
+      const tableData =
+        hot.getData();
+
+      if (
+        !Array.isArray(tableData) ||
+        tableData.length === 0
+      ) {
+        alert(
+          "❌ excelTable không có dữ liệu."
+        );
+
+        return;
+      }
+
+      // --------------------------------------------------------
+      // 1. LẤY drugData TRỰC TIẾP TỪ TABLE
+      // --------------------------------------------------------
+
+      drugData =
+        buildDrugDataFromTable();
+
+      console.log(
+        "✅ drugData cập nhật từ excelTable:",
+        drugData
+      );
+
+      // --------------------------------------------------------
+      // 2. ĐỒNG BỘ excelInput
+      // --------------------------------------------------------
+
+      syncExcelInput();
+
+      // --------------------------------------------------------
+      // 3. KIỂM TRA DUPLICATE
+      // --------------------------------------------------------
+
+      if (
+        typeof checkDrugDuplicate ===
+        "function"
+      ) {
+
+        try {
+
+          checkDrugDuplicate();
+
+        }
+        catch(error) {
+
+          console.warn(
+            "checkDrugDuplicate() lỗi:",
+            error
+          );
+
+        }
+
+      }
+
+      // --------------------------------------------------------
+      // 4. CẬP NHẬT INFO
+      // --------------------------------------------------------
+
+      const dataRows =
+        tableData.filter(row =>
+          row.some(cell =>
+            String(cell ?? "")
+              .trim() !== ""
+          )
+        );
+
+      const info =
+        document.getElementById(
+          "info"
+        );
+
+      if (info) {
+
+        info.innerHTML =
+          `
+          Tổng dòng:
+          <b>${dataRows.length}</b>
+          &nbsp;|&nbsp;
+          Nguồn:
+          <b>excelTable</b>
+          `;
+
+      }
+
+      // --------------------------------------------------------
+      // 5. KẾT THÚC
+      // --------------------------------------------------------
+
+      alert(
+        "✅ Đã cập nhật DATA THUỐC thành công!\n\n" +
+        "Nguồn chuẩn: excelTable\n" +
+        "Số dòng: " +
+        dataRows.length
+      );
+
+      return;
+    }
+
+    const inputElement =
+      document.getElementById(
+        "excelInput"
+      );
+
+
+    if (!inputElement) {
+
+      alert(
+        "❌ Không tìm thấy ô excelInput."
+      );
+
+      return;
+
+    }
+
+
+    const input =
+      inputElement.value;
+
+
+    if (
+      !input ||
+      !input.trim()
+    ) {
+
+      alert(
+        "Vui lòng paste dữ liệu Excel."
+      );
+
+      return;
+
+    }
+
+
+    // --------------------------------------------------------
+    // TÁCH DÒNG
+    // --------------------------------------------------------
+
+    const rawRows =
+      input
+        .replace(/\r/g, "")
+        .split("\n")
+        .map(row =>
+          row.split("\t")
+        );
+
+
+    // --------------------------------------------------------
+    // XÓA DÒNG HOÀN TOÀN RỖNG
+    // --------------------------------------------------------
+
+    const cleanedRows =
+      rawRows.filter(row => {
+
+        return row.some(
+          cell =>
+            String(cell ?? "")
+              .trim() !== ""
+        );
+
+      });
+
+
+    if (
+      cleanedRows.length < 2
+    ) {
+
+      alert(
+        "❌ Dữ liệu Excel không hợp lệ.\n\n" +
+        "Không tìm thấy đủ HEADER và DATA."
+      );
+
+      return;
+
+    }
+
+
+    console.log(
+      "DATA EXCEL:",
+      cleanedRows
+    );
+
+
+    // ========================================================
+    // DÒ TOÀN BỘ DATA
+    // ========================================================
+
+    const detected =
+      detectDrugColumns(
+        cleanedRows
+      );
+
+
+    if (!detected.success) {
+
+      alert(
+        "❌ Không tìm thấy cấu trúc cột DATA THUỐC.\n\n" +
+        detected.message
+      );
+
+      return;
+
+    }
+	
+	// ========================================================
+// CHUẨN HÓA GIÁ TRỊ EXCEL
+// ========================================================
+
+const normalizedRows =
+  normalizeDrugRowsByDetectedColumns(
+    cleanedRows,
+    detected.columns
+  );
+
+console.log(
+  "DATA SAU KHI CHUẨN HÓA:",
+  normalizedRows
+);
+
+// ============================================================
+// CHUẨN HÓA EXCEL THEO CỘT ĐÃ DETECT
+// ============================================================
+//
+// Đây là bước trung gian:
+//
+// Excel paste
+//     ↓
+// detect cột
+//     ↓
+// normalize giá trị
+//     ↓
+// convertDrugRow
+//     ↓
+// Handsontable
+//
+// ============================================================
+
+function normalizeDrugRowsByDetectedColumns(
+  data,
+  columnIndexes
+) {
+
+  if (!Array.isArray(data)) {
+    return [];
+  }
+
+
+  const result =
+    data.map(row => {
+
+      if (!Array.isArray(row)) {
+        return row;
+      }
+
+      return [...row];
+
+    });
+
+
+  // ----------------------------------------------------------
+  // CÁC FIELD %
+  // ----------------------------------------------------------
+
+  const percentKeys = [
+
+    "fsApp",
+    "tyLeCaiApp",
+    "tyTrongThuoc",
+    "ttTPCN",
+
+    "htDS",
+    "tyTrongDSShop",
+    "estDS",
+
+    "htHOT",
+    "estHOT",
+    "tyLeHOT",
+
+    "htCanDate",
+    "estCanDate"
+
+  ];
+
+
+  // ----------------------------------------------------------
+  // CHUẨN HÓA
+  // ----------------------------------------------------------
+
+  percentKeys.forEach(key => {
+
+    const col =
+      columnIndexes[key];
+
+
+    if (
+      col === undefined ||
+      col === null ||
+      col < 0
+    ) {
+
+      return;
+
+    }
+
+
+    // --------------------------------------------------------
+    // Bỏ qua dòng header
+    //
+    // Tìm cell đầu tiên chính là tên header.
+    // --------------------------------------------------------
+
+    let headerRow = -1;
+
+
+    for (
+      let i = 0;
+      i < result.length;
+      i++
+    ) {
+
+      const value =
+        result[i]?.[col];
+
+
+      const normalized =
+        normalizeDrugHeader(value);
+
+
+      const aliases =
+        DRUG_COLUMN_CONFIG[key]
+          ?.names
+          ?.map(name =>
+            normalizeDrugHeader(name)
+          ) || [];
+
+
+      if (
+        aliases.includes(normalized)
+      ) {
+
+        headerRow = i;
+
+        break;
+
+      }
+
+    }
+
+
+    // --------------------------------------------------------
+    // CHUẨN HÓA DATA
+    // --------------------------------------------------------
+
+    for (
+      let i = 0;
+      i < result.length;
+      i++
+    ) {
+
+      // Không xử lý header
+      if (
+        i === headerRow
+      ) {
+
+        continue;
+
+      }
+
+
+      if (
+        col >= result[i].length
+      ) {
+
+        continue;
+
+      }
+
+
+      const value =
+        result[i][col];
+
+
+      if (
+        value === null ||
+        value === undefined ||
+        String(value).trim() === ""
+      ) {
+
+        continue;
+
+      }
+
+
+      result[i][col] =
+        normalizeDrugPercentValue(
+          value
+        );
+
+    }
+
+  });
+
+
+  return result;
+
+}
+
+
+
+    // ========================================================
+    // COPY CỘT
+    // ========================================================
+
+    const columnIndexes = {
+
+      ...detected.columns
+
+    };
+
+
+    console.log(
+      "HEADER REFERENCE ROW:",
+      detected.headerRow + 1
+    );
+
+
+    console.log(
+      "SỐ FIELD TÌM ĐƯỢC:",
+      detected.foundCount
+    );
+
+
+    console.log(
+      "COLUMN INDEXES:",
+      columnIndexes
+    );
+
+
+    // ========================================================
+    // CỘT KHÔNG TÌM ĐƯỢC
+    // ========================================================
+
+    if (
+      detected.missingColumns &&
+      detected.missingColumns.length > 0
+    ) {
+
+      console.warn(
+        "MISSING COLUMNS:",
+        detected.missingColumns
+      );
+
+
+      const manualColumns =
+        await askMissingDrugColumns(
+          detected.missingColumns,
+          cleanedRows
+        );
+
+
+      if (!manualColumns) {
+
+        console.log(
+          "Người dùng đã hủy."
+        );
+
+        return;
+
+      }
+
+
+      Object.assign(
+        columnIndexes,
+        manualColumns
+      );
+
+    }
+
+
+    // ========================================================
+    // HEADER REFERENCE
+    // ========================================================
+    //
+    // Đây chỉ là mốc tham khảo.
+    //
+    // Việc lấy CỘT đã được thực hiện trên TOÀN BỘ DATA.
+    //
+    // ========================================================
+
+    const headerRowIndex =
+      detected.headerRow;
+
+
+    // ========================================================
+    // TẠO DATA TABLE
+    // ========================================================
+
+    const tableRows = [];
+
+
+for (
+  let i = headerRowIndex + 1;
+  i < normalizedRows.length;
+  i++
+) {
+
+  const sourceRow =
+    normalizedRows[i];
+
+
+
+      if (
+        !isValidDrugDataRow(
+          sourceRow,
+          columnIndexes
+        )
+      ) {
+
+        continue;
+
+      }
+
+
+      const converted =
+        convertDrugRow(
+          sourceRow,
+          columnIndexes
+        );
+
+
+      tableRows.push(
+        converted
+      );
+
+    }
+
+
+    // ========================================================
+    // KIỂM TRA
+    // ========================================================
+
+    if (
+      tableRows.length === 0
+    ) {
+
+      alert(
+        "❌ Đã tìm thấy tên cột nhưng không có dòng DATA.\n\n" +
+        "Header tham khảo nằm ở dòng: " +
+        (headerRowIndex + 1)
+      );
+
+      return;
+
+    }
+
+
+    console.log(
+      "TABLE ROWS:",
+      tableRows
+    );
+
+
+    // ========================================================
+    // RENDER
+    // ========================================================
+
+    renderTable(
+      tableRows
+    );
+
+
+    // ========================================================
+    // CẬP NHẬT drugData
+    // ========================================================
+
+    drugData =
+      buildDrugDataFromTable();
+
+
+    console.log(
+      "drugData:",
+      drugData
+    );
+
+
+    // ========================================================
+    // INFO
+    // ========================================================
+
+    const info =
+      document.getElementById(
+        "info"
+      );
+
+
+    if (info) {
+
+      info.innerHTML =
+        `
+          Tổng dòng:
+          <b>${tableRows.length}</b>
+          &nbsp;|&nbsp;
+          Field tìm được:
+          <b>${detected.foundCount}</b>
+        `;
+
+    }
+
+
+    // ========================================================
+    // SEARCH CONTAINER
+    // ========================================================
+
+    const searchContainer =
+      document.getElementById(
+        "searchContainer"
+      );
+
+
+    if (searchContainer) {
+
+      searchContainer.style.display =
+        "flex";
+
+    }
+
+
+    // ========================================================
+    // CHECK DUPLICATE
+    // ========================================================
+
+    if (
+      typeof checkDrugDuplicate ===
+      "function"
+    ) {
+
+      try {
+
+        checkDrugDuplicate();
+
+      } catch (error) {
+
+        console.warn(
+          "checkDrugDuplicate() lỗi:",
+          error
+        );
+
+      }
+
+    }
+
+
+    // ========================================================
+    // SYNC INPUT
+    // ========================================================
+
+    syncExcelInput();
+
+
+    alert(
+      "✅ Đã cập nhật DATA THUỐC thành công!\n\n" +
+      "Header tham khảo: dòng " +
+      (headerRowIndex + 1) +
+      "\n" +
+      "Số dòng: " +
+      tableRows.length +
+      "\n" +
+      "Field tìm được: " +
+      detected.foundCount
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "❌ parseExcelData ERROR:",
+      error
+    );
+
+
+    alert(
+      "❌ Có lỗi khi xử lý DATA THUỐC.\n\n" +
+      error.message
+    );
+
+  }
+
+}
+
+
+// ============================================================
+// 22. RENDER HANDSONTABLE
+// ============================================================
+
+function renderTable(rows) {
+
+  const container =
+    document.getElementById(
+      "excelTable"
+    );
+
+
+  if (!container) {
+
+    alert(
+      "❌ Không tìm thấy element #excelTable."
+    );
+
+    return;
+
+  }
+
+
+  // ----------------------------------------------------------
+  // DESTROY TABLE CŨ
+  // ----------------------------------------------------------
+
+  if (hot) {
+
+    try {
+
+      hot.destroy();
+
+    } catch (error) {
+
+      console.warn(
+        "Không thể destroy Handsontable cũ:",
+        error
+      );
+
+    }
+
+    hot = null;
+
+  }
+
+
+  // ----------------------------------------------------------
+  // XÓA CONTENT CŨ
+  // ----------------------------------------------------------
+
+  container.innerHTML = "";
+
+
+  // ----------------------------------------------------------
+  // FORMAT DATA
+  // ----------------------------------------------------------
+
+  const formattedRows =
+    rows.map(row => {
+
+      return headers.map(
+        (header, index) => {
+
+          let value =
+            row[index];
+
+
+          if (
+            value === null ||
+            value === undefined
+          ) {
+
+            return "";
+
+          }
+
+
+          value =
+            String(value)
+              .trim();
+
+
+          // --------------------------------------------------
+          // CỘT %
+          // --------------------------------------------------
+
+          if (
+            DRUG_PERCENT_COLUMNS.includes(
+              index
+            )
+          ) {
+
+            return value;
+
+          }
+
+
+          // --------------------------------------------------
+          // CỘT TEXT
+          // --------------------------------------------------
+
+          if (
+            DRUG_TEXT_COLUMNS.includes(
+              index
+            )
+          ) {
+
+            return value;
+
+          }
+
+
+          // --------------------------------------------------
+          // CỘT NUMBER
+          // --------------------------------------------------
+
+          const number =
+  parseDrugNumber(value);
+
+if (
+  value !== "" &&
+  Number.isFinite(number)
+) {
+
+  // 9 cột dữ liệu cần làm tròn đến hàng đơn vị
+  if (
+    DRUG_ROUND_NUMBER_COLUMNS.includes(index)
+  ) {
+    return Math.round(number);
+  }
+
+  return number;
+}
+
+
+          return value;
+
+        }
+
+      );
+
+    });
+
+
+  // ----------------------------------------------------------
+  // HANDSONTABLE
+  // ----------------------------------------------------------
+
+  hot =
+    new Handsontable(
+      container,
+      {
+
+        data:
+          formattedRows,
+
+        colHeaders:
+          headers,
+
+        rowHeaders:
+          true,
+
+        search:
+          true,
+
+        height:
+          "75vh",
+
+        width:
+          "100%",
+
+        stretchH:
+          "all",
+
+        licenseKey:
+          "non-commercial-and-evaluation",
+
+        manualColumnResize:
+          true,
+
+        manualRowResize:
+          true,
+
+        contextMenu:
+          true,
+
+        filters:
+          true,
+
+        dropdownMenu:
+          true,
+
+        columnSorting:
+          true,
+
+        copyPaste:
+          true,
+
+        fillHandle:
+          true,
+
+        undo:
+          true,
+
+        redo:
+          true,
+
+        navigableHeaders:
+          true,
+
+        selectionMode:
+          "multiple",
+
+        autoWrapRow:
+          true,
+
+        autoWrapCol:
+          true,
+
+        wordWrap:
+          false,
+
+        comments:
+          true,
+
+        fixedRowsTop:
+          0,
+
+        fixedColumnsStart:
+          0,
+
+
+        // ----------------------------------------------------
+        // CELL CONFIG
+        // ----------------------------------------------------
+
+        cells(row, col) {
+
+          const cellProperties = {};
+
+
+          // --------------------------------------------------
+          // %
+          // --------------------------------------------------
+
+          if (
+            DRUG_PERCENT_COLUMNS.includes(
+              col
+            )
+          ) {
+
+            cellProperties.type =
+              "text";
+
+            cellProperties.className =
+              "htCenter";
+
+            return cellProperties;
+
+          }
+
+
+          // --------------------------------------------------
+          // TEXT
+          // --------------------------------------------------
+
+          if (
+            DRUG_TEXT_COLUMNS.includes(
+              col
+            )
+          ) {
+
+            cellProperties.type =
+              "text";
+
+            cellProperties.className =
+              "htLeft";
+
+            return cellProperties;
+
+          }
+
+
+          // --------------------------------------------------
+          // NUMBER
+          // --------------------------------------------------
+
+          cellProperties.type =
+            "numeric";
+
+          cellProperties.numericFormat =
+            {
+              pattern:
+                "0,0.00"
+            };
+
+          cellProperties.className =
+            "htRight";
+
+
+          return cellProperties;
+
+        },
+
+
+        // ----------------------------------------------------
+        // AFTER CHANGE
+        // ----------------------------------------------------
+
+        afterChange(
+          changes,
+          source
+        ) {
+
+          if (
+            !changes ||
+            source === "loadData"
+          ) {
+
+            return;
+
+          }
+
+
+          try {
+
+            drugData =
+              buildDrugDataFromTable();
+
+
+            console.log(
+              "drugData updated:",
+              drugData
+            );
+
+
+            syncExcelInput();
+
+
+          } catch (error) {
+
+            console.error(
+              "afterChange error:",
+              error
+            );
+
+          }
+
+        }
+
+      }
+    );
+
+
+  // ----------------------------------------------------------
+  // SYNC SAU KHI RENDER
+  // ----------------------------------------------------------
+
+  setTimeout(
+    syncExcelInput,
+    100
+  );
+
+}
+
+
+// ============================================================
+// 23. HÀM LẤY DATA THUỐC THEO MÃ NV
+// ============================================================
+
+function getDrugDataByMaNV(maNV) {
+
+  const normalized =
+    normalizeMaNV(
+      maNV
+    );
+
+
+  if (
+    !Array.isArray(drugData)
+  ) {
+
+    return [];
+
+  }
+
+
+  return drugData.filter(
+    item =>
+      normalizeMaNV(
+        item.maNV
+      ) === normalized
+  );
+
+}
+
+
+// ============================================================
+// 24. DEBUG DATA THUỐC
+// ============================================================
+
+function debugDrugData() {
+
+  console.log(
+    "=============================="
+  );
+
+  console.log(
+    "DRUG DATA"
+  );
+
+  console.log(
+    "=============================="
+  );
+
+  console.log(
+    "Số dòng:",
+    Array.isArray(drugData)
+      ? drugData.length
+      : 0
+  );
+
+  console.table(
+    Array.isArray(drugData)
+      ? drugData
+      : []
+  );
+
+  console.log(
+    "Handsontable:",
+    hot
+  );
+
+  console.log(
+    "=============================="
+  );
+
+}
+
+
+// ============================================================
+// 25. EXPORT DATA TABLE
+// ============================================================
+
+function getCurrentDrugTableData() {
+
+  if (!hot) {
+    return [];
+  }
+
+  return hot.getData();
+
+}
+
+
+// ============================================================
+// 26. SYNC THỦ CÔNG
+// ============================================================
+
+function syncDrugData() {
+
+  if (!hot) {
+
+    console.warn(
+      "Chưa có Handsontable."
+    );
+
+    return;
+
+  }
+
+
+  drugData =
+    buildDrugDataFromTable();
+
+
+  syncExcelInput();
+
+
+  console.log(
+    "✅ Đã sync drugData."
+  );
+
+}
+
+
+// ============================================================
+// 27. THÔNG BÁO KHI KHÔNG CÓ DỮ LIỆU
+// ============================================================
+
+function checkDrugTableExists() {
+
+  if (
+    !hot ||
+    !Array.isArray(
+      hot.getData()
+    )
+  ) {
+
+    return false;
+
+  }
+
+  return true;
+
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
+// ============================================================
+// 28. LẤY EXCEL ĐÃ LƯU TRONG TRÌNH DUYỆT
+// ============================================================
+//
+// Luồng:
+//
+// IndexedDB
+//     ↓
+// currentExcel
+//     ↓
+// XLSX.read()
+//     ↓
+// Sheet đầu tiên
+//     ↓
+// sheet_to_json()
+//     ↓
+// TSV
+//     ↓
+// excelInput
+//     ↓
+// parseExcelData()
+//     ↓
+// detectDrugColumns()
+//     ↓
+// renderTable()
+//     ↓
+// drugData
+//
+// ============================================================
+
+const DRUG_DB_NAME = "ExcelStorage";
+
+const DRUG_DB_VERSION = 1;
+
+const DRUG_STORE_NAME = "files";
+
+
+// ============================================================
+// MỞ DATABASE
+// ============================================================
+
+function openDrugBrowserDatabase() {
+
+  return new Promise(
+    function(resolve, reject) {
+
+      const request =
+        indexedDB.open(
+          DRUG_DB_NAME,
+          DRUG_DB_VERSION
+        );
+
+
+      request.onupgradeneeded =
+        function(event) {
+
+          const database =
+            event.target.result;
+
+
+          if (
+            !database.objectStoreNames.contains(
+              DRUG_STORE_NAME
+            )
+          ) {
+
+            database.createObjectStore(
+              DRUG_STORE_NAME,
+              {
+                keyPath: "id"
+              }
+            );
+
+          }
+
+        };
+
+
+      request.onsuccess =
+        function(event) {
+
+          resolve(
+            event.target.result
+          );
+
+        };
+
+
+      request.onerror =
+        function() {
+
+          reject(
+            request.error
+          );
+
+        };
+
+    }
+  );
+
+}
+
+
+// ============================================================
+// LẤY FILE ĐÃ LƯU
+// ============================================================
+
+function getSavedExcelFromBrowser() {
+
+  return new Promise(
+    async function(resolve, reject) {
+
+      try {
+
+        const db =
+          await openDrugBrowserDatabase();
+
+
+        const transaction =
+          db.transaction(
+            [
+              DRUG_STORE_NAME
+            ],
+            "readonly"
+          );
+
+
+        const store =
+          transaction.objectStore(
+            DRUG_STORE_NAME
+          );
+
+
+        const request =
+          store.get(
+            "currentExcel"
+          );
+
+
+        request.onsuccess =
+          function() {
+
+            resolve(
+              request.result || null
+            );
+
+          };
+
+
+        request.onerror =
+          function() {
+
+            reject(
+              request.error
+            );
+
+          };
+
+      }
+      catch(error) {
+
+        reject(error);
+
+      }
+
+    }
+  );
+
+}
+
+
+// ============================================================
+// CHUYỂN EXCEL → MẢNG DATA
+// ============================================================
+//
+// Ví dụ:
+//
+// Excel:
+//
+// Vùng | ASM | Mã NV | DS MTD
+// A    | HCM | NV01  | 1000000
+//
+// sẽ thành:
+//
+// [
+//   ["Vùng","ASM","Mã NV","DS MTD"],
+//   ["A","HCM","NV01",1000000]
+// ]
+//
+// ============================================================
+
+function convertSavedSheetToDrugRows(
+  worksheet
+) {
+
+  if (!worksheet) {
+
+    return [];
+
+  }
+
+
+  const rows =
+    XLSX.utils.sheet_to_json(
+      worksheet,
+      {
+
+        header: 1,
+
+        raw: true,
+
+        defval: "",
+
+        blankrows: true
+
+      }
+    );
+
+
+  if (!Array.isArray(rows)) {
+
+    return [];
+
+  }
+
+
+  return rows;
+
+}
+
+
+// ============================================================
+// CHUYỂN DATA → TSV
+// ============================================================
+//
+// parseExcelData() hiện tại của bạn đang đọc:
+//
+// excelInput.value
+//
+// theo format:
+//
+// cột1 TAB cột2 TAB cột3
+//
+// Vì vậy ta chuyển Excel thành TSV.
+// ============================================================
+
+function drugRowsToTSV(rows) {
+
+  return rows
+    .map(row => {
+
+      if (!Array.isArray(row)) {
+
+        return "";
+
+      }
+
+
+      return row
+        .map(cell => {
+
+          if (
+            cell === null ||
+            cell === undefined
+          ) {
+
+            return "";
+
+          }
+
+
+          // -----------------------------------------------
+          // Nếu là Date
+          // -----------------------------------------------
+
+          if (
+            cell instanceof Date
+          ) {
+
+            return cell.toLocaleDateString(
+              "vi-VN"
+            );
+
+          }
+
+
+          // -----------------------------------------------
+          // Nếu có TAB / xuống dòng
+          // -----------------------------------------------
+
+          return String(cell)
+            .replace(/\t/g, " ")
+            .replace(/\r?\n/g, " ");
+
+        })
+        .join("\t");
+
+    })
+    .join("\n");
+
+}
+
+
+// ============================================================
+// 29. NÚT LẤY EXCEL ĐÃ LƯU
+// ============================================================
+
+async function loadSavedExcelFromBrowser() {
+
+  const button =
+    document.getElementById(
+      "loadSavedExcelBtn"
+    );
+
+
+  try {
+
+    // --------------------------------------------------------
+    // KHÓA NÚT
+    // --------------------------------------------------------
+
+    if (button) {
+
+      button.disabled = true;
+
+      button.innerHTML =
+        "⏳ Đang lấy dữ liệu...";
+
+    }
+
+
+    // --------------------------------------------------------
+    // LẤY RECORD
+    // --------------------------------------------------------
+
+    const savedFile =
+      await getSavedExcelFromBrowser();
+
+
+    if (!savedFile) {
+
+      alert(
+        "❌ Chưa có dữ liệu Excel được lưu trên trình duyệt.\n\n" +
+        "Bạn hãy mở trang chuẩn hóa Excel,\n" +
+        "chọn file Excel và bấm:\n\n" +
+        "💾 Lưu vào trình duyệt"
+      );
+
+      return;
+
+    }
+
+
+    console.log(
+      "FILE EXCEL ĐÃ LƯU:",
+      savedFile
+    );
+
+
+    // --------------------------------------------------------
+    // LẤY BINARY
+    // --------------------------------------------------------
+
+    let binaryData =
+      savedFile.data;
+
+
+    if (!binaryData) {
+
+      throw new Error(
+        "Dữ liệu Excel trong trình duyệt không tồn tại."
+      );
+
+    }
+
+
+    // --------------------------------------------------------
+    // CHUYỂN VỀ ARRAYBUFFER
+    // --------------------------------------------------------
+
+    let arrayBuffer;
+
+
+    if (
+      binaryData instanceof ArrayBuffer
+    ) {
+
+      arrayBuffer =
+        binaryData;
+
+    }
+
+    else if (
+      ArrayBuffer.isView(
+        binaryData
+      )
+    ) {
+
+      arrayBuffer =
+        binaryData.buffer.slice(
+          binaryData.byteOffset,
+          binaryData.byteOffset +
+          binaryData.byteLength
+        );
+
+    }
+
+    else if (
+      Array.isArray(binaryData)
+    ) {
+
+      arrayBuffer =
+        new Uint8Array(
+          binaryData
+        ).buffer;
+
+    }
+
+    else {
+
+      throw new Error(
+        "Không nhận diện được định dạng dữ liệu Excel đã lưu."
+      );
+
+    }
+
+
+    // --------------------------------------------------------
+    // ĐỌC WORKBOOK
+    // --------------------------------------------------------
+
+    const workbook =
+      XLSX.read(
+        arrayBuffer,
+        {
+
+          type: "array",
+
+          cellNF: true,
+
+          cellStyles: true,
+
+          cellDates: true,
+
+          cellFormula: true
+
+        }
+      );
+
+
+    // --------------------------------------------------------
+    // KIỂM TRA SHEET
+    // --------------------------------------------------------
+
+    if (
+      !workbook.SheetNames ||
+      workbook.SheetNames.length === 0
+    ) {
+
+      throw new Error(
+        "File Excel không có Sheet."
+      );
+
+    }
+
+
+    console.log(
+      "CÁC SHEET:",
+      workbook.SheetNames
+    );
+
+
+    // --------------------------------------------------------
+    // LẤY SHEET ĐẦU TIÊN
+    // --------------------------------------------------------
+
+    const sheetName =
+      workbook.SheetNames[0];
+
+
+    const worksheet =
+      workbook.Sheets[
+        sheetName
+      ];
+
+
+    // --------------------------------------------------------
+    // EXCEL → ARRAY
+    // --------------------------------------------------------
+
+    const rows =
+      convertSavedSheetToDrugRows(
+        worksheet
+      );
+
+
+    if (
+      !rows ||
+      rows.length === 0
+    ) {
+
+      throw new Error(
+        "Sheet Excel đang rỗng."
+      );
+
+    }
+
+
+    console.log(
+      "DATA LẤY TỪ EXCEL:",
+      rows
+    );
+
+
+    // --------------------------------------------------------
+    // ARRAY → TSV
+    // --------------------------------------------------------
+
+    const tsv =
+      drugRowsToTSV(
+        rows
+      );
+
+
+    // --------------------------------------------------------
+    // ĐƯA VÀO excelInput
+    // --------------------------------------------------------
+
+    const input =
+      document.getElementById(
+        "excelInput"
+      );
+
+
+    if (!input) {
+
+      throw new Error(
+        "Không tìm thấy #excelInput."
+      );
+
+    }
+
+
+    input.value =
+      tsv;
+
+
+    // --------------------------------------------------------
+    // HIỂN THỊ THÔNG TIN
+    // --------------------------------------------------------
+
+    console.log(
+      "Đã nạp file:",
+      savedFile.fileName
+    );
+
+    console.log(
+      "Sheet:",
+      sheetName
+    );
+
+    console.log(
+      "Số dòng:",
+      rows.length
+    );
+
+
+    // --------------------------------------------------------
+    // GỌI LUỒNG XỬ LÝ HIỆN TẠI
+    // --------------------------------------------------------
+
+    await parseExcelData();
+
+
+    // --------------------------------------------------------
+    // KHÔI PHỤC GIAO DIỆN SAU KHI PARSE
+    // --------------------------------------------------------
+
+    const searchContainer =
+      document.getElementById("searchContainer");
+
+    const updateButton =
+      document.getElementById("btnUpdateDrug");
+
+    const duplicateButton =
+      document.getElementById("drugDuplicateBtn");
+
+
+    // Có dữ liệu thì phải hiện khu vực tìm kiếm
+    if (searchContainer) {
+
+      searchContainer.style.display = "flex";
+
+    }
+
+
+    // Quan trọng:
+    // parseExcelData() có thể đã làm nút này display:none.
+    // Sau khi nạp Excel xong, cho phép cập nhật lại dữ liệu.
+    if (updateButton) {
+
+      updateButton.style.display = "inline-block";
+
+    }
+
+
+    // Nút cảnh báo duplicate:
+    // Không tự ép hiện nếu chưa có duplicate.
+    // Chỉ khôi phục nếu code hiện tại của bạn đã đánh dấu nó.
+
+
+  }
+  catch(error) {
+
+    console.error(
+      "❌ loadSavedExcelFromBrowser ERROR:",
+      error
+    );
+
+
+    alert(
+      "❌ Không thể lấy Excel đã lưu.\n\n" +
+      error.message
+    );
+
+  }
+  finally {
+
+    // --------------------------------------------------------
+    // MỞ LẠI NÚT
+    // --------------------------------------------------------
+
+    if (button) {
+
+      button.disabled = false;
+
+      button.innerHTML =
+        "📂 Lấy Excel đã lưu trên web";
+
+    }
+
+  }
+
+}
+
+
+// ============================================================
+// END LOAD EXCEL FROM BROWSER
+// ============================================================
+
+function filterDrugByShop() {
+
+  if (!hot) {
+    alert("DATA_Thuốc chưa có dữ liệu.");
+    return;
+  }
+
+  const input =
+    document.getElementById("drugShopFilter");
+
+  const maShop =
+    String(input.value || "").trim();
+
+  if (!maShop) {
+    alert("Vui lòng nhập Mã shop.");
+    return;
+  }
+
+  const allData = hot.getSourceData();
+
+  const filteredData = allData.filter(row => {
+
+    const rowMaShop =
+      String(row[2] ?? "").trim();
+
+    return rowMaShop === maShop;
+  });
+
+  hot.loadData(filteredData);
+
+  console.log(
+    "🔍 DATA_Thuốc - Lọc Mã shop:",
+    maShop,
+    "Số dòng:",
+    filteredData.length
+  );
+}
+// ============================================================
+// END DATA THUỐC
+// ============================================================
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////123456789/////////////
 function importVXFile(event){
 
   const file = event.target.files[0];
@@ -4454,18 +9305,39 @@ const header =
     // BUILD NEW DATA
     //
 
+let currentMaShop = "";
+
 const filteredRows = rows
   .slice(headerRowIndex + 1)
-      .map(row => [
+  .map(row => {
 
-        row[colDSVT],
-        row[colVT],
-        row[colBau],
-        row[colTarget],
-        row[colThieu],
-        row[colPercent]
+    // ==========================================
+    // LẤY MÃ SHOP TỪ CỘT E - SHOP VỆ TINH
+    // ==========================================
+    const shopText = String(row[4] || "").trim();
 
-      ]);
+    if (shopText) {
+      const match = shopText.match(/^\s*(\d+)/);
+
+      if (match) {
+        currentMaShop = match[1];
+      }
+    }
+
+    // ==========================================
+    // DATA_VX
+    // ==========================================
+    return [
+      row[colDSVT],
+      row[colVT],
+      row[colBau],
+      row[colTarget],
+      row[colThieu],
+      row[colPercent],
+      currentMaShop
+    ];
+
+  });
 
     //
     // CONVERT TO TEXTAREA FORMAT
@@ -4507,30 +9379,32 @@ const vxHeaders = [
   'Doanh thu KPI bầu',
   'Target Doanh thu KPI',
   'Doanh thu KPI còn thiếu',
-  '%HT Target Doanh thu KPI'
+  '%HT Target Doanh thu KPI',
+  'Mã shop'
 ];
 
 function syncVXInput() {
 
   if (!vxHot) return;
 
+  // LUÔN LẤY DỮ LIỆU ĐANG HIỂN THỊ
   const data = vxHot.getData();
 
   const text = data.map(row => {
 
     return [
-      `${row[0] || ""}-${row[1] || ""}`, // ghép lại MãNV-TênNV
+      `${row[0] || ""}-${row[1] || ""}`,
       row[2] ?? "",
       row[3] ?? "",
       row[4] ?? "",
       row[5] ?? "",
-      row[6] ?? ""
+      row[6] ?? "",
+      row[7] ?? ""
     ].join("\t");
 
   }).join("\n");
 
   document.getElementById("vxInput").value = text;
-
 }
 
 function parseVXData(){
@@ -4616,7 +9490,10 @@ function renderVXTable(rows){
         .replace(/,/g,'')
       ) || 0,
 
-      String(row[5] || '')
+      String(row[5] || ''),
+
+  // MÃ SHOP - CỘT CUỐI
+  String(row[6] || '')
 
     ];
 
@@ -4764,6 +9641,50 @@ function renderVXTable(rows){
 });
 
 }
+
+function filterVXByShop() {
+
+  if (!vxHot) {
+    alert("DATA_VX chưa có dữ liệu.");
+    return;
+  }
+
+  const maShop =
+    String(
+      document.getElementById("vxShopFilter").value || ""
+    ).trim();
+
+  if (!maShop) {
+    alert("Vui lòng nhập Mã shop.");
+    return;
+  }
+
+  // LẤY ĐÚNG DỮ LIỆU ĐANG HIỂN THỊ
+  const allData = vxHot.getData();
+
+  // MÃ SHOP LÀ CỘT CUỐI - row[7]
+  const filteredData = allData.filter(row => {
+
+    return String(row[7] ?? "").trim() === maShop;
+
+  });
+
+  // NẠP LẠI BẢNG CHỈ VỚI DỮ LIỆU ĐÃ LỌC
+  vxHot.loadData(filteredData);
+
+  // QUAN TRỌNG:
+  // đồng bộ ngay dữ liệu sau khi lọc
+  syncVXInput();
+
+  console.log(
+    "DATA_VX đã lọc:",
+    maShop,
+    filteredData.length,
+    "dòng"
+  );
+}
+
+/////////////////////////////////////////1234567890/////////////////////////////////////////////////////////
 
 let kpiTargetSheet = '';
 let kpiTargetButton = null;
