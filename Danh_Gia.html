@@ -4520,7 +4520,8 @@ const DRUG_COLUMN_CONFIG = {
       "% HT DS",
       "% HT Doanh số",
       "% Hoàn thành DS",
-      "HT DS"
+      "HT DS",
+	  "% HT DS (NV)"
     ]
   },
 
@@ -4538,7 +4539,8 @@ const DRUG_COLUMN_CONFIG = {
     names: [
       "% EST DS",
       "% EST Doanh số",
-      "EST DS"
+      "EST DS",
+	  "EST %HT DS (NV)"
     ]
   },
 
@@ -4571,7 +4573,8 @@ const DRUG_COLUMN_CONFIG = {
     label: "DS HOT",
     names: [
       "DS HOT",
-      "Doanh số HOT"
+      "Doanh số HOT",
+	  "DS HOT M"
     ]
   },
 
@@ -9125,6 +9128,7 @@ function filterDrugByShop() {
     "Số dòng:",
     filteredData.length
   );
+  parseExcelData();
 }
 // ============================================================
 // END DATA THUỐC
@@ -9682,6 +9686,7 @@ function filterVXByShop() {
     filteredData.length,
     "dòng"
   );
+  parseVXData();
 }
 
 /////////////////////////////////////////1234567890/////////////////////////////////////////////////////////
