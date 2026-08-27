@@ -995,7 +995,7 @@ input:focus {
 
                 type="text"
 
-                placeholder="Nhập mã sản phẩm"
+                placeholder="Nhập mã sản phẩm / số điện thoại"
 
                 autocomplete="off"
 
@@ -1342,25 +1342,21 @@ function submitForm(event) {
 
 function searchProduct() {
 
-
-    const product =
-
+    const query =
         document
-
-        .getElementById(
-            "productCode"
-        )
-
-        .value
-
-        .trim();
+            .getElementById("productCode")
+            .value
+            .trim();
 
 
+    // ==============================
+    // KIỂM TRA
+    // ==============================
 
-    if (!product) {
+    if (!query) {
 
         alert(
-            "Vui lòng nhập mã sản phẩm"
+            "Vui lòng nhập mã sản phẩm hoặc số điện thoại"
         );
 
         return;
@@ -1368,32 +1364,23 @@ function searchProduct() {
     }
 
 
+    // ==============================
+    // HIỂN THỊ TRẠNG THÁI
+    // ==============================
 
     document
-
-        .getElementById(
-            "searchStatus"
-        )
-
+        .getElementById("searchStatus")
         .innerText =
-
-        "🔍 Đang tra cứu...";
+            "🔍 Đang tra cứu...";
 
 
     document
-
-        .getElementById(
-            "results"
-        )
-
+        .getElementById("results")
         .innerHTML = "";
 
 
     const searchButton =
-
-        document
-
-        .getElementById(
+        document.getElementById(
             "searchButton"
         );
 
@@ -1401,23 +1388,17 @@ function searchProduct() {
     searchButton.disabled = true;
 
 
-
-    // ==========================
+    // ==============================
     // TẠO CALLBACK
-    // ==========================
+    // ==============================
 
     const callbackName =
-
         "searchCallback_" +
-
         Date.now();
 
 
-
     window[callbackName] =
-
         function(data) {
-
 
             console.log(data);
 
@@ -1425,56 +1406,107 @@ function searchProduct() {
             searchButton.disabled = false;
 
 
+            // ==========================
+            // LỖI
+            // ==========================
 
             if (!data.success) {
 
-
                 document
-
                     .getElementById(
                         "searchStatus"
                     )
-
                     .innerText =
-
-                    "❌ " +
-
-                    data.message;
+                        "❌ " +
+                        data.message;
 
 
                 delete window[
                     callbackName
                 ];
 
-
                 return;
 
             }
 
 
+            // ==========================
+            // TRA CỨU MÃ SẢN PHẨM
+            // ==========================
 
-            document
+            if (data.mode === "product") {
 
-                .getElementById(
-                    "searchStatus"
-                )
-
-                .innerText =
-
-                "Tìm thấy " +
-
-                data.count +
-
-                " khách hàng";
-
+                document
+                    .getElementById(
+                        "searchStatus"
+                    )
+                    .innerText =
+                        "🔎 Mã sản phẩm: " +
+                        query +
+                        " — Tìm thấy " +
+                        data.count +
+                        " khách hàng";
 
 
-            displayCustomers(
+                displayCustomers(
+                    data.customers
+                );
 
-                data.customers
+            }
 
-            );
 
+            // ==========================
+            // TRA CỨU SỐ ĐIỆN THOẠI
+            // ==========================
+
+            else if (
+                data.mode === "phone"
+            ) {
+
+                if (
+                    !data.customer
+                ) {
+
+                    document
+                        .getElementById(
+                            "searchStatus"
+                        )
+                        .innerText =
+                            "❌ Không tìm thấy khách hàng";
+
+                    document
+                        .getElementById(
+                            "results"
+                        )
+                        .innerHTML = `
+
+                            <div class="no-result">
+
+                                Không tìm thấy khách hàng
+                                với số điện thoại:
+                                <b>${escapeHtml(query)}</b>
+
+                            </div>
+
+                        `;
+
+                } else {
+
+                    document
+                        .getElementById(
+                            "searchStatus"
+                        )
+                        .innerText =
+                            "📱 Thông tin khách hàng";
+
+
+                    displayCustomerProducts(
+                        data.customer
+                    );
+
+                }
+
+            }
 
 
             delete window[
@@ -1484,31 +1516,23 @@ function searchProduct() {
         };
 
 
-
-    // ==========================
+    // ==============================
     // TẠO URL
-    // ==========================
+    // ==============================
 
     const url =
-
         API +
-
-        "?product=" +
-
-        encodeURIComponent(product) +
-
+        "?query=" +
+        encodeURIComponent(query) +
         "&callback=" +
-
         callbackName;
 
 
-
-    // ==========================
+    // ==============================
     // JSONP
-    // ==========================
+    // ==============================
 
     const script =
-
         document.createElement(
             "script"
         );
@@ -1517,26 +1541,19 @@ function searchProduct() {
     script.src = url;
 
 
-
     script.onerror =
-
         function() {
 
-
             searchButton.disabled =
-
                 false;
 
 
             document
-
                 .getElementById(
                     "searchStatus"
                 )
-
                 .innerText =
-
-                "❌ Không kết nối được Apps Script";
+                    "❌ Không kết nối được Apps Script";
 
 
             delete window[
@@ -1546,16 +1563,11 @@ function searchProduct() {
         };
 
 
-
     document
-
         .body
-
         .appendChild(script);
 
 }
-
-
 
 /* ========================================
    HIỂN THỊ KHÁCH HÀNG
@@ -1655,6 +1667,112 @@ function displayCustomers(
 
 }
 
+/* ========================================
+   HIỂN THỊ KHÁCH HÀNG + SẢN PHẨM
+======================================== */
+
+function displayCustomerProducts(customer) {
+
+    const results =
+        document.getElementById("results");
+
+
+    results.innerHTML = `
+
+        <div class="customer">
+
+            <div class="customer-name">
+
+                ${escapeHtml(
+                    customer.name
+                )}
+
+            </div>
+
+
+            <div class="customer-info">
+
+                📞 ${escapeHtml(
+                    customer.phone
+                )}
+
+            </div>
+
+
+            <div class="customer-info">
+
+                📍 ${escapeHtml(
+                    customer.address
+                )}
+
+            </div>
+
+
+            <div
+                class="customer-info"
+                style="margin-top:15px;"
+            >
+
+                <b>📦 Sản phẩm đã sử dụng:</b>
+
+            </div>
+
+
+            <div
+                style="margin-top:10px;"
+            >
+
+                ${
+                    customer.products &&
+                    customer.products.length > 0
+
+                    ?
+
+                    customer.products
+                        .map(function(product) {
+
+                            return `
+
+                                <div
+                                    style="
+                                        padding:10px;
+                                        margin:6px 0;
+                                        background:#f5f6f8;
+                                        border:1px solid #ddd;
+                                        border-radius:6px;
+                                    "
+                                >
+
+                                    🏷️
+                                    ${escapeHtml(product)}
+
+                                </div>
+
+                            `;
+
+                        })
+                        .join("")
+
+                    :
+
+                    `
+
+                        <div class="no-result">
+
+                            Khách hàng chưa có sản phẩm
+
+                        </div>
+
+                    `
+                }
+
+            </div>
+
+        </div>
+
+    `;
+
+}
 
 
 /* ========================================
