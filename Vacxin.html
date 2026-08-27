@@ -397,6 +397,8 @@ body{
 
 </div>
 
+
+
 <script>
 
 // CHẶN CHẠY FILE LOCAL
@@ -946,10 +948,20 @@ const keyword =
 // ALL
 if(selectedMain !== "all"){
 
-    // chọn object lớn
     const mainData = vaccineGroups[selectedMain];
 
-    // nếu chọn subgroup
+    // Lấy toàn bộ vaccine thuộc main-filter
+    const mainVaccineNames = [
+        ...new Set(
+            mainData.groups.flatMap(group => group.vaccines)
+        )
+    ];
+
+    filteredData = vaccineData.filter(v =>
+        mainVaccineNames.includes(v.group)
+    );
+
+    // Nếu chọn tiếp sub-filter
     if(selectedSub !== "all"){
 
         const selectedGroup =
@@ -958,13 +970,14 @@ if(selectedMain !== "all"){
         const vaccineNames =
             selectedGroup.vaccines;
 
-        filteredData = vaccineData.filter(v =>
+        filteredData = filteredData.filter(v =>
             vaccineNames.includes(v.group)
         );
 
     }
 
 }
+
 
 if(keyword){
 
