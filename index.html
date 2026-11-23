@@ -26,23 +26,25 @@
       background: linear-gradient(145deg, #2563eb, #0f766e);
       font-size: 40px;
     }
-    h1 { margin: 0 0 10px; font-size: 25px; letter-spacing: .4px; }
+    h1 { margin: 0 0 10px; font-size: 25px; }
     .intro { margin: 0 auto 26px; color: #cbd5e1; line-height: 1.6; font-size: 15px; }
-    .install-btn {
-      display: block; width: 100%; padding: 17px 18px;
+    .action {
+      display: block; width: 100%; padding: 17px 18px; border: 0;
       border-radius: 13px; background: #16a34a; color: white;
       text-decoration: none; font-weight: 800; font-size: 17px;
-      box-shadow: 0 8px 22px rgba(22,163,74,.25);
-      transition: transform .15s, background .15s;
+      cursor: pointer; box-shadow: 0 8px 22px rgba(22,163,74,.25);
     }
-    .install-btn:hover { background: #15803d; transform: translateY(-1px); }
-    .hint { margin: 16px 0 0; color: #94a3b8; font-size: 12px; line-height: 1.5; }
+    .action:disabled { opacity: .65; cursor: wait; }
+    .open { background: #2563eb; box-shadow: 0 8px 22px rgba(37,99,235,.25); }
+    .hint { margin: 16px 0 0; color: #94a3b8; font-size: 12px; line-height: 1.6; }
     .steps {
       margin-top: 28px; padding: 20px; text-align: left;
       border-radius: 15px; background: rgba(255,255,255,.055);
     }
     .steps h2 { margin: 0 0 13px; font-size: 15px; color: #e2e8f0; }
     .steps ol { margin: 0; padding-left: 21px; color: #cbd5e1; font-size: 13px; line-height: 1.8; }
+    .hidden { display: none; }
+    .status { min-height: 20px; margin-top: 13px; color: #bfdbfe; font-size: 13px; line-height: 1.5; }
     .footer { margin: 22px 0 0; color: #64748b; font-size: 11px; }
   </style>
 </head>
@@ -50,27 +52,83 @@
   <main class="card">
     <div class="logo" aria-hidden="true">📱</div>
     <h1>CÀI ĐẶT ỨNG DỤNG</h1>
-    <p class="intro">Nhấn nút bên dưới để tải tệp cài đặt ứng dụng dành cho thiết bị Android.</p>
+    <p class="intro">Nhấn nút bên dưới để tải ứng dụng dành cho Android.</p>
 
-    <a class="install-btn"
-       href="https://0363398277.github.io/NVN/Key.apk"
-       aria-label="Tải tệp APK">
-      ⬇ TẢI VÀ CÀI ĐẶT
-    </a>
+    <button id="downloadBtn" class="action" type="button">⬇ TẢI APK</button>
 
-    <p class="hint">Tệp cài đặt: Key.apk</p>
+    <div id="openArea" class="hidden">
+      <p class="hint">Tải APK đã hoàn tất.</p>
+      <button id="openBtn" class="action open" type="button">📂 MỞ APK</button>
+      <p class="hint">Nếu nút MỞ APK không gọi được trình cài đặt, hãy chạm vào thông báo tải xuống của trình duyệt hoặc mở tệp Key.apk trong thư mục Download.</p>
+    </div>
+
+    <p id="status" class="status" role="status" aria-live="polite"></p>
 
     <section class="steps">
-      <h2>HƯỚNG DẪN CÀI ĐẶT</h2>
+      <h2>HƯỚNG DẪN</h2>
       <ol>
-        <li>Nhấn <strong>TẢI VÀ CÀI ĐẶT</strong> để tải tệp APK.</li>
-        <li>Mở tệp <strong>Key.apk</strong> sau khi tải xong.</li>
-        <li>Nếu Android yêu cầu, cho phép trình duyệt cài ứng dụng không rõ nguồn gốc.</li>
-        <li>Nhấn <strong>Cài đặt</strong> và chờ hoàn tất.</li>
+        <li>Nhấn <strong>TẢI APK</strong> và chờ tải xong.</li>
+        <li>Nút <strong>MỞ APK</strong> sẽ xuất hiện.</li>
+        <li>Nếu Android hỏi quyền cài ứng dụng từ nguồn này, hãy cho phép trình duyệt rồi quay lại mở tệp APK.</li>
+        <li>Nhấn <strong>Cài đặt</strong> trong màn hình Android.</li>
       </ol>
     </section>
 
-    <p class="footer">Chỉ dành cho thiết bị Android · Hãy chỉ cài đặt APK từ nguồn bạn tin cậy.</p>
+    <p class="footer">Chỉ dành cho Android · Chỉ cài APK từ nguồn bạn tin cậy.</p>
   </main>
+
+  <script>
+    const APK_URL = "https://0363398277.github.io/NVN/Key.apk";
+    const downloadBtn = document.getElementById("downloadBtn");
+    const openArea = document.getElementById("openArea");
+    const openBtn = document.getElementById("openBtn");
+    const status = document.getElementById("status");
+    let apkBlobUrl = null;
+
+    downloadBtn.addEventListener("click", async () => {
+      downloadBtn.disabled = true;
+      downloadBtn.textContent = "ĐANG TẢI APK...";
+      status.textContent = "Vui lòng giữ trang này mở trong khi tải.";
+      try {
+        const response = await fetch(APK_URL);
+        if (!response.ok) throw new Error("Không tải được APK (" + response.status + ").");
+        const blob = await response.blob();
+        apkBlobUrl = URL.createObjectURL(new Blob([blob], {
+          type: "application/vnd.android.package-archive"
+        }));
+
+        const link = document.createElement("a");
+        link.href = apkBlobUrl;
+        link.download = "Key.apk";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        openArea.classList.remove("hidden");
+        status.textContent = "Đã tải xong. Nút MỞ APK đã sẵn sàng.";
+        downloadBtn.textContent = "TẢI LẠI APK";
+      } catch (error) {
+        status.textContent = "Không thể tải tự động. Hãy thử tải trực tiếp tại liên kết APK.";
+        downloadBtn.textContent = "THỬ TẢI LẠI";
+        console.error(error);
+      } finally {
+        downloadBtn.disabled = false;
+      }
+    });
+
+    openBtn.addEventListener("click", () => {
+      if (!apkBlobUrl) return;
+      // Thử chuyển APK sang trình xử lý mặc định của Android.
+      // Một số trình duyệt vẫn chỉ tải lại tệp; khi đó mở từ thông báo Downloads.
+      const link = document.createElement("a");
+      link.href = apkBlobUrl;
+      link.target = "_blank";
+      link.rel = "noopener";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      status.textContent = "Nếu màn hình cài đặt không xuất hiện, hãy mở thông báo tải xuống Key.apk của trình duyệt.";
+    });
+  </script>
 </body>
 </html>
