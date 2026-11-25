@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Image Studio</title>
 <style>
 *{box-sizing:border-box}
@@ -105,13 +105,26 @@ details[open]>summary{border-left:3px solid var(--accent)}
 #fvView input[type=number]{width:58px}
 #fvBox{flex:1;min-height:0;position:relative;overflow:hidden;background:repeating-conic-gradient(#222 0 25%,#2a2a2d 0 50%) 0 0/16px 16px}
 #fvCv{position:absolute;left:0;top:0;cursor:grab;touch-action:none}
+#fvView.bgon #fvBox,#fvView.bgon #fvStrip .fvth{background:var(--fvbg,#00ff00)}
+#fvView .bgtool{display:flex;gap:5px;align-items:center;white-space:nowrap;padding:2px 6px;border:1px solid var(--border);border-radius:4px}
+#fvView .bgtool input[type=color]{width:30px;height:22px;padding:0;border:1px solid var(--border);background:none;cursor:pointer}
 #fvStrip{display:flex;gap:4px;overflow-x:auto;padding:6px 8px;background:#121214;border-top:1px solid var(--border);min-height:92px}
-#fvStrip .fvth{flex:none;position:relative;border:2px solid transparent;border-radius:3px;cursor:pointer;background:#000}
+#fvStrip .fvth{flex:none;position:relative;border:2px solid transparent;border-radius:3px;cursor:pointer;background:repeating-conic-gradient(#555 0 25%,#3a3a3a 0 50%) 0 0/10px 10px}
 #fvStrip .fvth.cur{border-color:var(--accent)}#fvStrip .fvth.out{opacity:.3}
 #fvStrip .fvth canvas{display:block;height:64px;max-width:none}
 #fvSl+.numbox{display:none}
 #fvStrip .fvth i{position:absolute;left:2px;top:1px;font:10px/1 sans-serif;background:#000a;color:#fff;padding:1px 3px;border-radius:2px;font-style:normal}
 #fvStrip .fvth input{position:absolute;right:1px;bottom:1px;margin:0}
+.fvsec{border:1px solid var(--border);border-radius:5px;margin-top:8px;overflow:hidden}
+.fvsec:first-child{margin-top:0}
+.fvsh{display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none;padding:7px 8px;font-weight:600;color:#fff}
+.fvblue>.fvsh,.fvdark>.fvsh{background:#0a0a0c}.fvblue>.fvsh:hover,.fvdark>.fvsh:hover{background:#25252a}
+.fvblue,.fvdark{border-color:#55555c}.fvblue>.fvsb,.fvdark>.fvsb{border-left:3px solid #55555c}
+.fvsh .ar{display:inline-block;width:12px;opacity:.8}.fvsh .tt{flex:1;min-width:0}
+.fvpin{flex:none;background:transparent;border:0;padding:0 2px;cursor:pointer;opacity:.4;filter:grayscale(1);font-size:13px;line-height:1}
+.fvpin:hover{opacity:.8}.fvpin.on{opacity:1;filter:none}
+.fvsb{padding:8px}.fvsec.shut>.fvsb{display:none}
+.fvsb .help:last-child{margin-bottom:0}
 .fvh{display:block;margin:12px 0 5px;font-weight:600}.fvh.first{margin-top:0}
 .fvg{display:grid;grid-template-columns:minmax(96px,42%) 1fr;gap:6px 8px;align-items:center}
 .fvg label{font-size:12px;color:var(--muted,#aaa)}
@@ -338,6 +351,34 @@ details:not([open])>summary.col .st::before{content:"▸ "}
 .tool-fly button .ky{opacity:.7;font-size:11.5px;margin-left:14px}
 .tool-fly button.cur .ic::after{content:"";}
 .tool-fly button.cur{box-shadow:inset 3px 0 0 #8ec0ff}
+
+/* ===== Kiểu nét vẽ (stamp brush) ===== */
+#pbGrid .pbb{aspect-ratio:1;background:#202022;border:1px solid var(--line);border-radius:4px;padding:2px;display:flex;align-items:center;justify-content:center;color:var(--text);font-size:16px;min-width:0}
+#pbGrid .pbb.on{border-color:var(--accent);background:#2a3a55}
+#pbGrid canvas{width:100%;height:100%;display:block}
+/* ===== Giao diện mobile (html.mb) ===== */
+#mbBar,#mbHead{display:none}
+html.mb body{overflow:hidden;overscroll-behavior:none;touch-action:manipulation}
+html.mb .app{height:100vh;height:100dvh;min-height:0}
+html.mb #mbBar{display:flex;order:-1;gap:4px;padding:4px 6px;background:var(--panel);border-bottom:1px solid var(--border);overflow-x:auto;flex:none;scrollbar-width:none}
+html.mb #mbBar .tb{flex:1 0 auto;min-width:44px;height:38px;font-size:14px;border-color:var(--line)}
+html.mb .workspace-head{overflow-x:auto;scrollbar-width:none;padding:2px 6px;margin:0;flex:none}
+html.mb .main{flex-direction:column;min-height:0;flex:1}
+html.mb .workspace{order:1;flex:1;min-height:0!important;padding:4px}
+html.mb .properties{order:2;width:100%;height:42vh;flex:none;border-left:0;border-top:2px solid var(--accent);display:none;overscroll-behavior:contain}
+html.mb.sheet .properties{display:block}
+html.mb.sheet.big .properties{height:68vh}
+html.mb #mbHead{display:flex;position:sticky;top:0;z-index:5;align-items:center;gap:8px;padding:6px 10px;background:#323235;border-bottom:1px solid var(--border)}
+html.mb .toolbar{order:3;width:100%;height:auto;flex:none;flex-direction:row;flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;overflow-y:hidden;padding:4px 6px calc(4px + env(safe-area-inset-bottom));gap:4px;border-right:0;border-top:1px solid var(--border);scrollbar-width:none}
+html.mb .toolbar::-webkit-scrollbar,html.mb #mbBar::-webkit-scrollbar,html.mb .workspace-head::-webkit-scrollbar{display:none}
+html.mb .tool{width:42px;height:42px;font-size:19px;flex:none}
+html.mb .toolbar>.tool,html.mb .toolbar>.tool-divider{touch-action:pan-x!important}
+html.mb .tool-divider{width:1px;height:26px;margin:0 3px;flex:none;background:var(--line)}
+html.mb .tool[title]:hover::after{display:none}
+html.mb .tb{min-height:34px}
+html.mb input[type=range]{height:30px}
+html.mb input[type=checkbox]{width:20px;height:20px}
+html.mb .dialog{max-height:92vh;max-height:92dvh;overflow:auto}
 </style>
 </head>
 <body>
@@ -392,6 +433,8 @@ details:not([open])>summary.col .st::before{content:"▸ "}
       </div></div>
       <span class="selonly" style="margin-left:4px">Feather:</span>
       <input type="number" class="selonly" id="selFeather" min="0" max="250" value="0" style="width:54px"><span class="selonly">px</span><span id="selFeatherT" hidden>0</span>
+      <span class="selonly" style="margin-left:6px" title="Làm mượt đường viền khi Xóa / Cắt: biến bậc thang răng cưa thành đường cong mềm (giống Liquify). 0 = giữ nguyên góc nhọn.">Mượt mép:</span>
+      <input type="number" class="selonly" id="selEdgeSm" min="0" max="12" step="0.5" value="1.5" style="width:48px" title="Làm mượt đường viền khi Xóa / Cắt: biến bậc thang răng cưa thành đường cong mềm (giống Liquify). 0 = giữ nguyên góc nhọn."><span class="selonly">px</span>
       <div class="sel-dd selonly" id="ddAct"><button type="button" class="tb sel-dd-btn" title="Các thao tác với vùng chọn">Thao tác ▾</button><div class="sel-dd-menu">
         <button class="tb" id="selBarAll" title="Chọn tất cả (Ctrl+A)">Chọn tất cả</button>
         <button class="tb" id="selBarNone" title="Bỏ vùng chọn (Enter)">Bỏ chọn</button>
@@ -400,6 +443,9 @@ details:not([open])>summary.col .st::before{content:"▸ "}
         <button class="tb" id="selBarCut" title="Cắt khỏi lớp đang chọn (Ctrl+X)">Cắt</button>
         <button class="tb" id="selBarPaste" title="Dán thành lớp mới, dùng được ở mọi tab (Ctrl+V)">Dán</button>
         <button class="tb" id="selBarLayer" title="Tạo lớp mới từ vùng chọn (Ctrl+J)">Tạo lớp mới</button>
+        <button class="tb" id="selBarStroke" title="Vẽ nét theo viền vùng chọn bằng bút đang chọn (tab Vẽ)">Vẽ nét viền chọn</button>
+        <button class="tb" id="selBarDel" title="Xóa sạch phần ảnh trong vùng chọn của lớp đang chọn (Delete)">Xóa sạch (Delete)</button>
+        <button class="tb" id="selBarSmooth" title="Làm liền (khử răng cưa) viền trong suốt của lớp đang chọn; có vùng chọn thì chỉ làm trong vùng chọn">Làm liền viền</button>
         <button class="tb" id="selBarCrop" title="Crop ảnh theo vùng chọn, các lớp khác giữ nguyên (cũng có trong menu chuột phải)">Crop theo vùng chọn</button>
       </div></div>
       <div id="cropBar" style="display:none;align-items:center;gap:6px;margin-left:4px;white-space:nowrap">
@@ -426,6 +472,11 @@ details:not([open])>summary.col .st::before{content:"▸ "}
     </div>
   </div>
 
+<div id="mbBar">
+  <button class="tb" id="mbOpen">📂 Mở</button><button class="tb" id="mbNew">＋ Mới</button>
+  <button class="tb" id="mbUndo">↶</button><button class="tb" id="mbRedo">↷</button>
+  <button class="tb" id="mbPanel">⚙ Bảng</button><button class="tb primary" id="mbSave">↓ Lưu</button>
+</div>
 <div class="main">
 
 <aside class="toolbar">
@@ -444,7 +495,9 @@ details:not([open])>summary.col .st::before{content:"▸ "}
   <button class="tool" data-tab="Chuyển đổi màu" title="Chuyển đổi màu">🎨</button>
   <button class="tool" data-tool="text" data-grp="text" data-tab="Chữ" title="Chữ (T)"><b>T</b></button>
   <button class="tool" id="stitchTool" data-tab="Ghép ảnh" title="Ghép ảnh nối tiếp">⊞</button>
+  <button class="tool" data-tab="Nhân bản" title="Nhân bản: lặp biến đổi / nhân bản theo số lượng + hiệu ứng (vòng tròn 360°, xếp ngang, xếp dọc...)">🔁</button>
   <button class="tool" data-tab="Xóa nền" title="Xóa nền">◩</button>
+  <button class="tool" id="bbFolderTool" title="Xóa nền hàng loạt cả thư mục: chọn thư mục ảnh, ảnh đã tách (PNG nền trong suốt) được lưu vào một thư mục con nằm ngay trong thư mục đó">🗂</button>
   <button class="tool" data-tab="Kích thước" title="Đổi kích thước (phím S)">↔</button>
   <div class="tool-divider" data-dk="div-2"></div>
   <button class="tool" data-tab="Trung tâm AI" title="Trung tâm AI: quản lý mô hình, làm mờ hậu cảnh, bấm để tách vật">🤖</button>
@@ -471,6 +524,7 @@ details:not([open])>summary.col .st::before{content:"▸ "}
   <small id="resultSize" style="display:none">-</small>
 <div id="fvView" class="hidden">
     <div class="bar"><b>🎞 Khung xem frame</b><span id="fvInfo" style="color:var(--muted)">–</span><span style="flex:1"></span>
+      <div class="bgtool" title="Nền phía sau frame để kiểm tra ảnh đã tách (không ảnh hưởng file xuất)"><label class="check" style="margin:0"><input type="checkbox" id="fvBgOn">Nền</label><input type="color" id="fvBgCol" value="#00ff00" title="Kéo chọn màu nền"></div>
       <button class="small-btn" id="fvZm">−</button><button class="small-btn" id="fvZp">＋</button><button class="small-btn" id="fvFit">Vừa khung</button><button class="small-btn" id="fv100">100%</button>
       <button class="small-btn" id="fvX">✕ Đóng</button></div>
     <div id="fvBox"><canvas id="fvCv"></canvas></div>
@@ -486,15 +540,16 @@ details:not([open])>summary.col .st::before{content:"▸ "}
 </main>
 
 <aside class="properties">
+  <div id="mbHead"><b style="flex:1">Thuộc tính</b><button class="tb" id="mbBig" title="Cao / thấp">⤢</button><button class="tb" id="mbClose">✕ Đóng</button></div>
   <details>
     <summary><span class="st">Lớp ảnh (Layers)</span><button type="button" class="qm" title="Xem hướng dẫn">?</button></summary>
     <div class="qm-data" hidden><p class="help">Dùng công cụ ↖ (V): click lớp trên ảnh hoặc trong danh sách để chọn. Lớp bị che bên dưới: giữ Alt + click để chọn lớp nằm dưới (click tiếp để đi xuống nữa), phần trong suốt của lớp phía trên không chặn click. Vùng chọn, xóa nền, chỉnh màu, hiệu ứng, làm mờ, cắt, biến dạng... chỉ áp dụng cho lớp đang chọn (xem dòng "Đang sửa" ở thanh dưới). Kéo để di chuyển, kéo 8 ô vuông để đổi cỡ (ô góc giữ tỷ lệ), chấm tròn phía trên để xoay, Delete để xóa. Biểu tượng 🔗 nối nhiều lớp thành nhóm cùng di chuyển, lật, xoay 90°, cắt. Kéo thả nhiều file vào cửa sổ để thêm nhanh thành các lớp. Chữ luôn làm việc trên ảnh gốc. Nhân bản (chuột phải vào item hoặc Ctrl+D) tạo bản sao của item đang chọn: lớp, vùng chọn, chữ hoặc ảnh gốc.</p><p class="help"><b>Chọn nhiều lớp:</b> Ctrl + click vào lớp (trong danh sách hoặc trên ảnh) để thêm / bớt, Shift + click để chọn cả đoạn, Ctrl + A để chọn tất cả các lớp. Các lớp cùng chọn được kéo, đổi cỡ, xoay, lật, đổi độ mờ, nhân bản hoặc xóa đồng thời. <b>Group</b> (Ctrl+G) gộp các lớp đang chọn thành 1 lớp duy nhất (📁); <b>Ungroup</b> (Ctrl+Shift+G hoặc chuột phải) trả các lớp về như cũ; nhấn ▸ để xem các lớp trong nhóm và ⤴ để tách riêng từng lớp. Chuột phải để Nhân bản / Sao chép / Di chuyển / Xóa lớp, hoặc chuyển sang tab khác.</p></div>
     <div class="body">
-      <button class="small-btn" id="lyAdd" style="width:100%">＋ Chèn ảnh thành lớp mới</button>
       <input type="file" id="layerInput" accept="image/*" multiple hidden>
-      <div class="segment" id="lySortBar" style="margin-top:6px">
-        <button class="small-btn" id="lySortTime" title="Xếp theo thứ tự thêm vào: lần 1 lớp thêm sau nằm trên cùng, nhấn lần nữa thì đảo ngược">⏱ Thời gian</button>
-        <button class="small-btn" id="lySortName" title="Xếp theo tên A → Z từ trên xuống (nhấn lần nữa để Z → A)">🔤 Tên</button>
+      <div id="lySortBar" style="display:flex;gap:3px;margin-top:2px">
+        <button class="small-btn" id="lyAdd" style="flex:1.25 1 0;min-width:0;padding:5px 2px;font-size:10.5px;white-space:nowrap" title="Chèn ảnh thành lớp mới">＋ Chèn ảnh</button>
+        <button class="small-btn" id="lySortTime" style="flex:1.1 1 0;min-width:0;padding:5px 2px;font-size:10.5px;white-space:nowrap" title="Xếp theo thứ tự thêm vào: lần 1 lớp thêm sau nằm trên cùng, nhấn lần nữa thì đảo ngược">⏱ Thời gian</button>
+        <button class="small-btn" id="lySortName" style="flex:.8 1 0;min-width:0;padding:5px 2px;font-size:10.5px;white-space:nowrap" title="Xếp theo tên A → Z từ trên xuống (nhấn lần nữa để Z → A)">Aa Tên</button>
       </div>
       <div id="layerList" class="layers"></div>
       <div id="legacyLayerBtns" hidden>
@@ -556,6 +611,12 @@ details:not([open])>summary.col .st::before{content:"▸ "}
         <label class="check" style="margin:0"><input type="checkbox" id="stBgOn">Tô nền khe</label>
         <input type="color" id="stBg" value="#ffffff">
       </div>
+      <div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border)">
+        <b style="display:block">🧽 Xóa nền hàng loạt (trong suốt)</b>
+        <div class="bb-ui"></div>
+        <button class="small-btn" id="stBgGo" style="width:100%;margin-top:6px" title="Xóa nền tất cả lớp đang hiện (nếu có lớp bật 🔗 thì chỉ các lớp đó) bằng 1 lần bấm">🧽 Xóa nền tất cả lớp</button>
+        <p class="help" id="stBgInfo">Áp dụng cho các lớp đang hiện (nếu có lớp bật 🔗 thì chỉ các lớp đó). Nên xóa nền trước rồi mới bấm mũi tên ghép. Hoàn tác bằng Ctrl+Z.</p>
+      </div>
       <button class="small-btn" id="sfOpen" style="width:100%;margin-top:8px" title="Tách ảnh nhiều frame (sprite sheet) ra từng frame rồi xếp lại theo ý muốn">🧩 Tách &amp; xếp lại frame…</button>
     </div>
   </details>
@@ -574,9 +635,10 @@ details:not([open])>summary.col .st::before{content:"▸ "}
         <label class="prop-label">Màu bút</label>
         <input type="color" id="penColor" value="#ff3b30">
         <label class="prop-label" style="margin-top:6px">Cỡ bút (px)</label>
-        <input type="range" id="penSize" min="1" max="200" value="8">
+        <input type="range" id="penSize" min="1" max="400" value="8">
         <label class="prop-label" style="margin-top:6px">Độ đậm (%)</label>
-        <input type="range" id="penAlpha" min="5" max="100" value="100">
+        <input type="range" id="penAlpha" min="1" max="100" value="100">
+        <div id="pbBox"></div>
         <button class="small-btn" id="penNew" style="width:100%;margin-top:8px">Bắt đầu lớp vẽ mới</button>
       </div>
 
@@ -603,7 +665,7 @@ details:not([open])>summary.col .st::before{content:"▸ "}
         <label class="prop-label" style="margin-top:6px">Độ nhạy (vùng màu gần giống)</label>
         <input type="range" id="bkTol" min="0" max="100" value="25">
         <label class="prop-label" style="margin-top:6px">Độ đậm (%)</label>
-        <input type="range" id="bkAlpha" min="5" max="100" value="100">
+        <input type="range" id="bkAlpha" min="1" max="100" value="100">
       </div>
     </div>
   </details>
@@ -622,7 +684,7 @@ details:not([open])>summary.col .st::before{content:"▸ "}
         <label class="prop-label">Cỡ cọ (px)</label>
         <input type="range" id="erSize" min="1" max="300" value="30">
         <label class="prop-label" style="margin-top:6px">Độ mạnh (%)</label>
-        <input type="range" id="erAlpha" min="5" max="100" value="100">
+        <input type="range" id="erAlpha" min="1" max="100" value="100">
       </div>
       <div id="erOptsBg" class="hidden" style="margin-top:8px">
         <label class="prop-label">Độ nhạy màu (càng cao xóa càng nhiều màu gần giống)</label>
@@ -634,7 +696,7 @@ details:not([open])>summary.col .st::before{content:"▸ "}
         <label class="prop-label">Độ nhạy màu</label>
         <input type="range" id="meTol" min="0" max="100" value="25">
         <label class="prop-label" style="margin-top:6px">Độ mạnh (%)</label>
-        <input type="range" id="meStr" min="5" max="100" value="100">
+        <input type="range" id="meStr" min="1" max="100" value="100">
         <label class="prop-label" style="margin-top:6px">Mở rộng vùng xóa (px)</label>
         <input type="range" id="meGrow" min="0" max="6" value="0">
         <label class="check" style="margin-top:6px"><input type="checkbox" id="meCont" checked>Chỉ vùng liền nhau</label>
@@ -688,16 +750,36 @@ details:not([open])>summary.col .st::before{content:"▸ "}
       </div>
       <div id="autoOpts" style="margin-bottom:8px">
         <label class="prop-label">Tự tạo điểm chọn: độ nhạy</label>
-        <input type="range" id="apSens" min="10" max="200" value="100">
+        <input type="range" id="apSens" min="1" max="200" value="100">
         <label class="prop-label" style="margin-top:6px">Mức chi tiết (số điểm)</label>
         <input type="range" id="apDetail" min="1" max="10" value="7">
         <label class="check"><input type="checkbox" id="apSmooth">Làm mượt thành đường cong</label>
       </div>
-      <label class="check" title="Ảnh thường: chọn đến đâu lấy đến đó. Ảnh PNG có nền trong suốt: đường bao tự bám sát phần ảnh, bỏ phần trong suốt."><input type="checkbox" id="selHug" checked>PNG nền trong suốt: viền vùng chọn tự bám sát phần ảnh</label>
+      <label class="prop-label" style="margin-top:6px">Viền vùng chọn với ảnh PNG nền trong suốt</label>
+      <div class="segment" id="selHugSeg">
+        <button class="small-btn active" data-hug="1" title="Viền vùng chọn tự bám sát phần ảnh, bỏ phần trong suốt">🧲 Ôm sát ảnh</button>
+        <button class="small-btn" data-hug="0" title="Vùng chọn giữ đúng hình bạn vẽ, kể cả phần nằm ngoài ảnh / trên vùng trong suốt">⬚ Không ôm sát</button>
+      </div>
+      <input type="checkbox" id="selHug" checked hidden>
       <div class="segment">
         <button class="small-btn" id="selAll" title="Ctrl+A">Chọn tất cả</button>
         <button class="small-btn" id="selInvert" title="Ctrl+Shift+I">Đảo vùng chọn</button>
       </div>
+      <label class="prop-label" style="margin-top:8px">Tăng / giảm vùng chọn (px)</label>
+      <div style="display:flex;gap:4px;align-items:center">
+        <button class="small-btn" id="selShrink" style="flex:1" title="Thu nhỏ đều vùng chọn: đường kính / cạnh giảm đúng số px đã nhập">− Giảm</button>
+        <input type="number" id="selGrowN" value="1" min="0.1" step="0.5" style="width:58px" title="Số px mỗi lần bấm (phím [ ] cũng dùng số này)">
+        <button class="small-btn" id="selGrow" style="flex:1" title="Nở đều vùng chọn: đường kính / cạnh tăng đúng số px đã nhập">＋ Tăng</button>
+      </div>
+      <p class="help">Vùng chọn nở / co đều mọi phía (hình tròn 200 px bấm Tăng 1 → 201 px, Giảm 1 → 199 px; mỗi cạnh dịch nửa số px). Muốn mỗi cạnh dịch 1 px thì nhập 2. Vẫn áp dụng cho vùng chọn đã Đảo.</p>
+      <label class="prop-label" style="margin-top:10px">Vẽ nét theo viền vùng chọn</label>
+      <div class="segment" id="selStrokePos">
+        <button class="small-btn" data-sp="in" title="Nét nằm hoàn toàn bên trong viền chọn">Trong</button>
+        <button class="small-btn active" data-sp="mid" title="Nét nằm giữa viền chọn (một nửa trong, một nửa ngoài)">Giữa</button>
+        <button class="small-btn" data-sp="out" title="Nét nằm hoàn toàn bên ngoài viền chọn">Ngoài</button>
+      </div>
+      <button class="small-btn" id="selStrokeBtn" style="width:100%;margin-top:6px" title="Vẽ nét chạy dọc viền vùng chọn (giống Edit > Stroke trong Photoshop)">✏ Vẽ nét theo viền chọn</button>
+      <p class="help">Dùng màu, cỡ bút, độ đậm và kiểu nét đang chọn ở tab Vẽ (kể cả kiểu hạt như ngôi sao, cỏ, ảnh của bạn). Nét nằm trong lớp "Nét vẽ" riêng; Ctrl+Z hoàn tác một lần là mất cả nét.</p>
       <p class="help" style="margin-top:8px">Chế độ Mới / Thêm / Trừ / Giao và Feather nằm trên thanh phía trên khung ảnh. Vùng chọn không còn cắt ảnh: nó chỉ tạo đường viền để các chức năng khác dùng (Delete = xóa phần ảnh trong vùng, nút Vá vùng hỏng).</p>
     </div>
   </details>
@@ -726,9 +808,9 @@ details:not([open])>summary.col .st::before{content:"▸ "}
         <button class="small-btn" id="wLiquify">≋ Liquify</button>
       </div>
       <label class="prop-label">Cỡ cọ / phạm vi ảnh hưởng: <span id="wRadT">80</span> px</label>
-      <input type="range" id="wRad" min="10" max="400" value="80">
+      <input type="range" id="wRad" min="1" max="400" value="80">
       <label class="prop-label" style="margin-top:6px">Lực đẩy (Liquify): <span id="wStrT">60</span>%</label>
-      <input type="range" id="wStr" min="5" max="100" value="60">
+      <input type="range" id="wStr" min="1" max="100" value="60">
       <div class="segment" style="margin-top:8px">
         <button class="small-btn" id="wApply">Áp dụng</button>
         <button class="small-btn" id="wCancel">Hủy</button>
@@ -736,6 +818,63 @@ details:not([open])>summary.col .st::before{content:"▸ "}
       <div class="segment" style="margin-top:4px">
         <button class="small-btn" id="wClear">Xóa ghim</button>
         <button class="small-btn" id="wReset">Ảnh gốc</button>
+      </div>
+    </div>
+  </details>
+
+  <details>
+    <summary><span class="st">Nhân bản</span><button type="button" class="qm" title="Xem hướng dẫn">?</button></summary>
+    <div class="qm-data" hidden><p class="help"><b>Lặp biến đổi</b> (Ctrl+Alt+Shift+T): Ctrl+D nhân bản lớp, di chuyển / xoay / đổi cỡ bản sao, rồi bấm nút để tạo tiếp các lớp theo đúng phép biến đổi giữa lớp đang chọn và lớp nằm ngay bên dưới nó.</p><p class="help"><b>Hiệu ứng</b>: chọn lớp gốc, nhập số lượng bản sao và kiểu sắp xếp (vòng tròn 360°, xếp ngang, xếp dọc, lưới, xoắn ốc, quạt...). Các bản sao là lớp riêng, được chọn sẵn để bạn có thể Group (Ctrl+G) hoặc xoay / kéo cả cụm. Ctrl+Z để hoàn tác. Khi còn ở chế độ Thông số + hiệu ứng, chọn 1 bản trong dãy rồi xoay / lật / dời / đổi cỡ / đổi màu / vẽ thêm thì cả dãy đổi theo (bỏ tích «Đồng bộ cả dãy» hoặc bấm «Kết thúc đồng bộ» để tắt).</p></div>
+    <div class="body">
+      <div class="segment" id="dpMode">
+        <button class="small-btn active" data-dpmode="repeat" title="Nhân bản + lặp lại phép biến đổi của lớp trước">⟳ Lặp biến đổi</button>
+        <button class="small-btn" data-dpmode="fx" title="Nhân bản theo số lượng, thông số và hiệu ứng sắp xếp">✦ Thông số + hiệu ứng</button>
+      </div>
+      <div id="dpRepeatBox">
+        <div id="dpDiff" class="help" style="margin-top:8px;color:#e8c46a"></div>
+        <div style="display:flex;gap:4px;align-items:center;margin-top:8px">
+          <button class="small-btn" id="lyRepeat" style="flex:1" title="Lớp B nằm trên lớp A (A là lớp ngay bên dưới B) và đã dời / xoay / đổi cỡ so với A. Bấm: tạo lớp C so với B đúng như B so với A, bấm tiếp: D so với C... (phím tắt Ctrl+Alt+Shift+T hoặc Ctrl+Alt+D)">⟳ Nhân bản + lặp biến đổi</button>
+          <input type="number" id="lyRepeatN" value="1" min="1" max="200" style="width:46px" title="Số lớp tạo ra mỗi lần bấm">
+        </div>
+        <p class="help">Chọn lớp bản sao (đã dời / xoay / đổi cỡ so với lớp nằm ngay bên dưới nó trong bảng Lớp), xem dòng vàng "Khác nhau" ở trên, rồi bấm nút: lớp mới (xếp ngay trên lớp hiện tại) sẽ khác lớp hiện tại đúng bằng chừng đó. Ô bên phải là số lớp tạo ra mỗi lần bấm.</p>
+      </div>
+      <div id="dpFxBox" class="hidden">
+        <label class="prop-label" style="margin-top:8px">Số lượng nhân bản</label>
+        <input type="number" id="dpN" value="8" min="1" max="200" style="width:100%">
+        <label class="prop-label" style="margin-top:6px">Hiệu ứng</label>
+        <select id="dpFx" style="width:100%">
+          <option value="circle">⭕ Vòng tròn 360°</option>
+          <option value="h">⇉ Xếp ngang</option>
+          <option value="v">⇊ Xếp dọc</option>
+          <option value="diag">⬊ Xếp chéo</option>
+          <option value="grid">▦ Lưới (cột × hàng)</option>
+          <option value="spiral">🌀 Xoắn ốc</option>
+          <option value="fan">🪭 Xòe quạt</option>
+          <option value="wave">〰 Lượn sóng</option>
+          <option value="stack">◎ Chồng lớp (thu nhỏ / xoay dần)</option>
+          <option value="random">✧ Rải ngẫu nhiên</option>
+        </select>
+        <div data-fx="h v diag grid wave"><label class="prop-label" style="margin-top:6px">Khoảng cách (px, 0 = sát nhau)</label><input type="number" id="dpGap" value="0" min="0" style="width:100%"></div>
+        <div data-fx="grid"><label class="prop-label" style="margin-top:6px">Số cột</label><input type="number" id="dpCols" value="4" min="1" max="50" style="width:100%"></div>
+        <div data-fx="circle spiral random"><label class="prop-label" style="margin-top:6px">Bán kính (px, 0 = tự tính)</label><input type="number" id="dpRad" value="0" min="0" style="width:100%"></div>
+        <div data-fx="circle spiral fan"><label class="prop-label" style="margin-top:6px">Tổng góc (°)</label><input type="number" id="dpSweep" value="360" style="width:100%"></div>
+        <div data-fx="circle spiral"><label class="prop-label" style="margin-top:6px">Góc bắt đầu (°, −90 = phía trên)</label><input type="number" id="dpStart" value="-90" style="width:100%"></div>
+        <div data-fx="circle"><label class="prop-label" style="margin-top:6px">Vị trí bản gốc</label>
+          <select id="dpOrig" style="width:100%"><option value="on">Nằm trên vòng</option><option value="center">Ở tâm vòng (bản sao vây quanh)</option></select></div>
+        <div data-fx="circle spiral"><label class="check"><input type="checkbox" id="dpFace" checked>Xoay theo vòng (hướng ra ngoài)</label></div>
+        <div data-fx="wave"><label class="prop-label" style="margin-top:6px">Biên độ sóng (px, 0 = tự tính)</label><input type="number" id="dpAmp" value="0" min="0" style="width:100%"></div>
+        <label class="prop-label" style="margin-top:8px">Thêm cho mỗi bản kế tiếp:</label>
+        <div class="row2">
+          <div><label class="prop-label">Xoay (°)</label><input type="number" id="dpRot" value="0" style="width:100%"></div>
+          <div><label class="prop-label">Tỉ lệ (%)</label><input type="number" id="dpScale" value="100" min="5" max="300" style="width:100%"></div>
+        </div>
+        <label class="prop-label" style="margin-top:6px">Mờ dần mỗi bản (%)</label>
+        <input type="number" id="dpFade" value="0" min="0" max="50" style="width:100%">
+        <button class="small-btn" id="dpGo" style="width:100%;margin-top:8px" title="Tạo các bản sao từ lớp đang chọn">✦ Nhân bản</button>
+        <p class="help" id="dpHelp"></p>
+        <label class="check" style="margin-top:6px"><input type="checkbox" id="dpLive" checked>Đồng bộ cả dãy: sửa 1 bản (xoay, lật, dời, cỡ, độ mờ, đổi màu, vẽ thêm…) thì mọi bản đổi theo</label>
+        <p class="help" id="dpLiveInfo"></p>
+        <button class="small-btn" id="dpLiveEnd" style="width:100%" title="Cắt liên hệ giữa các bản sao: từ đó mỗi bản sửa riêng">⛓ Kết thúc đồng bộ dãy</button>
       </div>
     </div>
   </details>
@@ -894,19 +1033,18 @@ details:not([open])>summary.col .st::before{content:"▸ "}
 
       <button class="small-btn aibig" data-aipanel="avPanel">🎬 AI video · 🎙 âm thanh · 🧍 đổi nền ảnh ▾</button>
       <div id="avPanel" class="aipanel hidden">
-        <label class="prop-label">Màu nền mới (đổi nền ảnh / video) <input type="color" id="avColor" value="#00b140"></label>
+        <label class="prop-label">Màu nền mới (đổi nền ảnh) <input type="color" id="avColor" value="#00b140"></label>
         <b style="display:block;margin-top:8px">🧍 Ảnh</b>
         <button type="button" class="small-btn" id="avImgBtn" style="width:100%;margin-top:4px">Đổi nền ảnh người (1 lần bấm)</button>
         <button type="button" class="small-btn" id="avImgTr" style="width:100%;margin-top:4px">Tách người → nền trong suốt</button>
-        <b style="display:block;margin-top:10px">🎬 Video (chọn file video, AI xử lý từng khung rồi lưu WebM)</b>
-        <button type="button" class="small-btn" id="avVidBtn" style="width:100%;margin-top:4px">Tách người khỏi nền video (MODNet)</button>
+        <b style="display:block;margin-top:10px">🎬 Video (chọn file video, AI phóng to từng khung rồi lưu WebM)</b>
         <button type="button" class="small-btn" id="avVidSr" style="width:100%;margin-top:4px">Phóng to video ×2 bằng AI (Swin2SR)</button>
         <label class="prop-label" style="margin-top:4px">Khung hình/giây <input type="number" id="avFps" value="10" min="2" max="24" style="width:56px"> · cạnh dài tối đa <input type="number" id="avMax" value="480" min="160" max="960" step="80" style="width:64px"> px</label>
         <b style="display:block;margin-top:10px">🎙 Chép lời / phụ đề (Whisper, từ video hoặc âm thanh)</b>
         <select id="avLang" style="width:100%;margin-top:4px"><option value="">Tự nhận ngôn ngữ</option><option value="vietnamese">Tiếng Việt</option><option value="english">English</option><option value="chinese">中文</option><option value="japanese">日本語</option><option value="korean">한국어</option></select>
         <button type="button" class="small-btn" id="avAsr" style="width:100%;margin-top:4px">Chọn file → chép lời + tạo .srt</button>
         <textarea id="avTxt" rows="5" style="width:100%;margin-top:4px;font-size:11px" placeholder="Kết quả chép lời hiện ở đây"></textarea>
-        <p class="help" id="avInfo">Video chạy CPU nên chậm: thử clip ngắn trước. WebM không có nền trong suốt (chọn xanh lá để xóa phông tiếp). Chưa giữ âm thanh trong video xuất ra. Giữ tab mở khi đang chạy.</p>
+        <p class="help" id="avInfo">Video chạy CPU nên chậm: thử clip ngắn trước. Chưa giữ âm thanh trong video xuất ra. Giữ tab mở khi đang chạy.</p>
         <button type="button" class="small-btn hidden" id="avStop" style="width:100%">⏹ Dừng</button>
       </div>
       <button class="small-btn aibig" data-aipanel="mdPanel">⚙ Mô hình AI &amp; dùng offline ▾</button>
@@ -920,12 +1058,12 @@ details:not([open])>summary.col .st::before{content:"▸ "}
 
   <details>
     <summary><span class="st">Frame &amp; ảnh động</span><button type="button" class="qm" title="Xem hướng dẫn">?</button></summary>
-    <div class="qm-data" hidden><p class="help">Quy trình: ① nạp video hoặc ảnh nhiều frame → ② tách frame → ③ xem, phóng to, giới hạn đoạn xem, tick chọn → ④ chỉnh kích thước khung cả dãy → ⑤ sửa frame trong trình chỉnh sửa rồi cập nhật ngược vào dãy → ⑥ tạo GIF / WebM hoặc xuất PNG / ZIP / sprite sheet. Chạy offline.</p></div>
+    <div class="qm-data" hidden><p class="help">Quy trình: ① nạp video hoặc ảnh nhiều frame và tách frame → ② xem, phóng to, giới hạn đoạn xem, tick chọn → ③ chỉnh kích thước khung cả dãy → ④ xóa nền hàng loạt (có nền màu để kiểm tra) → ⑤ sửa frame trong trình chỉnh sửa rồi cập nhật ngược vào dãy → ⑥ tạo GIF / WebM hoặc xuất PNG / ZIP / sprite sheet. Bấm vào tiêu đề từng mục để thu gọn / mở rộng. Chạy offline.</p></div>
     <div class="body">
-      <span class="fvh first">① Nguồn</span>
+      <div class="fvsec fvblue"><div class="fvsh" role="button" tabindex="0"><span class="ar">▾</span><span class="tt">① Nguồn &amp; tách frame</span><button type="button" class="fvpin" title="Ghim: mục này luôn mở. Không ghim: mở mục khác thì mục này tự đóng">📍</button></div><div class="fvsb">
       <div class="fvb2" style="margin-top:0"><button class="small-btn" id="fvPickVid">🎬 Chọn video…</button><button class="small-btn" id="fvPickImg">🖼 Ảnh nhiều frame…</button></div>
       <p class="help" id="fvSrc">Chưa chọn nguồn.</p>
-      <span class="fvh">② Tách frame</span>
+      
       <div id="fvVidSet">
         <div class="fvg">
           <label>Bắt đầu (giây)</label><input type="number" id="fvFrom" value="0" min="0" step="0.1">
@@ -948,13 +1086,15 @@ details:not([open])>summary.col .st::before{content:"▸ "}
         <button class="small-btn fvw" id="fvCutImg">✂ Cắt ảnh thành frame (chia đều theo kích thước)</button>
       </div>
       <p class="help" id="fvProg"></p><button class="small-btn fvw hidden" id="fvStop">⏹ Dừng</button>
-      <span class="fvh">③ Xem &amp; chọn frame</span>
+      </div></div>
+      <div class="fvsec fvdark shut"><div class="fvsh" role="button" tabindex="0"><span class="ar">▸</span><span class="tt">② Xem &amp; chọn frame</span><button type="button" class="fvpin" title="Ghim: mục này luôn mở. Không ghim: mở mục khác thì mục này tự đóng">📍</button></div><div class="fvsb">
       <button class="small-btn fvw" id="fvOpenView" style="margin-top:0">👁 Mở khung xem (phóng to, giới hạn đoạn xem)</button>
       <div class="fvb3"><button class="small-btn" id="fvAll">Chọn hết</button><button class="small-btn" id="fvNone">Bỏ chọn</button><button class="small-btn" id="fvInv">Đảo chọn</button></div>
       <div class="fvb2"><button class="small-btn" id="fvRange" title="Chỉ tick các frame nằm trong đoạn giới hạn xem">Chọn = đoạn xem</button><button class="small-btn" id="fvRev">⇄ Đảo thứ tự</button></div>
       <div class="fvb2"><button class="small-btn" id="fvDel">🗑 Xóa frame đã chọn</button><button class="small-btn" id="fvClear">Xóa tất cả</button></div>
       <p class="help" id="fvCount">Chưa có frame.</p>
-      <span class="fvh">④ Kích thước khung (cả dãy)</span>
+      </div></div>
+      <div class="fvsec fvblue shut"><div class="fvsh" role="button" tabindex="0"><span class="ar">▸</span><span class="tt">③ Kích thước khung (cả dãy)</span><button type="button" class="fvpin" title="Ghim: mục này luôn mở. Không ghim: mở mục khác thì mục này tự đóng">📍</button></div><div class="fvsb">
       <p class="help" id="fvSizeInfo" style="margin-top:0">Chưa có frame.</p>
       <div class="fvg">
         <label>Thêm chiều rộng (px)</label><input type="number" id="fvDW" value="0" step="2" title="Số dương: mở rộng, chia đều 2 bên. Số âm: cắt bớt đều 2 bên.">
@@ -966,15 +1106,26 @@ details:not([open])>summary.col .st::before{content:"▸ "}
       <button class="small-btn fvw" id="fvGrow">⤢ Mở rộng / thu hẹp khung (chia đều mỗi bên)</button>
       <div class="fvb2"><button class="small-btn" id="fvSync" title="Đưa mọi frame về cùng kích thước lớn nhất, nội dung căn giữa">≡ Đồng bộ cùng kích thước</button><button class="small-btn" id="fvUndoSz">↶ Hoàn tác kích thước</button></div>
       <p class="help">Ví dụ frame 1024×768, thêm rộng 50 → mỗi bên 25 px (số lẻ lệch 1 px). Số âm = cắt bớt. Dùng cho mọi frame trong dãy để không bị lệch cỡ.</p>
-      <span class="fvh">⑤ Sửa trong trình chỉnh sửa</span>
+      </div></div>
+      <div class="fvsec fvdark shut"><div class="fvsh" role="button" tabindex="0"><span class="ar">▸</span><span class="tt">④ Xóa nền (trong suốt)</span><button type="button" class="fvpin" title="Ghim: mục này luôn mở. Không ghim: mở mục khác thì mục này tự đóng">📍</button></div><div class="fvsb">
+      <div class="bb-ui"></div>
+      <div class="fvg"><label>Áp dụng cho</label><select id="fvBgScope"><option value="all">Tất cả frame</option><option value="sel">Frame đã chọn</option></select></div>
+      <button class="small-btn fvw" id="fvBgGo" title="Xóa nền (trong suốt) toàn bộ frame bằng 1 lần bấm">🧽 Xóa nền hàng loạt</button>
+      <button class="small-btn fvw" id="fvBgUndo">↶ Hoàn tác xóa nền</button>
+      <p class="help">Xuất PNG (ZIP) / sprite sheet / GIF sau bước này sẽ giữ nền trong suốt.</p>
+      <div class="fvg" style="margin-top:8px"><label>Nền kiểm tra</label><span style="display:flex;gap:10px;align-items:center"><label class="check" style="margin:0"><input type="checkbox" id="fvBgOn2">Hiện nền</label><input type="color" id="fvBgCol2" value="#00ff00" title="Kéo chọn màu nền" style="width:44px;height:26px;padding:0;cursor:pointer"></span></div>
+      <p class="help">Chỉ để xem, không ảnh hưởng file xuất.</p></div></div>
+      <div class="fvsec fvblue shut"><div class="fvsh" role="button" tabindex="0"><span class="ar">▸</span><span class="tt">⑤ Sửa trong trình chỉnh sửa</span><button type="button" class="fvpin" title="Ghim: mục này luôn mở. Không ghim: mở mục khác thì mục này tự đóng">📍</button></div><div class="fvsb">
       <div class="fvb2" style="margin-top:0"><button class="small-btn" id="fvEdit1" title="Mở frame đang xem thành một tab ảnh để sửa">✏ Sửa frame đang xem</button><button class="small-btn" id="fvEditSel" title="Ghép các frame đã chọn thành 1 ảnh để sửa cùng lúc (ví dụ xóa nền hàng loạt)">✏ Sửa các frame đã chọn</button></div>
       <button class="small-btn fvw hidden" id="fvBack2">⤴ Cập nhật bản đã sửa vào dãy frame</button>
       <p class="help" id="fvEditInfo">Frame được mở ở tab ảnh mới. Sửa xong bấm ⤴ (ở đây hoặc trên thanh trên) để cập nhật lại vào dãy.</p>
-      <span class="fvh">⑥ Tạo ảnh động / xuất</span>
+      </div></div>
+      <div class="fvsec fvdark shut"><div class="fvsh" role="button" tabindex="0"><span class="ar">▸</span><span class="tt">⑥ Tạo ảnh động / xuất</span><button type="button" class="fvpin" title="Ghim: mục này luôn mở. Không ghim: mở mục khác thì mục này tự đóng">📍</button></div><div class="fvsb">
       <div class="fvg"><label>Mỗi frame (ms)</label><input type="number" id="fvMs" value="100" min="20" max="60000" step="10"></div>
       <button class="small-btn fvw" id="fvAnim">🎞 Tạo ảnh động GIF / WebM…</button>
       <div class="fvb2"><button class="small-btn" id="fvZip">↓ PNG (ZIP)</button><button class="small-btn" id="fvSheet">↓ Sprite sheet</button></div>
       <button class="small-btn fvw" id="fvToEd">↗ Mở sprite sheet trong trình chỉnh sửa</button>
+      </div></div>
       <input type="file" id="fvFileV" accept="video/*" hidden><input type="file" id="fvFileI" accept="image/*" hidden>
     </div>
   </details>
@@ -1027,7 +1178,7 @@ details:not([open])>summary.col .st::before{content:"▸ "}
       </div>
       <label class="check"><input type="checkbox" id="tGrad">Chuyển sắc từ trên xuống</label>
       <label class="prop-label">Độ đậm nhạt: chữ</label>
-      <input type="range" id="tAlpha" min="5" max="100" value="100">
+      <input type="range" id="tAlpha" min="1" max="100" value="100">
       <div class="row2" style="margin-top:8px">
         <div><label class="prop-label">Viền chữ</label><input type="range" id="tStrokeW" min="0" max="30" value="0"></div>
         <div><label class="prop-label">Màu viền</label><input type="color" id="tStrokeColor" value="#000000"></div>
@@ -1139,6 +1290,11 @@ details:not([open])>summary.col .st::before{content:"▸ "}
         <label class="check"><input type="checkbox" id="sfSkip" checked>Bỏ ô trống (lưới / ô cố định / tab Ghép)</label>
         <label class="check"><input type="checkbox" id="sfTrim">Thu gọn khung sát phần có hình</label>
         <button class="small-btn" id="sfRedo" style="width:100%">↻ Tách lại</button>
+        <details style="margin-top:6px"><summary style="cursor:pointer">🧽 Xóa nền hàng loạt các frame</summary>
+          <div class="bb-ui"></div>
+          <div class="row2" style="margin-top:6px"><button class="small-btn" id="sfBgGo" title="Xóa nền (trong suốt) từng frame trên ảnh nguồn">🧽 Xóa nền tất cả frame</button><button class="small-btn" id="sfBgUndo">↶ Hoàn tác</button></div>
+          <div class="help" id="sfBgInfo">Làm xong rồi bấm «Tạo tab mới» hoặc ↓ PNG.</div>
+        </details>
         <div class="help" id="sfInfo">—</div>
       </div>
 
@@ -1325,7 +1481,21 @@ details:not([open])>summary.col .st::before{content:"▸ "}
           <option value="image/png">PNG</option>
           <option value="image/webp">WebP</option>
           <option value="image/jpeg">JPG</option>
+          <option value="image/x-icon">ICO (icon Windows)</option>
         </select>
+      </div>
+      <div class="field hidden" id="icoOpts">
+        <label class="prop-label">Các cỡ icon chứa trong file .ico</label>
+        <div style="display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:4px">
+          <label class="check" style="margin:0"><input type="checkbox" value="16" checked>16</label>
+          <label class="check" style="margin:0"><input type="checkbox" value="24">24</label>
+          <label class="check" style="margin:0"><input type="checkbox" value="32" checked>32</label>
+          <label class="check" style="margin:0"><input type="checkbox" value="48" checked>48</label>
+          <label class="check" style="margin:0"><input type="checkbox" value="64">64</label>
+          <label class="check" style="margin:0"><input type="checkbox" value="128">128</label>
+          <label class="check" style="margin:0"><input type="checkbox" value="256" checked>256</label>
+        </div>
+        <p class="help">Ảnh không vuông được căn giữa, phần thừa trong suốt. Nên cắt vuông / tách nền trước khi lưu.</p>
       </div>
       <div class="field">
         <label class="prop-label">Chất lượng <span id="qualityText">85%</span></label>
@@ -1404,6 +1574,22 @@ details:not([open])>summary.col .st::before{content:"▸ "}
       <p class="help" id="aiInfo"></p>
     </div>
     <div class="foot"><button class="tb" id="aiStop">Dừng</button></div>
+  </div>
+</div>
+
+<!-- HỘP THOẠI XÓA NỀN HÀNG LOẠT CẢ THƯ MỤC -->
+<div class="modal hidden" id="bbFolderModal">
+  <div class="dialog" style="width:460px">
+    <h3>🗂 Xóa nền hàng loạt cả thư mục</h3>
+    <div class="body">
+      <p class="help" style="margin-top:0">Bấm «Chọn thư mục và bắt đầu», chọn thư mục đang chứa ảnh. Từng ảnh được xóa nền rồi lưu thành PNG nền trong suốt vào một thư mục con nằm ngay trong thư mục đã chọn. Ảnh gốc không bị đụng tới.</p>
+      <div class="bb-ui"></div>
+      <label class="prop-label" style="margin-top:8px">Tên thư mục con chứa ảnh đã tách</label>
+      <input type="text" id="bbFolderName" value="da_tach_nen" style="width:100%">
+      <p class="help" id="bbFolderInfo"></p>
+      <input type="file" id="bbDirInput" webkitdirectory multiple hidden>
+    </div>
+    <div class="foot"><button class="tb primary" id="bbFolderGo">📂 Chọn thư mục và bắt đầu</button><button class="tb" id="bbFolderClose">Đóng</button></div>
   </div>
 </div>
 
@@ -1564,6 +1750,7 @@ const $=id=>document.getElementById(id);
 let img=null,file=null,sourceURL=null,resultURL=null,resultBlob=null;
 let tool="select",defMode="keep",showOutline=true,lastCropRatio="1";
 var tEditing=false,tInline=null,textCtx=null;
+let rotHud=null;   // {cx,cy,a0,arc,px,py,label}: hiển thị góc đang xoay so với vị trí ban đầu
 let cloneSrc=null,cloneSrcLayer=-2,cloneOff=null,cloneDraw=null,cloneHover=null;
 let freePts=[],freeDrawing=false,freeFar=false,freeOp="new",freeHover=null;
 let selOp="new",selAnt=0,drawOp="new",drawShift0=false,drawShiftOff=false,edgeKey="",edgePts=null,edgeSc=1;
@@ -1585,7 +1772,7 @@ const hc=document.createElement("canvas").getContext("2d");
 const canvas=$("selectionCanvas");
 const pen=canvas.getContext("2d");
 const COLORS={keep:"#35c46a",remove:"#ef5350"};
-const EXT={"image/png":"png","image/jpeg":"jpg","image/webp":"webp"};
+const EXT={"image/png":"png","image/jpeg":"jpg","image/webp":"webp","image/x-icon":"ico"};
 
 var statusLog=[],toastTimer=null;
 function status(s){
@@ -1633,9 +1820,9 @@ const isEraser=t=>ERASERS.includes(t);
 const isBrushTool=t=>t==="pen"||t==="erase"||t==="bgerase"||t==="restore";
 const TOOL_TAB={select:"Lớp ảnh",rect:"Vùng chọn",ellipse:"Vùng chọn",lasso:"Vùng chọn",poly:"Vùng chọn",autopoly:"Vùng chọn",pen:"Vẽ",shape:"Vẽ",bucket:"Vẽ",erase:"Tẩy",bgerase:"Tẩy",magicerase:"Tẩy",restore:"Tẩy",puppet:"Biến dạng",liquify:"Biến dạng",crop:"Cắt ảnh",text:"Chữ"};
 // Mở tab bên phải tương ứng và kéo lên đầu khung
-const TAB_KEYS=["Ghép ảnh","Vẽ","Tẩy","Xóa nền","Vùng chọn","Cắt ảnh","Biến dạng","Xoay / Lật","Hiệu ứng","Làm mờ","Chuyển đổi màu","Nâng cấp","Trung tâm AI","Frame","Kích thước","Chữ"];
+const TAB_KEYS=["Ghép ảnh","Nhân bản","Vẽ","Tẩy","Xóa nền","Vùng chọn","Cắt ảnh","Biến dạng","Xoay / Lật","Hiệu ứng","Làm mờ","Chuyển đổi màu","Nâng cấp","Trung tâm AI","Frame","Kích thước","Chữ"];
 // pinnedTabs: tab đã ghim (luôn hiện). looseTabs: tab chưa ghim nhưng đang hiện (sẽ ẩn khi mở tab khác)
-let pinnedTabs=new Set(),looseTabs=new Set();
+let pinnedTabs=new Set(),looseTabs=new Set(),frameMode=false;   // frameMode: đang ở tab Frame => ẩn Lớp ảnh + Các bước thực hiện
 function tabEl(key){return [...document.querySelectorAll(".properties details")].find(x=>x.querySelector(".st").textContent.trim().startsWith(key))}
 // Lớp ảnh luôn hiện; các tab chưa ghim nằm ngay dưới Lớp ảnh, rồi đến các tab đã ghim theo thứ tự menu
 function refreshTabs(){
@@ -1645,7 +1832,8 @@ function refreshTabs(){
     d.classList.toggle("hidden",!(pinnedTabs.has(k)||looseTabs.has(k)));
     const pb=d.querySelector(".pin");if(pb)pb.classList.toggle("on",pinnedTabs.has(k));
   });
-  const hpE=$("histPanel");if(hpE)lay.after(hpE);      // khung "Các bước thực hiện" luôn nằm ngay dưới khung Lớp ảnh
+  const hpE=$("histPanel");if(hpE)lay.after(hpE);
+  lay.classList.toggle("hidden",frameMode);if(hpE)hpE.classList.toggle("hidden",frameMode);      // khung "Các bước thực hiện" luôn nằm ngay dưới khung Lớp ảnh
   let anchor=hpE||lay;
   const place=d=>{anchor.after(d);anchor=d};
   looseTabs.forEach(k=>{if(!pinnedTabs.has(k))place(tabEl(k))});
@@ -1655,8 +1843,9 @@ function refreshTabs(){
 }
 function openTab(key){
   const lay=tabEl("Lớp ảnh");
-  if(key==="Lớp ảnh"){lay.scrollIntoView({block:"start"});return}
+  if(key==="Lớp ảnh"){if(frameMode){frameMode=false;refreshTabs()}lay.scrollIntoView({block:"start"});return}
   if(!TAB_KEYS.includes(key))return;
+  frameMode=(key==="Frame");
   looseTabs=new Set(pinnedTabs.has(key)?[]:[key]);      // mở tab mới thì các tab chưa ghim cũ bị ẩn
   refreshTabs();
   const d=tabEl(key);d.open=true;
@@ -2382,8 +2571,8 @@ $("saveOk").onclick=async()=>{
   $("saveModal").classList.add("hidden");
   try{
     status("Đang xử lý ảnh...");
-    const r=await process(type);
-    showResult(r);const blob=r.blob;
+    const r=type==="image/x-icon"?await pbMakeIco():await process(type);
+    if(type!=="image/x-icon")showResult(r);const blob=r.blob;
     let wrote=false;
     if(handle){
       try{
@@ -2661,7 +2850,11 @@ function baseThumb(){
   return baseThumbURL;
 }
 var layerSeqN=0,lySortLast="";
-function ensureLayerSeq(){layers.forEach(l=>{if(l.seq==null)l.seq=++layerSeqN;else if(l.seq>layerSeqN)layerSeqN=l.seq})}
+function ensureLayerSeq(){
+  const seen=new Set();
+  layers.forEach(l=>{if(l.seq!=null&&l.seq>layerSeqN)layerSeqN=l.seq});
+  layers.forEach(l=>{if(l.seq==null||seen.has(l.seq))l.seq=++layerSeqN;seen.add(l.seq)});   // bản sao (spread) kế thừa seq của bản gốc -> cấp số mới
+}
 // Xếp lại thứ tự (z-order) các lớp. mode: "time" | "name" | "rev". Nền giữ nguyên vị trí trong chồng lớp.
 function sortLayers(mode){
   if(layers.length<2){status("Cần ít nhất 2 lớp để sắp xếp.");return}
@@ -2898,8 +3091,10 @@ canvas.addEventListener("pointermove",e=>{
   let G,P;
   if(m==="rot"){
     const cx=(b.x0+b.x1)/2,cy=(b.y0+b.y1)/2;
-    let d=Math.atan2(p.y-cy,p.x-cx)-Math.atan2(mdrag.start.y-cy,mdrag.start.x-cx);
+    const aNow=Math.atan2(p.y-cy,p.x-cx),a0=Math.atan2(mdrag.start.y-cy,mdrag.start.x-cx);
+    let d=aNow-a0;
     if(e.shiftKey)d=Math.round(d/D2R/15)*15*D2R;
+    setRotHud(mdrag,aNow,a0,d/D2R,cx,cy,p,"cả cụm "+mdrag.orig.length+" lớp");
     const c=Math.cos(d),sn=Math.sin(d);G=[[c,-sn],[sn,c]];P={x:cx,y:cy};
   }else{
     const bw=Math.max(1,b.x1-b.x0),bh=Math.max(1,b.y1-b.y0);
@@ -2915,7 +3110,7 @@ canvas.addEventListener("pointermove",e=>{
 });
 function msEnd(){
   if(!mdrag)return;
-  const d=mdrag;mdrag=null;layerVer++;
+  const d=mdrag;mdrag=null;layerVer++;if(rotHud){rotHud=null;drawSelection()}
   if(d.moved&&d.mode!=="rot")d.orig.forEach(o=>{if(o.l.shape)reRaster(o.l)});
   scheduleLive();
 }
@@ -2954,7 +3149,7 @@ $("lyDup").onclick=()=>{
   saveActive();
   const ni=selLayer+1;
   if(ni<=baseZ)baseZ++;
-  layers.splice(ni,0,{...L,name:L.name+" (bản sao)",x:L.x+20,y:L.y+20,cache:null,st:JSON.parse(JSON.stringify(L.st)),el:(L.draw||L.shape)?copyCanvas(L.el):L.el,shape:L.shape?{...L.shape}:undefined});
+  layers.splice(ni,0,{...L,from:L,seq:null,name:L.name+" (bản sao)",x:L.x+20,y:L.y+20,cache:null,st:JSON.parse(JSON.stringify(L.st)),el:(L.draw||L.shape)?copyCanvas(L.el):L.el,shape:L.shape?{...L.shape}:undefined});
   selectItem(ni);layerChanged();
 };
 function startLayerDrag(mode,p){
@@ -3052,10 +3247,11 @@ canvas.addEventListener("pointermove",e=>{
     const dx=p.x-ldrag.start.x,dy=p.y-ldrag.start.y;
     ldrag.group.forEach(g=>{g.l.x=g.x+dx;g.l.y=g.y+dy});
   }else if(m==="rot"){
-    const cx=o.x+o.w/2,cy=o.y+o.h/2;
-    let deg=o.rot+(Math.atan2(p.y-cy,p.x-cx)-Math.atan2(ldrag.start.y-cy,ldrag.start.x-cx))/D2R;
+    const cx=o.x+o.w/2,cy=o.y+o.h/2,aNow=Math.atan2(p.y-cy,p.x-cx),a0=Math.atan2(ldrag.start.y-cy,ldrag.start.x-cx);
+    let deg=o.rot+(aNow-a0)/D2R;
     if(e.shiftKey)deg=Math.round(deg/15)*15;
     l.rot=((deg%360)+360)%360;
+    setRotHud(ldrag,aNow,a0,l.rot-o.rot,cx,cy,p,"góc lớp "+fmtDeg(l.rot));
   }else{
     const th=o.rot*D2R,cs=Math.cos(th),sn=Math.sin(th);
     const dx0=p.x-ldrag.start.x,dy0=p.y-ldrag.start.y;
@@ -3080,7 +3276,7 @@ canvas.addEventListener("pointermove",e=>{
 function layerEnd(){
   if(!ldrag)return;
   const m=ldrag.mode,l=layers[selLayer];
-  ldrag=null;layerVer++;
+  ldrag=null;layerVer++;if(rotHud){rotHud=null;drawSelection()}
   if(l&&l.shape&&m!=="move"&&m!=="rot")reRaster(l);   // vẽ lại hình theo kích thước mới cho nét viền không bị méo
   scheduleLive();
 }
@@ -3116,6 +3312,7 @@ function scaleRegion(r,rx,ry){
   const c=JSON.parse(JSON.stringify(r));
   if(c.type==="lasso")c.points.forEach(p=>{p.x*=rx;p.y*=ry});
   else{c.x*=rx;c.y*=ry;c.w*=rx;c.h*=ry}
+  if(c.gd)c.gd*=(rx+ry)/2;
   return c;
 }
 // Hệ số kích thước xuất so với ảnh mẫu (ảnh khác cỡ sẽ được co giãn cùng tỷ lệ)
@@ -3276,7 +3473,7 @@ $("batchBtn").onclick=()=>{
   $("bSummary").textContent=mainL
     ?"Mỗi ảnh trong thư mục sẽ thay vào đúng lớp ảnh mẫu và được xử lý như ảnh mẫu: thu/phóng cùng tỷ lệ, vùng chọn, xóa nền, màu, hiệu ứng, lớp khác, xoay/lật, chữ, crop khung. Các thao tác AI / Extract / biến dạng (Puppet Warp, Liquify) đã làm trực tiếp lên điểm ảnh của ảnh mẫu không áp dụng hàng loạt. Ảnh gốc không bị thay đổi."
     :"Mọi ảnh trong thư mục sẽ được xử lý theo đúng cài đặt hiện tại: vùng chọn, xóa nền, màu, hiệu ứng, lớp ảnh, xoay/lật, chữ, cắt ảnh và kích thước (theo tỷ lệ so với ảnh mẫu). Biến dạng (Puppet Warp, Liquify) của ảnh nền không áp dụng hàng loạt. Ảnh gốc không bị thay đổi.";
-  $("bFormat").value=$("saveFormat").value;
+  $("bFormat").value=$("saveFormat").value==="image/x-icon"?"image/png":$("saveFormat").value;
   $("bQuality").value=$("quality").value;$("bQualityT").textContent=$("bQuality").value+"%";
   $("bMaxKB").value=$("maxKB").value;
   bSrc=null;bDst=null;bFiles=null;bFolder="";bOutDir=null;bDone=false;
@@ -3899,7 +4096,7 @@ function duplicateSelected(){
       saveActive();const act=layers[selLayer],copies=[];
       ms.forEach(L=>{
         const ni=layers.indexOf(L)+1;if(ni<=baseZ)baseZ++;
-        const n={...L,name:L.name+" (bản sao)",x:L.x+20,y:L.y+20,cache:null,st:JSON.parse(JSON.stringify(L.st)),el:(L.draw||L.shape)?copyCanvas(L.el):L.el,shape:L.shape?{...L.shape}:undefined};
+        const n={...L,from:L,seq:null,name:L.name+" (bản sao)",x:L.x+20,y:L.y+20,cache:null,st:JSON.parse(JSON.stringify(L.st)),el:(L.draw||L.shape)?copyCanvas(L.el):L.el,shape:L.shape?{...L.shape}:undefined};
         layers.splice(ni,0,n);copies.push(n);
       });
       selLayer=layers.indexOf(act);
@@ -3923,6 +4120,364 @@ function duplicateSelected(){
   addLayerFromCanvas(toCanvas(img),"Ảnh gốc (bản sao)",24,24,sourceW,sourceH);
   status("Đã nhân bản ảnh gốc thành một lớp ảnh.");
 }
+/* ---------- Nhân bản + lặp lại biến đổi (Ctrl+Alt+Shift+T) ----------
+   Lớp A là lớp nằm ngay bên dưới lớp B trong bảng Lớp; B đã di chuyển / xoay / đổi cỡ so với A. Bấm phím tắt: tạo lớp C
+   (xếp ngay trên B) sao cho C so với B đúng như B so với A, và cứ thế tiếp (D so với C...). */
+
+/* Khung "ảo" của lớp: 4 góc (TL,TR,BR,BL) của ảnh gốc của lớp sau khi đã bị xoay / nghiêng / méo / phối cảnh bằng Biến đổi tự do.
+   L.vq lưu 4 góc đó theo tọa độ chuẩn hóa (0..1) trong khung lớp, nên vẫn đúng khi lớp bị dời / đổi cỡ / xoay tiếp.
+   Lớp thường (chưa biến đổi tự do) có khung = chính hình chữ nhật của lớp. */
+function frameQuad(l){
+  const vq=l.vq||[[0,0],[1,0],[1,1],[0,1]];
+  return vq.map(p=>layerToBase(l,(l.fx||1)*(p[0]-.5)*l.w,(l.fy||1)*(p[1]-.5)*l.h));
+}
+function quadMat(q){   // ma trận 3x3 (phép chiếu) đưa hình vuông đơn vị lên tứ giác q
+  const p0=q[0],p1=q[1],p2=q[2],p3=q[3];
+  const dx1=p1.x-p2.x,dx2=p3.x-p2.x,dx3=p0.x-p1.x+p2.x-p3.x,dy1=p1.y-p2.y,dy2=p3.y-p2.y,dy3=p0.y-p1.y+p2.y-p3.y;
+  let a,b,d,e,g=0,h=0;
+  if(Math.abs(dx3)<1e-9&&Math.abs(dy3)<1e-9){a=p1.x-p0.x;b=p3.x-p0.x;d=p1.y-p0.y;e=p3.y-p0.y}
+  else{
+    const den=(dx1*dy2-dx2*dy1)||1e-9;
+    g=(dx3*dy2-dx2*dy3)/den;h=(dx1*dy3-dx3*dy1)/den;
+    a=p1.x-p0.x+g*p1.x;b=p3.x-p0.x+h*p3.x;d=p1.y-p0.y+g*p1.y;e=p3.y-p0.y+h*p3.y;
+  }
+  return [a,b,p0.x,d,e,p0.y,g,h,1];
+}
+function m3mul(A,B){const R=[];for(let i=0;i<3;i++)for(let j=0;j<3;j++)R.push(A[i*3]*B[j]+A[i*3+1]*B[3+j]+A[i*3+2]*B[6+j]);return R}
+function m3inv(M){
+  const [a,b,c,d,e,f,g,h,i]=M,A=e*i-f*h,B=-(d*i-f*g),C=d*h-e*g,det=a*A+b*B+c*C;
+  if(!isFinite(det)||Math.abs(det)<1e-12)return null;
+  return [A/det,-(b*i-c*h)/det,(b*f-c*e)/det,B/det,(a*i-c*g)/det,-(a*f-c*d)/det,C/det,-(a*h-b*g)/det,(a*e-b*d)/det];
+}
+function m3pt(M,x,y){const w=M[6]*x+M[7]*y+M[8];return {x:(M[0]*x+M[1]*y+M[2])/w,y:(M[3]*x+M[4]*y+M[5])/w}}
+// C = T(B) với T là phép biến đổi (phép chiếu) đưa khung của A thành khung của B: dùng khi A hoặc B đã qua Biến đổi tự do.
+// Mỗi lớp được "nướng" luôn từ ẢNH GỐC (bakeSrc) qua tổng phép biến đổi, không nướng chồng lên ảnh đã nướng: nhờ vậy lớp thứ 20 sắc nét như lớp thứ 2.
+let repWhy="";
+function repeatBake(A,B){
+  repWhy="";
+  const qA=quadMat(frameQuad(A)),iHA=m3inv(qA);
+  if(!iHA){repWhy="Khung của lớp bên dưới bị méo / suy biến (4 góc thẳng hàng hoặc trùng nhau) nên không tính được phép biến đổi.";return null}
+  const T=m3mul(quadMat(frameQuad(B)),iHA);
+  const SO=(B.bakeSrc&&B.bakeSrc.el&&B.bakeSrc.ver===(B.ver||0))?B.bakeSrc:null;   // ảnh gốc còn dùng được (lớp chưa bị vẽ / sửa thêm)
+  const srcEl=SO?SO.el:B.el,snw=SO?SO.nw:B.nw,snh=SO?SO.nh:B.nh;
+  const Q0=SO?SO.q:[[0,0],[1,0],[1,1],[0,1]].map(a=>layerToBase(B,(B.fx||1)*(a[0]-.5)*B.w,(B.fy||1)*(a[1]-.5)*B.h));
+  const Q=Q0.map(p=>m3pt(T,p.x,p.y));
+  if(Q.some(q=>!isFinite(q.x)||!isFinite(q.y))){repWhy="Phép biến đổi đưa một góc ra vô cực (phép biến đổi có phối cảnh đang tụ về một điểm) nên dừng.";return null}
+  const H=quadMat(Q),N=16,P=[];let x0=1e18,y0=1e18,x1=-1e18,y1=-1e18;
+  for(let j=0;j<=N;j++){const r=[];for(let i=0;i<=N;i++){
+    const q=m3pt(H,i/N,j/N);
+    if(!isFinite(q.x)||!isFinite(q.y)){repWhy="Kết quả không tính được (số vô hạn) nên dừng.";return null}
+    r.push(q);x0=Math.min(x0,q.x);x1=Math.max(x1,q.x);y0=Math.min(y0,q.y);y1=Math.max(y1,q.y)}P.push(r)}
+  const lim=50*Math.max(sourceW,sourceH);
+  if(x1-x0>lim||y1-y0>lim||x1<-lim||x0>lim||y1<-lim||y0>lim){repWhy="Lớp mới quá lớn (hoặc nằm quá xa khung ảnh) nên dừng.";return null}
+  const bw=x1-x0,bh=y1-y0;if(bw<1||bh<1){repWhy="Lớp mới nhỏ hơn 1 px nên dừng.";return null}
+  const area=Math.abs((Q[0].x*Q[1].y-Q[1].x*Q[0].y)+(Q[1].x*Q[2].y-Q[2].x*Q[1].y)+(Q[2].x*Q[3].y-Q[3].x*Q[2].y)+(Q[3].x*Q[0].y-Q[0].x*Q[3].y))/2;
+  let sc=Math.max(.02,Math.min(Math.sqrt(snw*snh/Math.max(area,1e-6)),3));sc=Math.min(sc,4096/bw,4096/bh);
+  const out=document.createElement("canvas");out.width=Math.max(1,Math.ceil(bw*sc));out.height=Math.max(1,Math.ceil(bh*sc));
+  const c=out.getContext("2d");c.imageSmoothingQuality="high";c.setTransform(sc,0,0,sc,-x0*sc,-y0*sc);
+  const pad=.75/sc,t=(a,b)=>({x:a/N*snw,y:b/N*snh});
+  for(let j=0;j<N;j++)for(let i=0;i<N;i++){
+    ftxTri(c,srcEl,t(i,j),t(i+1,j),t(i+1,j+1),P[j][i],P[j][i+1],P[j+1][i+1],pad);
+    ftxTri(c,srcEl,t(i,j),t(i+1,j+1),t(i,j+1),P[j][i],P[j+1][i+1],P[j+1][i],pad);
+  }
+  const w=out.width/sc,h=out.height/sc;
+  const QC=frameQuad(B).map(q=>m3pt(T,q.x,q.y));
+  const nver=(B.ver||0)+1;
+  return {...B,from:B,seq:null,linked:false,cache:null,name:B.name.replace(/ \(bản sao\)$/,"")+" (bản sao)",
+    st:JSON.parse(JSON.stringify(B.st)),el:out,nw:out.width,nh:out.height,x:x0,y:y0,w,h,rot:0,fx:1,fy:1,shape:null,ver:nver,
+    bakeSrc:{el:srcEl,nw:snw,nh:snh,q:Q,ver:nver},
+    vq:QC.map(q=>[(q.x-x0)/w,(q.y-y0)/h])};
+}
+// Lớp "trước" của B = lớp nằm ngay bên dưới B trong bảng Lớp (không phải lớp được nhân bản trước đó theo thời gian)
+function repPrev(B){
+  const bi=layers.indexOf(B);
+  return bi>0?layers[bi-1]:null;
+}
+// Bước thêm cho độ mờ: lớp mới hơn lớp B đúng bằng B hơn A
+function repOp(n,A,B){
+  delete n.fxg;
+  const oa=A.opacity==null?1:A.opacity,ob=B.opacity==null?1:B.opacity;
+  if(Math.abs(ob-oa)>.005)n.opacity=Math.max(0,Math.min(1,ob+(ob-oa)));
+}
+// So sánh từng thông số giữa lớp trước A và lớp hiện tại B
+function repDiff(A,B){
+  const cA=layerCenter(A),cB=layerCenter(B);
+  let dr=B.rot-A.rot;while(dr>180)dr-=360;while(dr<=-180)dr+=360;
+  const oa=A.opacity==null?1:A.opacity,ob=B.opacity==null?1:B.opacity;
+  return {dx:cB.x-cA.x,dy:cB.y-cA.y,dr,sw:A.w>0?B.w/A.w:1,sh:A.h>0?B.h/A.h:1,flipX:(A.fx||1)!==(B.fx||1),flipY:(A.fy||1)!==(B.fy||1),dop:ob-oa};
+}
+let dpDiffTxt="";
+function dpDiffUpdate(){
+  const el=document.getElementById("dpDiff");if(!el)return;
+  let t;
+  const B=selKind==="layer"?layers[selLayer]:null,A=B?repPrev(B):null;
+  if(!B)t="Chưa chọn lớp ảnh.";
+  else if(!A)t="Lớp này nằm dưới cùng nên chưa có lớp bên dưới để so sánh. Hãy Ctrl+D nhân bản, chỉnh bản sao (nằm trên lớp gốc) rồi quay lại đây.";
+  else{
+    const d=repDiff(A,B),f=v=>(Math.round(v*10)/10)+"",parts=[];
+    if(Math.abs(d.dx)>.05||Math.abs(d.dy)>.05)parts.push("dời ("+f(d.dx)+", "+f(d.dy)+") px");
+    if(Math.abs(d.dr)>.05)parts.push("xoay "+(d.dr>0?"+":"")+f(d.dr)+"°");
+    if(Math.abs(d.sw-1)>.001||Math.abs(d.sh-1)>.001)parts.push("cỡ ×"+(Math.round(d.sw*1000)/1000)+(Math.abs(d.sw-d.sh)>.001?" / ×"+(Math.round(d.sh*1000)/1000):""));
+    if(d.flipX)parts.push("lật ngang");if(d.flipY)parts.push("lật dọc");
+    if(Math.abs(d.dop)>.005)parts.push("độ mờ "+(d.dop>0?"+":"")+Math.round(d.dop*100)+"%");
+    t="So với \""+A.name+"\": "+(parts.length?parts.join(" · "):"không khác gì (hãy dời / xoay / đổi cỡ lớp này trước)");
+  }
+  if(t!==dpDiffTxt){dpDiffTxt=t;el.textContent="Khác nhau: "+t}
+}
+function repeatDup(count){
+  if(!img||batchRunning)return;
+  count=Math.max(1,Math.min(200,Math.round(Number(count)||1)));
+  const B0=layers[selLayer];
+  if(selKind!=="layer"||!B0){status("Hãy chọn một lớp đã được nhân bản và di chuyển / xoay trước (Ctrl+D rồi chỉnh bản sao).");return}
+  commitWarp();saveActive();
+  const mat=L=>{const t=L.rot*D2R,cs=Math.cos(t),sn=Math.sin(t);return [[cs*L.fx*L.w,-sn*L.fy*L.h],[sn*L.fx*L.w,cs*L.fy*L.h]]};
+  let made=0,cur=B0,why="",stepRot=null;
+  for(let k=0;k<count;k++){
+    const B=cur,bi=layers.indexOf(B);if(bi<0)break;
+    const A=bi>0?layers[bi-1]:null;                 // lớp nằm ngay bên dưới B trong bảng Lớp
+    if(!A||A===B){why="Lớp này nằm dưới cùng nên chưa có lớp bên dưới để so sánh. Hãy Ctrl+D nhân bản, chỉnh bản sao (nằm trên lớp gốc) rồi nhấn lại.";break}
+    if(A.vq||B.vq){   // đã biến đổi tự do (xoay quanh tâm tùy chọn, nghiêng, méo, phối cảnh...)
+      const n=repeatBake(A,B);if(!n){why=repWhy||"Không tính được phép biến đổi giữa 2 lớp.";break}
+      const ni=bi+1;if(ni<=baseZ)baseZ++;
+      repOp(n,A,B);layers.splice(ni,0,n);cur=n;made++;continue;
+    }
+    if(stepRot===null){let d=B.rot-A.rot;while(d>180)d-=360;while(d<=-180)d+=360;stepRot=d}
+    const La=mat(A),Lb=mat(B),det=La[0][0]*La[1][1]-La[0][1]*La[1][0];
+    if(Math.abs(det)<1e-9){why="Không tính được phép biến đổi giữa 2 lớp.";break}
+    const iv=[[La[1][1]/det,-La[0][1]/det],[-La[1][0]/det,La[0][0]/det]];
+    const G=[[Lb[0][0]*iv[0][0]+Lb[0][1]*iv[1][0],Lb[0][0]*iv[0][1]+Lb[0][1]*iv[1][1]],
+             [Lb[1][0]*iv[0][0]+Lb[1][1]*iv[1][0],Lb[1][0]*iv[0][1]+Lb[1][1]*iv[1][1]]];
+    const cA=layerCenter(A),cB=layerCenter(B),ni=bi+1;
+    if(ni<=baseZ)baseZ++;
+    const n={...B,from:B,seq:null,linked:false,cache:null,name:B.name.replace(/ \(bản sao\)$/,"")+" (bản sao)",
+      st:JSON.parse(JSON.stringify(B.st)),el:(B.draw||B.shape)?copyCanvas(B.el):B.el,shape:B.shape?{...B.shape}:undefined};
+    layers.splice(ni,0,n);
+    applyAffine(n,G,cA,cB,{cx:cB.x,cy:cB.y,rot:B.rot,fx:B.fx,fy:B.fy,w:B.w,h:B.h});   // C = B + (B so với A)
+    repOp(n,A,B);
+    if(!(n.w>2.01&&n.h>2.01&&n.w<100000&&n.h<100000)){layers.splice(ni,1);if(ni<=baseZ)baseZ--;why=(n.w<=2.01||n.h<=2.01)?"Lớp mới đã thu nhỏ tới mức tối thiểu nên dừng lại (phép biến đổi đang thu nhỏ dần).":"Lớp mới quá lớn nên dừng lại (phép biến đổi đang phóng to dần).";break}
+    if(n.shape)reRaster(n);
+    cur=n;made++;
+  }
+  if(made){
+    selectItem(layers.indexOf(cur));selKind="layer";msel=new Set();stepLabel="Nhân bản + lặp biến đổi";
+    layerChanged();
+    status("Đã tạo "+made+" lớp mới theo cùng phép biến đổi giữa lớp đang chọn và lớp nằm ngay bên dưới nó. Bấm lại để tạo tiếp."+(why?" Dừng lại vì: "+why:"")+((stepRot!==null&&Math.abs(stepRot)>.05&&Math.abs(360/Math.abs(stepRot)-Math.round(360/Math.abs(stepRot)))<.05)?" Lưu ý: mỗi lần xoay "+(Math.round(stepRot*10)/10)+"° nên sau "+Math.round(360/Math.abs(stepRot))+" bản sẽ quay đủ vòng và trùng lên bản đầu.":""));
+  }else if(why)status(why);
+}
+$("lyRepeat").onclick=()=>repeatDup($("lyRepeatN").value);
+
+/* ---------- Hiển thị góc xoay so với vị trí ban đầu (khi kéo chấm xoay) ---------- */
+function fmtDeg(v,sign){let n=Math.round(v*10)/10;if(Math.abs(n)<.05)n=0;return (sign&&n>0?"+":"")+n.toFixed(1).replace(/\.0$/,"")+"°"}
+// d: đối tượng đang kéo (giữ góc lần trước để cộng dồn, không nhảy khi vượt ±180°); delta: góc đã áp dụng (độ, theo chiều kim đồng hồ là dương)
+function setRotHud(d,aNow,a0,delta,cx,cy,p,extra,prior){
+  if(d.hudLa===undefined){d.hudLa=aNow;d.hudCum=0}
+  else{let dd=aNow-d.hudLa;while(dd>Math.PI)dd-=2*Math.PI;while(dd<-Math.PI)dd+=2*Math.PI;d.hudCum+=dd;d.hudLa=aNow}
+  const cum=d.hudCum/D2R,d0=((delta%360)+360)%360;   // góc đã áp dụng có thể bị làm tròn (Shift) / quy về 0..360: chọn vòng gần chuyển động thật nhất
+  const base=d0>180?d0-360:d0,arc=base+360*Math.round((cum-base)/360);
+  const label=prior!==undefined?"Xoay "+fmtDeg(arc,true)+" lần này  ·  "+extra+" so với ban đầu":"Xoay "+fmtDeg(arc,true)+" so với ban đầu"+(extra?"  ·  "+extra:"");
+  rotHud={cx,cy,a0,arc,px:p.x,py:p.y,label};
+}
+function ftxTotAng(S){   // tổng góc đã xoay của khung biến đổi tự do so với lúc mới mở
+  const P=S.pts,R=S.rect0;if(!P||!R||P.length<2||R.length<2)return 0;
+  let a=Math.atan2(P[1].y-P[0].y,P[1].x-P[0].x)-Math.atan2(R[1].y-R[0].y,R[1].x-R[0].x);
+  a/=D2R;while(a>180)a-=360;while(a<=-180)a+=360;return a;
+}
+function drawRotHud(){
+  const H=rotHud;if(!H||!img)return;
+  const ir=imageRect(),k=ir.w/sourceW,cx=ir.x+H.cx*k,cy=ir.y+H.cy*k;
+  const R=Math.max(40,Math.hypot((H.px-H.cx)*k,(H.py-H.cy)*k)),a0=H.a0,a1=H.a0+H.arc*D2R,r2=Math.min(R*.5,70);
+  pen.save();pen.setLineDash([]);
+  const ray=(a,col,dash)=>{
+    pen.beginPath();pen.moveTo(cx,cy);pen.lineTo(cx+R*Math.cos(a),cy+R*Math.sin(a));
+    pen.setLineDash([]);pen.lineWidth=3;pen.strokeStyle="rgba(0,0,0,.55)";pen.stroke();
+    pen.setLineDash(dash?[6,4]:[]);pen.lineWidth=1.5;pen.strokeStyle=col;pen.stroke();pen.setLineDash([]);
+  };
+  pen.beginPath();pen.moveTo(cx,cy);pen.arc(cx,cy,r2,a0,a1,H.arc<0);pen.closePath();
+  pen.fillStyle="rgba(255,196,0,.22)";pen.fill();pen.lineWidth=1.5;pen.strokeStyle="#ffc400";pen.stroke();
+  ray(a0,"#fff",true);      // vị trí ban đầu (nét đứt)
+  ray(a1,"#ffc400",false);  // vị trí hiện tại
+  pen.beginPath();pen.arc(cx,cy,3.5,0,7);pen.fillStyle="#ffc400";pen.fill();pen.lineWidth=1;pen.strokeStyle="#000";pen.stroke();
+  pen.restore();
+  const mid=(a0+a1)/2;
+  sizeLabel(H.label,cx+(r2+10)*Math.cos(mid),cy+(r2+10)*Math.sin(mid)-9);
+}
+
+/* ---------- Nhân bản + thông số + hiệu ứng ---------- */
+const DP_HELP={
+  circle:"Các bản sao nằm đều trên một vòng tròn (360° = đủ một vòng). Bản gốc nằm trên vòng, hoặc ở tâm với các bản sao vây quanh.",
+  h:"Các bản sao xếp thành hàng ngang sang phải. Khoảng cách 0 = sát nhau.",
+  v:"Các bản sao xếp thành cột dọc đi xuống. Khoảng cách 0 = sát nhau.",
+  diag:"Các bản sao xếp chéo xuống bên phải.",
+  grid:"Các bản sao xếp thành lưới, tính từ bản gốc ở góc trên trái; nhập số cột.",
+  spiral:"Các bản sao xoay quanh bản gốc và xa dần như đường xoắn ốc. Tăng Tổng góc (vd 720) để nhiều vòng hơn.",
+  fan:"Các bản sao xoay quanh mép dưới của lớp gốc như xòe quạt / xòe bài. Tổng góc âm = xòe sang trái.",
+  wave:"Các bản sao xếp ngang và lên xuống theo hình sóng.",
+  stack:"Các bản sao chồng lên đúng vị trí gốc; dùng ô Xoay / Tỉ lệ / Mờ dần để tạo hiệu ứng đường hầm, hoa văn.",
+  random:"Các bản sao rải ngẫu nhiên quanh bản gốc, mỗi bản nghiêng một góc khác nhau."
+};
+const DP_PRESET={stack:{rot:10,scale:85,fade:0}};
+function dpSetMode(m){
+  const fx=m==="fx";
+  $("dpRepeatBox").classList.toggle("hidden",fx);$("dpFxBox").classList.toggle("hidden",!fx);
+  document.querySelectorAll("#dpMode [data-dpmode]").forEach(b=>b.classList.toggle("active",b.dataset.dpmode===m));
+  if(fx)dpSync();
+}
+function dpSync(){
+  const f=$("dpFx").value;
+  document.querySelectorAll("#dpFxBox [data-fx]").forEach(d=>d.classList.toggle("hidden",!d.dataset.fx.split(" ").includes(f)));
+  $("dpHelp").textContent=DP_HELP[f]||"";
+}
+document.querySelectorAll("#dpMode [data-dpmode]").forEach(b=>b.onclick=()=>dpSetMode(b.dataset.dpmode));
+$("dpFx").onchange=()=>{
+  const f=$("dpFx").value,pr=DP_PRESET[f]||{rot:0,scale:100,fade:0};
+  $("dpRot").value=pr.rot;$("dpScale").value=pr.scale;$("dpFade").value=pr.fade;
+  $("dpSweep").value=({circle:360,spiral:720,fan:90})[f]||$("dpSweep").value;
+  dpSync();
+};
+function dpNum(id,def,lo,hi){let v=Number($(id).value);if(!isFinite(v)||$(id).value==="")v=def;if(lo!==undefined)v=Math.max(lo,v);if(hi!==undefined)v=Math.min(hi,v);return v}
+function dpPlan(A,fx,N){   // trả về danh sách {cx,cy,dr,s} cho từng bản sao (k = 1..N), tính từ lớp gốc A
+  const P0=layerCenter(A),cs=layerCorners(A),xs=cs.map(q=>q.x),ys=cs.map(q=>q.y);
+  const bw=Math.max(1,Math.max(...xs)-Math.min(...xs)),bh=Math.max(1,Math.max(...ys)-Math.min(...ys)),big=Math.max(bw,bh);
+  const gap=dpNum("dpGap",0,0),rad=dpNum("dpRad",0,0),sweep=dpNum("dpSweep",360),start=dpNum("dpStart",-90)
+       ,cols=Math.round(dpNum("dpCols",4,1,50)),face=$("dpFace").checked,amp=dpNum("dpAmp",0,0);
+  const gx=gap>0?gap:bw,gy=gap>0?gap:bh,out=[];
+  for(let k=1;k<=N;k++){
+    let cx=P0.x,cy=P0.y,dr=0;
+    if(fx==="h")cx=P0.x+k*gx;
+    else if(fx==="v")cy=P0.y+k*gy;
+    else if(fx==="diag"){cx=P0.x+k*gx;cy=P0.y+k*gy}
+    else if(fx==="grid"){cx=P0.x+(k%cols)*gx;cy=P0.y+Math.floor(k/cols)*gy}
+    else if(fx==="circle"){
+      const R=rad>0?rad:Math.max(big*.6,big*.5/Math.sin(Math.PI/(N+1)));
+      if($("dpOrig").value==="center"){
+        const step=Math.abs(sweep)>=360?sweep/N:(N>1?sweep/(N-1):0),th=(start+(k-1)*step)*D2R;
+        cx=P0.x+R*Math.cos(th);cy=P0.y+R*Math.sin(th);dr=face?(k-1)*step:0;
+      }else{
+        const step=Math.abs(sweep)>=360?sweep/(N+1):sweep/N,th0=start*D2R,th=(start+k*step)*D2R;
+        const Cx=P0.x-R*Math.cos(th0),Cy=P0.y-R*Math.sin(th0);   // tâm vòng: bản gốc nằm đúng điểm đầu của vòng
+        cx=Cx+R*Math.cos(th);cy=Cy+R*Math.sin(th);dr=face?k*step:0;
+      }
+    }else if(fx==="spiral"){
+      const R=rad>0?rad:big*1.5,step=sweep/N,th=(start+k*step)*D2R,r=R*k/N;
+      cx=P0.x+r*Math.cos(th);cy=P0.y+r*Math.sin(th);dr=face?k*step:0;
+    }else if(fx==="fan"){
+      const step=sweep/N,ph=k*step,pv=layerToBase(A,0,A.h/2),t=ph*D2R,c=Math.cos(t),sn=Math.sin(t),vx=P0.x-pv.x,vy=P0.y-pv.y;
+      cx=pv.x+vx*c-vy*sn;cy=pv.y+vx*sn+vy*c;dr=ph;
+    }else if(fx==="wave"){
+      const a=amp>0?amp:bh*.6;cx=P0.x+k*gx;cy=P0.y+a*Math.sin(k*Math.PI/4);
+    }else if(fx==="random"){
+      const R=rad>0?rad:big*2,r=R*Math.sqrt(Math.random()),th=Math.random()*Math.PI*2;
+      cx=P0.x+r*Math.cos(th);cy=P0.y+r*Math.sin(th);dr=(Math.random()-.5)*60;
+    }
+    out.push({cx,cy,dr});
+  }
+  return out;
+}
+const DP_NAME={circle:"vòng tròn",h:"xếp ngang",v:"xếp dọc",diag:"xếp chéo",grid:"lưới",spiral:"xoắn ốc",fan:"xòe quạt",wave:"lượn sóng",stack:"chồng lớp",random:"rải ngẫu nhiên"};
+function fxDuplicate(){
+  if(!img||batchRunning)return;
+  const A=layers[selLayer];
+  if(selKind!=="layer"||!A){status("Hãy chọn một lớp ảnh (công cụ ↖) làm bản gốc rồi bấm Nhân bản.");return}
+  const fx=$("dpFx").value,N=Math.round(dpNum("dpN",8,1,200));
+  const er=dpNum("dpRot",0),sc=dpNum("dpScale",100,5,300)/100,fade=dpNum("dpFade",0,0,50)/100;
+  commitWarp();saveActive();
+  const plan=dpPlan(A,fx,N),made=[];let prev=A,skipped=0;
+  plan.forEach((t,i)=>{
+    const k=i+1,s=Math.pow(sc,k),w=A.w*s,h=A.h*s;
+    if(w<2||h<2||w>40000||h>40000){skipped++;return}
+    const pi=layers.indexOf(prev)+1;if(pi<=baseZ)baseZ++;
+    const n={...A,from:A,seq:null,linked:false,cache:null,name:A.name.replace(/ \((bản sao|hiệu ứng) ?\d*\)$/,"")+" (hiệu ứng "+k+")",
+      st:JSON.parse(JSON.stringify(A.st)),el:(A.draw||A.shape)?copyCanvas(A.el):A.el,shape:A.shape?{...A.shape}:undefined};
+    n.w=w;n.h=h;n.x=t.cx-w/2;n.y=t.cy-h/2;
+    n.rot=(((A.rot+t.dr+k*er)%360)+360)%360;
+    n.opacity=Math.max(0,Math.min(1,(A.opacity==null?1:A.opacity)*(1-k*fade)));
+    layers.splice(pi,0,n);
+    if(n.shape)reRaster(n);
+    made.push(n);prev=n;
+  });
+  if(!made.length){status("Không tạo được bản sao nào (kích thước quá nhỏ hoặc quá lớn). Hãy chỉnh lại Tỉ lệ.");return}
+  selLayer=layers.indexOf(A);
+  msel=new Set(made);selectItem(layers.indexOf(made[made.length-1]));selKind="layer";
+  stepLabel="Nhân bản + hiệu ứng "+DP_NAME[fx];
+  layerChanged();
+  fxStart(A,made);
+  status("Đã tạo "+made.length+" bản sao theo kiểu \""+DP_NAME[fx]+"\""+(skipped?" (bỏ "+skipped+" bản vì kích thước không hợp lệ)":"")+". Các bản sao đang được chọn chung: Ctrl+G để gộp nhóm. Chọn riêng 1 bản rồi sửa (xoay, lật, dời, đổi màu, vẽ thêm…) thì cả dãy đổi theo.");
+}
+$("dpGo").onclick=fxDuplicate;
+dpSync();
+/* ---------- Dãy bản sao "Thông số + hiệu ứng" ĐỒNG BỘ: còn ở chế độ này thì sửa 1 bản (xoay, lật, dời, cỡ, độ mờ, đổi màu, vẽ thêm...) cả dãy đổi theo ---------- */
+let fxLive=null,fxGid=0;
+const fxEq=(a,b)=>Math.abs(a-b)<1e-6;
+function fxCtrlOf(l){try{return JSON.stringify(l===layers[selLayer]?captureCtrl():((l.st&&l.st.ctrl)||DEFAULT_CTRL))}catch(_){return ""}}
+function fxState(l){const c=layerCenter(l);return {cx:c.x,cy:c.y,w:l.w,h:l.h,rot:l.rot||0,fx:l.fx||1,fy:l.fy||1,op:l.opacity==null?1:l.opacity,blend:l.blend||"",ver:l.ver||0,el:l.el,ctrl:fxCtrlOf(l)}}
+function fxMembers(){return fxLive?layers.filter(l=>l.fxg===fxLive.gid):[]}
+function fxActive(){const box=$("dpFxBox"),det=box&&box.closest("details");return !!(fxLive&&det&&det.open&&!box.classList.contains("hidden")&&$("dpLive").checked)}
+function fxRebase(){if(!fxLive)return;fxLive.base=new Map();fxMembers().forEach(l=>fxLive.base.set(l,fxState(l)));fxLive.sel=selLayer}
+function fxInfo(){
+  const el=$("dpLiveInfo");if(!el)return;
+  const n=fxLive?fxMembers().length:0;
+  el.textContent=!n?"Chưa có dãy nào đang đồng bộ. Bấm «Nhân bản» để tạo dãy mới.":("Dãy đang đồng bộ: "+n+" bản. "+(fxActive()?"Chọn 1 bản rồi sửa: cả dãy đổi theo.":"Đang tạm dừng (tắt đồng bộ, hoặc đang ở chế độ khác)."));
+}
+function fxStart(A,made){
+  if(fxLive)layers.forEach(l=>{if(l.fxg===fxLive.gid)delete l.fxg});
+  const gid=++fxGid;fxLive={gid,base:new Map(),sel:-2};
+  A.fxg=gid;made.forEach(n=>{n.fxg=gid});
+  fxRebase();fxInfo();
+}
+function fxCopyPix(M,o){
+  o.el=(M.el instanceof HTMLCanvasElement)?copyCanvas(M.el):M.el;
+  o.nw=M.nw;o.nh=M.nh;o.draw=M.draw;
+  o.shape=M.shape?cl(M.shape):M.shape;o.init=M.init?cl(M.init):M.init;o.vq=M.vq?cl(M.vq):M.vq;
+  if(M.origEl!==undefined)o.origEl=M.origEl;
+  o.ver=(o.ver||0)+1;o.cache=null;
+}
+function fxTick(){
+  if(!fxLive||!img||stepBusy||batchRunning)return;
+  const mem=fxMembers();
+  if(mem.length<2){if(!mem.length)fxLive=null;return}
+  if(selLayer!==fxLive.sel||!fxActive()){fxRebase();return}       // đổi lớp đang chọn / tạm dừng: chỉ ghi lại mốc, không lan
+  if(ftxSess||penDraw||cloneDraw||drawing||warpDirty)return;       // đang vẽ / biến đổi dở: đợi xong
+  const heavyOk=!(ptrDown&&Date.now()-ptrDown<20000);               // đổi màu / vẽ: đợi thả chuột mới lan cho nhẹ
+  const ch=[];
+  for(const l of mem){
+    const b=fxLive.base.get(l);if(!b){fxRebase();return}
+    const s=fxState(l);
+    if(!(fxEq(b.cx,s.cx)&&fxEq(b.cy,s.cy)&&fxEq(b.w,s.w)&&fxEq(b.h,s.h)&&fxEq(b.rot,s.rot)&&b.fx===s.fx&&b.fy===s.fy&&fxEq(b.op,s.op)&&b.blend===s.blend&&b.ver===s.ver&&b.el===s.el&&b.ctrl===s.ctrl))ch.push([l,b,s]);
+  }
+  if(!ch.length)return;
+  if(ch.length>1){fxRebase();return}                                // nhiều bản đổi cùng lúc (chọn cả cụm kéo): coi như đã đồng bộ sẵn
+  const [M,b,s]=ch[0],others=mem.filter(l=>l!==M);
+  let dr=s.rot-b.rot;while(dr>180)dr-=360;while(dr<=-180)dr+=360;
+  const flX=s.fx!==b.fx,flY=s.fy!==b.fy,rotCh=!fxEq(dr,0),sw=b.w>0?s.w/b.w:1,sh=b.h>0?s.h/b.h:1,scCh=!fxEq(sw,1)||!fxEq(sh,1);
+  const dx=s.cx-b.cx,dy=s.cy-b.cy,dop=s.op-b.op,blCh=s.blend!==b.blend;
+  const pixCh=heavyOk&&(s.ver!==b.ver||s.el!==b.el),colCh=heavyOk&&s.ctrl!==b.ctrl;
+  let did=false;
+  for(const o of others){
+    if(flX||flY){if(flX)o.fx*=-1;if(flY)o.fy*=-1;did=true}                                   // lật: mỗi bản lật tại chỗ
+    else if(rotCh){o.rot=(((o.rot+dr)%360)+360)%360;did=true}                                // xoay: mỗi bản xoay thêm đúng góc đó quanh tâm của nó
+    else if(scCh){const c=layerCenter(o);o.w=Math.max(1,o.w*sw);o.h=Math.max(1,o.h*sh);o.x=c.x-o.w/2;o.y=c.y-o.h/2;did=true}   // đổi cỡ theo cùng tỉ lệ, giữ tâm
+    else if(!fxEq(dx,0)||!fxEq(dy,0)){o.x+=dx;o.y+=dy;did=true}                              // dời: cả dãy dời cùng một đoạn
+    if(!fxEq(dop,0)){o.opacity=Math.max(0,Math.min(1,(o.opacity==null?1:o.opacity)+dop));did=true}
+    if(blCh){o.blend=M.blend;did=true}
+    if(pixCh){fxCopyPix(M,o);did=true}                                                       // vẽ thêm / sửa điểm ảnh: chép sang mọi bản
+    if(colCh){o.st=o.st||{};o.st.ctrl=JSON.parse(s.ctrl);o.cache=null;did=true}              // chỉnh màu: dùng cùng thông số
+    if(o.shape&&scCh&&!pixCh){try{reRaster(o)}catch(_){}}
+  }
+  const nb=fxState(M);
+  if(!heavyOk){nb.ctrl=b.ctrl;nb.ver=b.ver;nb.el=b.el}              // phần nặng chưa lan: giữ mốc cũ để lát nữa còn phát hiện
+  fxLive.base.set(M,nb);others.forEach(o=>fxLive.base.set(o,fxState(o)));
+  if(did){
+    if(pixCh){if(others.length<=60)others.forEach(o=>{try{o.url=thumbOf(o.el)}catch(_){}})}
+    if(pixCh||colCh||!ptrDown)layerChanged();else{layerVer++;drawSelection();scheduleLive()}
+  }
+}
+setInterval(fxTick,80);setInterval(fxInfo,600);
+$("dpLive").onchange=()=>{fxRebase();fxInfo()};
+$("dpLiveEnd").onclick=()=>{
+  if(fxLive)layers.forEach(l=>{if(l.fxg===fxLive.gid)delete l.fxg});
+  fxLive=null;fxInfo();status("Đã kết thúc đồng bộ: các bản sao giờ độc lập với nhau.");
+};
+fxInfo();
 $("dupAny").onclick=duplicateSelected;
 $("lyGroup").onclick=()=>{groupLayers()};
 $("lyUngroup").onclick=()=>{
@@ -4037,7 +4592,7 @@ function strokeStart(e,erase,mode){
     bgDab(penDraw,p);
   }else if(mode==="restore"){
     penDraw.src=rsrc;penDraw.base=copyCanvas(cv);penDraw.tmp=document.createElement("canvas");penDraw.tmp.width=cv.width;penDraw.tmp.height=cv.height;penFull();
-  }else if(alpha<1){
+  }else if(stampOn(erase,mode)){stampBegin(penDraw,p)}else if(alpha<1){
     penDraw.base=copyCanvas(cv);penDraw.tmp=document.createElement("canvas");penDraw.tmp.width=cv.width;penDraw.tmp.height=cv.height;penFull();
   }else{
     const c=cv.getContext("2d");c.save();c.globalCompositeOperation=erase?"destination-out":"source-over";
@@ -4075,6 +4630,7 @@ function penFull(){
 function penPoint(p){
   const d=penDraw;if(!d)return;
   d.pts.push(p);
+  if(d.stamp){stampMove(d,p);d.last=p;return}
   if(d.mode==="restore"){penFull();return}
   if(d.mode==="bg"){bgSeg(d,d.last,p);d.last=p;return}
   if(d.alpha<1){penFull();return}
@@ -4087,7 +4643,7 @@ function penPoint(p){
 function penEnd(){
   if(!penDraw)return;
   const d=penDraw;penDraw=null;
-  if(regions.length){const pe=pixHist[pixHist.length-1];if(pe&&pe.L===d.L&&pe.prev)limitToSel(d.cv,pe.prev,d.L)}
+  if(regions.length&&!d.noClip){const pe=pixHist[pixHist.length-1];if(pe&&pe.L===d.L&&pe.prev)limitToSel(d.cv,pe.prev,d.L)}
   if(d.L){d.L.ver=(d.L.ver||0)+1;d.L.cache=null;layerVer++;refreshLayerThumb(d.L)}
   else{
     warpVer++;baseItem.cache=null;
@@ -4108,6 +4664,20 @@ function drawPenBrush(ir){
   if(!isBrushTool(tool)||!hover)return;
   const L=layers[selLayer],er=tool!=="pen",k2=(er||(L&&L.draw))?eMap().k2:ir.w/sourceW;
   const r=Math.max(1,Number($(er?"erSize":"penSize").value)*k2/2);
+  // Kiểu nét dạng hạt (ngôi sao, lá, ảnh của bạn...): con trỏ hiện đúng hình hạt đó, đổi cỡ theo Cỡ bút + mức phóng to
+  const sc=(!er&&window.stampCursor)?window.stampCursor():null;
+  if(sc){
+    const ang=sc.rot+((sc.follow&&penDraw&&penDraw.stamp&&penDraw.stamp.ang!=null)?penDraw.stamp.ang:0);
+    pen.save();pen.translate(hover.x,hover.y);pen.rotate(ang);
+    pen.globalAlpha=Math.max(.45,sc.alpha);
+    pen.shadowColor="rgba(0,0,0,.9)";pen.shadowBlur=2.5;
+    pen.drawImage(sc.tip,-r,-r,r*2,r*2);
+    pen.shadowColor="rgba(255,255,255,.9)";pen.shadowBlur=1;
+    pen.drawImage(sc.tip,-r,-r,r*2,r*2);
+    pen.restore();
+    if(r<4){pen.beginPath();pen.arc(hover.x,hover.y,Math.max(3,r),0,7);pen.lineWidth=1;pen.strokeStyle="rgba(255,255,255,.8)";pen.stroke()}
+    return;
+  }
   pen.beginPath();pen.arc(hover.x,hover.y,r,0,7);pen.lineWidth=1.5;pen.strokeStyle="#fff";pen.stroke();
   pen.lineWidth=.6;pen.strokeStyle="#000";pen.stroke();
 }
@@ -5044,6 +5614,20 @@ const avInfo=t=>{const e=$("avInfo");if(e){e.textContent=t;e.style.color="var(--
 function avSeek(v,t){return new Promise(r=>{let d=false;const fin=()=>{if(d)return;d=true;v.removeEventListener("seeked",fin);clearTimeout(tm);r()};
   const tm=setTimeout(fin,4000);v.addEventListener("seeked",fin);
   if(Math.abs(v.currentTime-t)<0.002){setTimeout(fin,60)}else v.currentTime=t})}
+// WebM ghi bằng trình duyệt (MediaRecorder) thường có độ dài = Infinity: tua tới cuối để trình duyệt tính ra độ dài thật rồi quay về đầu
+function fvFixDur(el){return new Promise(r=>{
+  let done=false;
+  const chk=()=>{if(isFinite(el.duration)&&el.duration>0)fin()};
+  const fin=()=>{if(done)return;done=true;clearTimeout(tm);el.removeEventListener("durationchange",chk);el.removeEventListener("timeupdate",chk);try{el.currentTime=0}catch(_){}setTimeout(r,120)};
+  const tm=setTimeout(fin,8000);
+  el.addEventListener("durationchange",chk);el.addEventListener("timeupdate",chk);
+  try{el.currentTime=1e101}catch(_){fin()}
+})}
+function fvDurOf(el){
+  let d=el.duration;
+  if(!isFinite(d)||!(d>0)){try{if(el.seekable&&el.seekable.length)d=el.seekable.end(el.seekable.length-1)}catch(_){}}
+  return d;
+}
 async function aiPersonAlpha(src,w,h){      // trả về Uint8Array alpha cỡ w×h (0..255)
   const lib=await loadTF();
   if(!aiLoaded.person)aiLoaded.person=await aiLoadModel("person","Xenova/modnet",aiProgCb("Đang tải MODNet"));
@@ -5084,20 +5668,21 @@ async function avImage(transparent){
   finally{bs.forEach(b=>b.disabled=false)}
 }
 let avStop=false;
-async function avVideo(mode){
+async function avVideo(){
   const inp=document.createElement("input");inp.type="file";inp.accept="video/*";
   inp.onchange=async()=>{
     const f=inp.files[0];if(!f)return;
     if(typeof MediaRecorder==="undefined"){avInfo("Trình duyệt không hỗ trợ MediaRecorder. Hãy dùng Chrome / Edge.");return}
     const url=URL.createObjectURL(f),v=document.createElement("video");v.muted=true;v.playsInline=true;v.preload="auto";
     v.style.cssText="position:fixed;left:-9999px;top:0;width:2px;height:2px;opacity:0";document.body.appendChild(v);
-    const btns=["avImgBtn","avImgTr","avVidBtn","avVidSr","avAsr"].map($);btns.forEach(b=>b.disabled=true);$("avStop").classList.remove("hidden");avStop=false;aiCancel=false;
+    const btns=["avImgBtn","avImgTr","avVidSr","avAsr"].map($);btns.forEach(b=>b.disabled=true);$("avStop").classList.remove("hidden");avStop=false;aiCancel=false;
     avInfo("Đã chọn: "+f.name+" ("+Math.round(f.size/1048576)+" MB). Đang đọc video…");
     try{
       await new Promise((ok,no)=>{const tm=setTimeout(()=>no(new Error("không đọc được video sau 20 giây (có thể là mã hóa H.265/HEVC mà trình duyệt không hỗ trợ). Hãy đổi sang MP4 H.264 hoặc WebM rồi thử lại")),20000);
         v.onloadeddata=()=>{clearTimeout(tm);ok()};v.onerror=()=>{clearTimeout(tm);no(new Error("trình duyệt không giải mã được video này (thử MP4 H.264 hoặc WebM)"))};v.src=url;v.load()});
+      if(!isFinite(v.duration))await fvFixDur(v);
       avInfo("Video "+v.videoWidth+"×"+v.videoHeight+", dài "+v.duration.toFixed(1)+" giây. Đang nạp mô hình AI…");
-      const sr=mode==="sr",fps=Math.max(2,Math.min(24,+$("avFps").value||10)),mxs=sr?Math.min(+$("avMax").value||480,360):(+$("avMax").value||480),dur=v.duration;
+      const sr=true,fps=Math.max(2,Math.min(24,+$("avFps").value||10)),mxs=sr?Math.min(+$("avMax").value||480,360):(+$("avMax").value||480),dur=v.duration;
       if(!isFinite(dur)||dur<=0)throw new Error("video không có độ dài hợp lệ");
       const k=Math.min(1,mxs/Math.max(v.videoWidth,v.videoHeight)),w=Math.max(2,Math.round(v.videoWidth*k)&~1),h=Math.max(2,Math.round(v.videoHeight*k)&~1);
       const total=Math.min(Math.floor(dur*fps),sr?300:900),bg=$("avColor").value,frames=[],t0=Date.now();
@@ -5107,7 +5692,6 @@ async function avVideo(mode){
         await avSeek(v,Math.min(dur-0.05,Math.max(0.01,i/fps)));
         let fr;
         if(sr){const c0=document.createElement("canvas");c0.width=w;c0.height=h;c0.getContext("2d").drawImage(v,0,0,w,h);fr=await aiUpscale2x(c0,"Xenova/swin2SR-lightweight-x2-64",false,"",0,1);ow=fr.width;oh=fr.height}
-        else fr=avCompose(v,await aiPersonAlpha(v,w,h),w,h,bg);
         frames.push(await createImageBitmap(fr));
         const el=(Date.now()-t0)/1000,eta=Math.round(el/(i+1)*(total-i-1));
         avInfo("AI đang xử lý khung "+(i+1)+"/"+total+" — còn khoảng "+eta+" giây");
@@ -5138,7 +5722,7 @@ function avAsr(){
   const inp=document.createElement("input");inp.type="file";inp.accept="audio/*,video/*";
   inp.onchange=async()=>{
     const f=inp.files[0];if(!f)return;
-    const btns=["avImgBtn","avImgTr","avVidBtn","avVidSr","avAsr"].map($);btns.forEach(b=>b.disabled=true);
+    const btns=["avImgBtn","avImgTr","avVidSr","avAsr"].map($);btns.forEach(b=>b.disabled=true);
     try{
       avInfo("Đang đọc âm thanh…");await aiTick();
       const ac=new (window.AudioContext||window.webkitAudioContext)({sampleRate:16000});
@@ -5162,7 +5746,298 @@ function avAsr(){
   inp.click();
 }
 $("avImgBtn").onclick=()=>avImage(false);$("avImgTr").onclick=()=>avImage(true);
-$("avVidBtn").onclick=()=>avVideo("person");$("avVidSr").onclick=()=>avVideo("sr");$("avAsr").onclick=avAsr;$("avStop").onclick=()=>{avStop=true};
+$("avVidSr").onclick=()=>avVideo();$("avAsr").onclick=avAsr;$("avStop").onclick=()=>{avStop=true};
+
+/* ===== XÓA NỀN HÀNG LOẠT (PNG nền trong suốt): dùng chung cho Frame & ảnh động, Ghép ảnh, Tách & xếp lại frame, và nút thư mục bên trái ===== */
+const BB={method:"color",tol:40,inner:false,soft:true};
+try{const sv=JSON.parse(localStorage.getItem("studio-bulkbg")||"null");if(sv&&typeof sv==="object")Object.assign(BB,sv)}catch(_){}
+if(!["color","person","object"].includes(BB.method))BB.method="color";
+BB.tol=Math.max(5,Math.min(200,+BB.tol||40));
+function bbSave(){try{localStorage.setItem("studio-bulkbg",JSON.stringify(BB))}catch(_){}}
+function bbControlsHTML(){
+  return '<label class="prop-label" style="margin-top:6px">Cách xóa nền</label>'
+   +'<select class="bb-method" style="width:100%">'
+   +'<option value="color">Theo màu nền (tự nhận màu từ viền ảnh)</option>'
+   +'<option value="person">AI: giữ lại người (MODNet)</option>'
+   +'<option value="object">AI: giữ lại vật thể / đồ vật (BiRefNet)</option></select>'
+   +'<div class="bb-colorbox">'
+   +'<label class="prop-label" style="margin-top:6px">Độ nhạy: <span class="bb-tolv">40</span></label>'
+   +'<input type="range" class="bb-tol" min="5" max="200" value="40">'
+   +'<label class="check"><input type="checkbox" class="bb-soft">Làm mềm viền</label>'
+   +'<label class="check"><input type="checkbox" class="bb-inner">Xóa cả vùng nền kín bên trong (giữa tay, chân…)</label>'
+   +'</div>'
+   +'<p class="help" style="margin:4px 0 0">Theo màu: hợp ảnh có nền một màu (trắng, xanh lá, đen…). Nền là cảnh thật thì dùng AI (chậm hơn, cần mô hình trong thư mục ai/).</p>';
+}
+function bbSyncUI(){
+  document.querySelectorAll(".bb-method").forEach(e=>{e.value=BB.method});
+  document.querySelectorAll(".bb-tol").forEach(e=>{if(+e.value!==BB.tol)e.value=BB.tol});
+  document.querySelectorAll(".bb-tolv").forEach(e=>{e.textContent=BB.tol});
+  document.querySelectorAll(".bb-inner").forEach(e=>{e.checked=!!BB.inner});
+  document.querySelectorAll(".bb-soft").forEach(e=>{e.checked=!!BB.soft});
+  document.querySelectorAll(".bb-colorbox").forEach(e=>e.classList.toggle("hidden",BB.method!=="color"));
+}
+document.addEventListener("input",e=>{const t=e.target;if(t&&t.classList&&t.classList.contains("bb-tol")){BB.tol=Math.max(5,Math.min(200,+t.value||40));bbSave();bbSyncUI()}});
+document.addEventListener("change",e=>{
+  const t=e.target;if(!t||!t.classList)return;
+  if(t.classList.contains("bb-method"))BB.method=t.value;
+  else if(t.classList.contains("bb-inner"))BB.inner=t.checked;
+  else if(t.classList.contains("bb-soft"))BB.soft=t.checked;
+  else return;
+  bbSave();bbSyncUI();
+});
+document.querySelectorAll(".bb-ui").forEach(d=>{d.innerHTML=bbControlsHTML()});
+bbSyncUI();
+
+// --- Xóa nền theo màu: nhận màu nền từ viền, tô loang từ mép vào, làm mềm viền ---
+function bbColorCut(src){
+  const w=src.width,h=src.height,c=document.createElement("canvas");c.width=w;c.height=h;
+  const x=c.getContext("2d",{willReadFrequently:true});x.drawImage(src,0,0);
+  const id=x.getImageData(0,0,w,h),d=id.data,N=w*h;
+  const edge=[];
+  for(let i=0;i<w;i++){edge.push(i);if(h>1)edge.push((h-1)*w+i)}
+  for(let j=1;j<h-1;j++){edge.push(j*w);if(w>1)edge.push(j*w+w-1)}
+  let clear=0;for(const p of edge)if(d[p*4+3]<16)clear++;
+  if(clear>edge.length*0.9)return {c,state:"already"};      // viền đã trong suốt: ảnh này đã xóa nền rồi
+  const hist=new Map();let opq=0;
+  for(const p of edge){const o=p*4;if(d[o+3]<16)continue;opq++;
+    const k=((d[o]>>5)<<6)|((d[o+1]>>5)<<3)|(d[o+2]>>5);let e=hist.get(k);if(!e){e=[0,0,0,0];hist.set(k,e)}
+    e[0]++;e[1]+=d[o];e[2]+=d[o+1];e[3]+=d[o+2]}
+  let best=null;for(const e of hist.values())if(!best||e[0]>best[0])best=e;
+  if(!best)return {c,state:"nobg"};
+  const br=best[1]/best[0],bgc=best[2]/best[0],bbl=best[3]/best[0],T=Math.max(1,BB.tol),T2=T*T;
+  const D2=o=>{const a=d[o]-br,b=d[o+1]-bgc,e=d[o+2]-bbl;return a*a+b*b+e*e};
+  let fit=0;for(const p of edge){const o=p*4;if(d[o+3]>=16&&D2(o)<=T2)fit++}
+  if(fit<opq*0.5)return {c,state:"nobg"};                    // viền nhiều màu: không phải nền đặc
+  const rem=new Uint8Array(N);
+  if(BB.inner){for(let p=0;p<N;p++){const o=p*4;if(d[o+3]<16||D2(o)<=T2)rem[p]=1}}
+  else{
+    const st=new Int32Array(N);let sp=0;
+    const push=p=>{if(!rem[p]){const o=p*4;if(d[o+3]<16||D2(o)<=T2){rem[p]=1;st[sp++]=p}}};
+    for(const p of edge)push(p);
+    while(sp){const p=st[--sp],px=p%w,py=(p-px)/w;
+      if(px>0)push(p-1);if(px<w-1)push(p+1);if(py>0)push(p-w);if(py<h-1)push(p+w)}
+  }
+  let nr=0;for(let p=0;p<N;p++)if(rem[p])nr++;
+  if(!nr)return {c,state:"nobg"};
+  if(BB.soft){       // vùng viền 2 px quanh phần đã xóa: pixel gần màu nền thì mờ dần và gỡ màu nền ra khỏi viền
+    const T3=T*1.7,cand=new Uint8Array(N);
+    for(let p=0;p<N;p++){
+      if(!rem[p])continue;const px=p%w,py=(p-px)/w;
+      if((px>0&&!rem[p-1])||(px<w-1&&!rem[p+1])||(py>0&&!rem[p-w])||(py<h-1&&!rem[p+w])){
+        for(let dy=-2;dy<=2;dy++){const yy=py+dy;if(yy<0||yy>=h)continue;
+          for(let dx=-2;dx<=2;dx++){const xx=px+dx;if(xx<0||xx>=w)continue;const q=yy*w+xx;if(!rem[q])cand[q]=1}}
+      }
+    }
+    for(let p=0;p<N;p++){
+      if(!cand[p])continue;const o=p*4,dist=Math.sqrt(D2(o));
+      if(dist<=T||dist>=T3)continue;
+      const a=(dist-T)/(T3-T);
+      d[o+3]=Math.round(d[o+3]*a);
+      if(a>0.05){const ia=1-a;d[o]=Math.max(0,Math.min(255,Math.round((d[o]-br*ia)/a)));d[o+1]=Math.max(0,Math.min(255,Math.round((d[o+1]-bgc*ia)/a)));d[o+2]=Math.max(0,Math.min(255,Math.round((d[o+2]-bbl*ia)/a)))}
+    }
+  }
+  for(let p=0;p<N;p++)if(rem[p]){const o=p*4;d[o]=d[o+1]=d[o+2]=0;d[o+3]=0}
+  x.putImageData(id,0,0);
+  return {c,state:"ok"};
+}
+// --- Xóa nền bằng AI ---
+async function bbObjectAlpha(src,w,h){
+  const lib=await loadTF();
+  if(!aiLoaded.object){
+    let lastErr=null;
+    for(const mid of ["h143N/birefnet-lite-512-chunked","studioludens/birefnet-lite-512"]){
+      try{aiLoaded.object=await aiLoadModel("object",mid,aiProgCb("Đang tải BiRefNet"));break}catch(e){lastErr=e;console.error(e)}
+    }
+    if(!aiLoaded.object)throw lastErr||new Error("không nạp được mô hình vật thể");
+  }
+  const c=document.createElement("canvas");c.width=w;c.height=h;const x=c.getContext("2d");
+  x.fillStyle="#fff";x.fillRect(0,0,w,h);x.drawImage(src,0,0,w,h);
+  let im=await canvasToRaw(lib,c);if(im.channels!==3)im=im.rgb();
+  const {pixel_values}=await aiLoaded.object.proc(im);
+  const res=await aiLoaded.object.model({input_image:pixel_values});
+  let t=Object.values(res)[0][0];
+  const dd=t.data;let mn=Infinity,mx=-Infinity;for(let i=0;i<dd.length;i+=53){if(dd[i]<mn)mn=dd[i];if(dd[i]>mx)mx=dd[i]}
+  if(!(mn>=0&&mx<=1.0001))t=t.sigmoid();
+  const m=await lib.RawImage.fromTensor(t.mul(255).to("uint8")).resize(w,h),ch=m.channels||1,o=new Uint8Array(w*h);
+  for(let i=0;i<o.length;i++){const v=m.data[i*ch];o[i]=v<12?0:v>243?255:v}
+  return o;
+}
+function bbUpAlpha(al,w,h,W,H){
+  const a=document.createElement("canvas");a.width=w;a.height=h;const x=a.getContext("2d");
+  const id=x.createImageData(w,h);
+  for(let i=0;i<al.length;i++){id.data[i*4]=255;id.data[i*4+1]=255;id.data[i*4+2]=255;id.data[i*4+3]=al[i]}
+  x.putImageData(id,0,0);
+  const b=document.createElement("canvas");b.width=W;b.height=H;const y=b.getContext("2d",{willReadFrequently:true});
+  y.imageSmoothingQuality="high";y.drawImage(a,0,0,W,H);
+  const bd=y.getImageData(0,0,W,H).data,o=new Uint8Array(W*H);
+  for(let i=0;i<o.length;i++)o[i]=bd[i*4+3];
+  return o;
+}
+async function bbAICut(src,kind){
+  const W=src.width,H=src.height;
+  if(W*H>90e6)throw new Error("ảnh quá lớn ("+W+"×"+H+")");
+  const k=Math.min(1,2048/Math.max(W,H)),w=Math.max(1,Math.round(W*k)),h=Math.max(1,Math.round(H*k));
+  let al=kind==="person"?await aiPersonAlpha(src,w,h):await bbObjectAlpha(src,w,h);
+  let n=0;for(let i=0;i<al.length;i+=11)if(al[i]>200)n++;
+  if(n<al.length/11*0.003)return {c:null,state:"empty"};
+  if(w!==W||h!==H)al=bbUpAlpha(al,w,h,W,H);       // AI chạy ở cỡ nhỏ, mặt nạ được phóng lại về đúng cỡ ảnh gốc
+  return {c:avCompose(src,al,W,H,null),state:"ok"};
+}
+async function bbProcess(src){return BB.method==="color"?bbColorCut(src):bbAICut(src,BB.method)}
+// Chạy hàng loạt: getSrc(i) → canvas nguồn; setOut(i,canvas,state) nhận kết quả (state "ok" hoặc "already")
+async function bbBatch(n,getSrc,setOut,title){
+  const st={ok:0,already:0,nobg:0,empty:0,fail:0,skip:[],stopped:false,errMsg:""};
+  $("aiTitle").textContent=title;aiInfo("Đang chuẩn bị…");aiProg(0);aiCancel=false;
+  $("aiModal").classList.remove("hidden");batchRunning=true;
+  const t0=Date.now();
+  try{
+    for(let i=0;i<n;i++){
+      if(aiCancel){st.stopped=true;break}
+      const el=(Date.now()-t0)/1000,eta=i?Math.round(el/i*(n-i)):0;
+      aiInfo("Đang xóa nền "+(i+1)+"/"+n+(i&&eta>2?" — còn khoảng "+eta+" giây":""));aiProg(i/n);await aiTick();
+      try{
+        const r=await bbProcess(await getSrc(i));
+        if(r.state==="ok"||r.state==="already")await setOut(i,r.c,r.state);else st.skip.push(i);
+        st[r.state]++;
+      }catch(e){
+        console.error(e);st.fail++;st.skip.push(i);st.errMsg=(e&&e.message)?e.message:String(e);
+        if(st.fail>=3&&!st.ok&&!st.already){break}   // lỗi liên tiếp (thường do chưa có mô hình AI): dừng sớm cho khỏi chờ vô ích
+      }
+    }
+    aiProg(1);
+  }finally{batchRunning=false;$("aiModal").classList.add("hidden")}
+  return st;
+}
+function bbSummary(st,n,unit){
+  let t="Đã xóa nền "+st.ok+"/"+n+" "+unit+".";
+  if(st.already)t+=" "+st.already+" "+unit+" vốn đã trong suốt.";
+  if(st.nobg)t+=" "+st.nobg+" "+unit+" không có nền một màu rõ ràng nên bỏ qua (thử chỉnh Độ nhạy hoặc dùng AI).";
+  if(st.empty)t+=" "+st.empty+" "+unit+" AI không thấy vật cần giữ nên bỏ qua.";
+  if(st.fail)t+=" "+st.fail+" lỗi"+(st.errMsg?" ("+st.errMsg+")":"")+".";
+  if(st.fail&&!st.ok&&BB.method!=="color")t+=" Dùng offline: chạy tai_ai.py person object rồi mở bằng chay.bat.";
+  if(st.stopped)t+=" Đã dừng giữa chừng.";
+  return t;
+}
+
+// --- Frame & ảnh động: xóa nền cả dãy (hoặc các frame đã tick) ---
+$("fvBgGo").onclick=async()=>{
+  if(fv.busy||batchRunning)return;
+  const sel=$("fvBgScope").value==="sel",L=sel?fvSel():fv.frames;
+  if(!L.length){fvMsg(sel?"Chưa tick frame nào.":"Chưa có frame.");return}
+  fv.busy=true;try{fvPause()}catch(_){}
+  try{
+    const outs=new Array(L.length);
+    const st=await bbBatch(L.length,i=>L[i].c,(i,c,s)=>{if(s==="ok")outs[i]=c},"Đang xóa nền "+L.length+" frame…");
+    const old=[];outs.forEach((c,i)=>{if(c){old.push({f:L[i],c:L[i].c});L[i].c=c}});
+    if(old.length)fv.undoBg=old;
+    fvRefresh();fvMsg(bbSummary(st,L.length,"frame"));
+  }catch(e){console.error(e);fvMsg("Lỗi: "+(e&&e.message?e.message:e))}
+  finally{fv.busy=false}
+};
+$("fvBgUndo").onclick=()=>{
+  if(!fv.undoBg){fvMsg("Không có lần xóa nền nào để hoàn tác.");return}
+  fv.undoBg.forEach(o=>{o.f.c=o.c});fv.undoBg=null;fvRefresh();fvMsg("Đã hoàn tác xóa nền.");
+};
+
+// --- Ghép ảnh nối tiếp: xóa nền các lớp sẽ ghép (làm trước khi bấm mũi tên ghép) ---
+$("stBgGo").onclick=async()=>{
+  if(!img){status("Hãy mở ảnh trước.");return}
+  if(batchRunning)return;
+  commitWarp();
+  const anyLinked=layers.some(l=>l.visible&&l.linked);
+  const set=layers.filter(l=>l.visible&&(!anyLinked||l.linked)),useBase=!set.length,n=useBase?1:set.length;
+  const info=t=>{$("stBgInfo").textContent=t;status(t)};
+  try{
+    const outs=new Array(n);
+    const st=await bbBatch(n,i=>toCanvas(useBase?img:set[i].el),(i,c,s)=>{if(s==="ok")outs[i]=c},"Đang xóa nền "+n+(useBase?" ảnh…":" lớp ảnh…"));
+    if(outs.some(Boolean)){
+      stepLabel="Xóa nền hàng loạt";
+      if(useBase)setBaseCanvas(outs[0]);else outs.forEach((c,i)=>{if(c)setLayerCanvas(set[i],c)});   // gán đồng loạt để chỉ ra 1 bước hoàn tác
+    }
+    info(bbSummary(st,n,useBase?"ảnh":"lớp"));
+  }catch(e){console.error(e);info("Lỗi: "+(e&&e.message?e.message:e))}
+};
+
+// --- Tách & xếp lại frame: xóa nền từng khung ngay trên ảnh nguồn của hộp thoại ---
+$("sfBgGo").onclick=async()=>{
+  if(batchRunning)return;
+  if(!sf.src||!sf.frames.length){$("sfBgInfo").textContent="Chưa có frame nào để xóa nền.";return}
+  const S=sf.src,info=t=>{$("sfBgInfo").textContent=t};
+  try{
+    const outs=new Array(sf.frames.length),rects=sf.frames.map(r=>({x:r.x,y:r.y,w:r.w,h:r.h}));
+    const st=await bbBatch(rects.length,i=>{
+      const r=rects[i],c=document.createElement("canvas");c.width=r.w;c.height=r.h;
+      c.getContext("2d").drawImage(S,r.x,r.y,r.w,r.h,0,0,r.w,r.h);return c;
+    },(i,c,s)=>{if(s==="ok")outs[i]=c},"Đang xóa nền "+rects.length+" frame…");
+    if(outs.some(Boolean)){
+      const bak=document.createElement("canvas");bak.width=S.width;bak.height=S.height;bak.getContext("2d").drawImage(S,0,0);sf.undoBg=bak;
+      const sx=S.getContext("2d");
+      outs.forEach((c,i)=>{if(!c)return;const r=rects[i];sx.clearRect(r.x,r.y,r.w,r.h);sx.drawImage(c,0,0,c.width,c.height,r.x,r.y,r.w,r.h)});
+      sf.data=null;sf.dataFor=null;sf.mask=null;sf.maskFor=null;sfRefreshAll();
+    }
+    info(bbSummary(st,rects.length,"frame")+(outs.some(Boolean)?" Bấm «Tạo tab mới» hoặc ↓ PNG để lấy kết quả.":""));
+  }catch(e){console.error(e);info("Lỗi: "+(e&&e.message?e.message:e))}
+};
+$("sfBgUndo").onclick=()=>{
+  if(!sf.undoBg||!sf.src){$("sfBgInfo").textContent="Không có lần xóa nền nào để hoàn tác.";return}
+  const x=sf.src.getContext("2d");x.clearRect(0,0,sf.src.width,sf.src.height);x.drawImage(sf.undoBg,0,0);
+  sf.undoBg=null;sf.data=null;sf.dataFor=null;sf.mask=null;sf.maskFor=null;sfRefreshAll();$("sfBgInfo").textContent="Đã hoàn tác xóa nền.";
+};
+
+// --- Nút bên trái: xóa nền cả thư mục, lưu PNG trong suốt vào thư mục con ngay trong thư mục đã chọn ---
+const bbFolderInfo=t=>{$("bbFolderInfo").textContent=t;status(t)};
+const bbFolderName=()=>($("bbFolderName").value||"").replace(/[\\\/:*?"<>|]+/g,"_").trim()||"da_tach_nen";
+$("bbFolderTool").onclick=()=>{if(batchRunning)return;$("bbFolderModal").classList.remove("hidden")};
+$("bbFolderClose").onclick=()=>$("bbFolderModal").classList.add("hidden");
+async function bbFolderRun(files,save,subName){
+  const used=new Set();
+  $("bbFolderModal").classList.add("hidden");
+  const st=await bbBatch(files.length,async i=>{
+    const f=await files[i].get(),bm=await createImageBitmap(f),c=document.createElement("canvas");
+    c.width=bm.width;c.height=bm.height;c.getContext("2d").drawImage(bm,0,0);if(bm.close)bm.close();return c;
+  },async(i,c)=>{
+    const base=files[i].name.replace(/\.[^.]+$/,"");let nm=base+".png",k=2;
+    while(used.has(nm.toLowerCase()))nm=base+"_"+(k++)+".png";used.add(nm.toLowerCase());
+    const blob=await new Promise(r=>c.toBlob(r,"image/png"));if(!blob)throw new Error("không tạo được PNG");
+    await save(nm,blob);
+  },"Đang xóa nền "+files.length+" ảnh trong thư mục…");
+  let t=bbSummary(st,files.length,"ảnh")+" Ảnh PNG nền trong suốt nằm trong thư mục con «"+subName+"».";
+  if(st.skip.length)t+=" Ảnh bị bỏ qua: "+st.skip.slice(0,6).map(i=>files[i].name).join(", ")+(st.skip.length>6?"…":"")+".";
+  $("bbFolderModal").classList.remove("hidden");bbFolderInfo(t);
+}
+$("bbFolderGo").onclick=async()=>{
+  if(batchRunning)return;
+  const sub=bbFolderName();$("bbFolderName").value=sub;
+  if(window.showDirectoryPicker){
+    let root;
+    try{root=await showDirectoryPicker({mode:"readwrite",id:"studio-bgbulk"})}
+    catch(e){if(e&&e.name!=="AbortError")bbFolderInfo("Không mở được thư mục: "+(e.message||e)+" (thư mục hệ thống như Desktop, Documents, Downloads gốc bị trình duyệt chặn: hãy chọn một thư mục con).");return}
+    try{
+      const files=[];
+      for await(const [n,h] of root.entries())if(h.kind==="file"&&IMG_EXT.test(n))files.push({name:n,get:()=>h.getFile()});
+      files.sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true}));
+      if(!files.length){bbFolderInfo("Không có ảnh nào trong thư mục «"+root.name+"» (không tính thư mục con).");return}
+      const out=await root.getDirectoryHandle(sub,{create:true});
+      await bbFolderRun(files,async(nm,blob)=>{const fh=await out.getFileHandle(nm,{create:true}),w=await fh.createWritable();await w.write(blob);await w.close()},sub);
+    }catch(e){console.error(e);$("bbFolderModal").classList.remove("hidden");bbFolderInfo("Lỗi: "+(e&&e.message?e.message:e))}
+  }else $("bbDirInput").click();      // trình duyệt không hỗ trợ ghi thư mục: chọn thư mục rồi nhận file ZIP
+};
+$("bbDirInput").onchange=async e=>{
+  const fs=[...e.target.files].filter(f=>f.webkitRelativePath.split("/").length===2&&IMG_EXT.test(f.name));
+  const root=fs.length?fs[0].webkitRelativePath.split("/")[0]:"";e.target.value="";
+  if(!fs.length){bbFolderInfo("Không có ảnh nào trong thư mục này (không tính thư mục con).");return}
+  fs.sort((a,b)=>a.name.localeCompare(b.name,undefined,{numeric:true}));
+  const sub=bbFolderName(),entries=[];
+  try{
+    await bbFolderRun(fs.map(f=>({name:f.name,get:async()=>f})),async(nm,blob)=>{entries.push({name:sub+"/"+nm,blob})},sub);
+    if(entries.length){
+      const z=await makeZip(entries),a=document.createElement("a");
+      a.href=URL.createObjectURL(z);a.download=root+"_"+sub+".zip";document.body.appendChild(a);a.click();a.remove();
+      setTimeout(()=>URL.revokeObjectURL(a.href),60000);
+      bbFolderInfo($("bbFolderInfo").textContent+" Trình duyệt này không ghi thẳng vào thư mục được nên đã tải file ZIP: giải nén vào thư mục gốc là có thư mục con «"+sub+"». (Dùng Chrome / Edge để lưu thẳng.)");
+    }
+  }catch(err){console.error(err);bbFolderInfo("Lỗi: "+(err&&err.message?err.message:err))}
+};
 
 /* ===== FRAME VIDEO & ẢNH ĐỘNG: tách frame, khung xem có zoom + giới hạn đoạn, đưa sang bộ tạo GIF/WebM ===== */
 const fv={frames:[],cur:0,a:0,b:0,z:1,ox:0,oy:0,timer:0,vid:null,sheet:null,stop:false,busy:false,ver:0};
@@ -5189,10 +6064,14 @@ $("fvFileV").onchange=async()=>{
   try{
     await new Promise((ok,no)=>{const tm=setTimeout(()=>no(new Error("không đọc được video (có thể là H.265/HEVC; hãy đổi sang MP4 H.264 hoặc WebM)")),20000);
       el.onloadeddata=()=>{clearTimeout(tm);ok()};el.onerror=()=>{clearTimeout(tm);no(new Error("trình duyệt không giải mã được video này"))};el.src=url;el.load()});
+    if(!isFinite(el.duration)||!(el.duration>0)){fvMsg("Đang tính độ dài video (WebM ghi bằng trình duyệt)…");await fvFixDur(el)}
+    const dur=fvDurOf(el);
+    if(!isFinite(dur)||!(dur>0))throw new Error("không xác định được độ dài video này (thử xuất lại video hoặc đổi sang MP4 H.264)");
+    if(!el.videoWidth||!el.videoHeight)throw new Error("video không có hình (chỉ có âm thanh?)");
     if(fv.vid&&fv.vid.el)fv.vid.el.remove();
-    fv.vid={el,url,name:f.name,dur:el.duration,w:el.videoWidth,h:el.videoHeight};fv.sheet=null;
-    $("fvFrom").value=0;$("fvTo").value=el.duration.toFixed(2);
-    fvSetSource("vid",f.name,el.videoWidth+"×"+el.videoHeight+", dài "+el.duration.toFixed(2)+" giây");fvMsg("Đã nạp video. Đặt khoảng thời gian rồi bấm Tách frame.");
+    fv.vid={el,url,name:f.name,dur,w:el.videoWidth,h:el.videoHeight};fv.sheet=null;
+    $("fvFrom").value=0;$("fvTo").value=dur.toFixed(2);
+    fvSetSource("vid",f.name,el.videoWidth+"×"+el.videoHeight+", dài "+dur.toFixed(2)+" giây");fvMsg("Đã nạp video. Đặt khoảng thời gian rồi bấm Tách frame.");
   }catch(e){el.remove();URL.revokeObjectURL(url);fvMsg("Lỗi: "+e.message)}
 };
 $("fvFileI").onchange=async()=>{
@@ -5303,6 +6182,42 @@ const fvFitV=()=>{fv.z=1;fv.ox=fv.oy=0;fvDraw()};
 fvCv.addEventListener("dblclick",fvFitV);$("fvFit").onclick=fvFitV;$("fvZp").onclick=()=>fvZoom(1.4);$("fvZm").onclick=()=>fvZoom(1/1.4);
 $("fv100").onclick=()=>{const f=fv.frames[fv.cur];if(!f)return;const s0=Math.min(fvCv.width/f.c.width,fvCv.height/f.c.height);fv.ox=fv.oy=0;fv.z=1/s0;fvDraw()};
 if(window.ResizeObserver)new ResizeObserver(()=>fvDraw()).observe(fvBox);
+// ---- lớp nền đổi màu / ẩn hiện (chỉ để xem, không đưa vào file xuất) ----
+{const V=$("fvView"),on=$("fvBgOn"),col=$("fvBgCol");
+  let sv={};try{sv=JSON.parse(localStorage.getItem("studio-fvbg")||"{}")||{}}catch(_){}
+  if(/^#[0-9a-f]{6}$/i.test(sv.c||""))col.value=sv.c;on.checked=!!sv.on;
+  const apply=()=>{V.style.setProperty("--fvbg",col.value);V.classList.toggle("bgon",on.checked);
+    try{localStorage.setItem("studio-fvbg",JSON.stringify({on:on.checked,c:col.value}))}catch(_){}};
+  on.onchange=apply;col.oninput=()=>{on.checked=true;apply()};
+  apply();}
+
+// ---- khung Frame bên phải: mỗi mục có nút ghim. Ghim = luôn mở; không ghim = mở mục này thì đóng các mục không ghim khác ----
+{const KEY="studio-fvsec-pins",secs=()=>[...document.querySelectorAll(".fvsec")];
+  let pins=new Set();try{pins=new Set(JSON.parse(localStorage.getItem(KEY)||"[]"))}catch(_){}
+  const setOpen=(sc,o)=>{sc.classList.toggle("shut",!o);sc.querySelector(".ar").textContent=o?"▾":"▸"};
+  const save=()=>{try{localStorage.setItem(KEY,JSON.stringify([...pins]))}catch(_){}};
+  secs().forEach((sc,i)=>{sc.dataset.k=i;const on=pins.has(String(i));sc.querySelector(".fvpin").classList.toggle("on",on);if(on)setOpen(sc,true)});
+  document.addEventListener("click",e=>{
+    const pb=e.target.closest&&e.target.closest(".fvpin");
+    if(pb){e.stopPropagation();const sc=pb.closest(".fvsec"),k=sc.dataset.k,on=!pins.has(k);
+      on?pins.add(k):pins.delete(k);pb.classList.toggle("on",on);if(on)setOpen(sc,true);save();return}
+    const h=e.target.closest&&e.target.closest(".fvsh");if(!h)return;
+    const sc=h.parentElement,k=sc.dataset.k;
+    if(pins.has(k))return;                                   // mục đã ghim: luôn mở
+    if(sc.classList.contains("shut")){secs().forEach(o=>{if(o!==sc&&!pins.has(o.dataset.k))setOpen(o,false)});setOpen(sc,true);
+      if(sc.scrollIntoView)sc.scrollIntoView({block:"nearest"})}
+    else setOpen(sc,false);
+  });
+  document.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.classList&&e.target.classList.contains("fvsh")){e.preventDefault();e.target.click()}});
+}
+// ---- nền kiểm tra: ô điều khiển ở panel phải đồng bộ với khung xem ----
+{const on=$("fvBgOn"),col=$("fvBgCol"),on2=$("fvBgOn2"),col2=$("fvBgCol2");
+  const sync=()=>{on2.checked=on.checked;col2.value=col.value};
+  on.addEventListener("change",sync);col.addEventListener("input",sync);
+  on2.onchange=()=>{on.checked=on2.checked;on.onchange()};
+  col2.oninput=()=>{col.value=col2.value;col.oninput()};
+  sync();}
+
 // ---- phát trong đoạn giới hạn ----
 function fvPause(){clearTimeout(fv.timer);fv.timer=0;$("fvPlay").textContent="▶ Phát"}
 function fvTick(){
@@ -5342,7 +6257,7 @@ function fvSheetOf(list){
 }
 const fvBase=()=>(fv.vid?fv.vid.name:fv.sheet?fv.sheet.name:"frames").replace(/\.[^.]+$/,"").replace(/[<>:"/\\|?*\x00-\x1F]/g,"-");
 const fvBlob=c=>new Promise(r=>c.toBlob(r,"image/png"));
-function fvNeed(){const l=fvSel();if(!l.length)fvMsg("Chưa tick frame nào (③ Xem & chọn frame).");return l}
+function fvNeed(){const l=fvSel();if(!l.length)fvMsg("Chưa tick frame nào (② Xem & chọn frame).");return l}
 $("fvZip").onclick=async()=>{
   const l=fvNeed();if(!l.length)return;
   try{const ent=[],pad=String(l.length).length+1;
@@ -5413,7 +6328,7 @@ async function fvEdit(many){
     loadImage(new File([blob],name,{type:"image/png"}));
     for(let i=0;i<80;i++){await anSleep(50);if(tabs.length>before&&curTab&&curTab.name===name&&layers.length)break}
     if(!(tabs.length>before)){fvMsg("Không mở được ảnh để sửa.");return}
-    fv.edit={tab:curTab,list,...meta};fvEditUI();
+    fv.edit={tab:curTab,list,...meta};fvEditUI();openTab("Lớp ảnh");
     status("Đang sửa "+list.length+" frame ở tab “"+name+"”. Sửa xong bấm ⤴ Cập nhật frame đã sửa.");
   }catch(e){fvMsg("Lỗi: "+e.message)}
 }
@@ -5433,7 +6348,7 @@ async function fvBack(){
     }
     const first=Math.max(0,fv.frames.indexOf(E.list[0]));
     openTab("Frame");fvRefresh();fvGo(first);fvOpen();
-    const sz=new Set(fv.frames.map(f=>f.c.width+"x"+f.c.height));fvMsg("Đã cập nhật "+n+" frame đã sửa vào dãy."+(sz.size>1?" Kích thước các frame đang không đều: dùng ④ “Đồng bộ cùng kích thước” hoặc thêm rộng / cao cho cả dãy.":""));
+    const sz=new Set(fv.frames.map(f=>f.c.width+"x"+f.c.height));fvMsg("Đã cập nhật "+n+" frame đã sửa vào dãy."+(sz.size>1?" Kích thước các frame đang không đều: dùng ③ “Đồng bộ cùng kích thước” hoặc thêm rộng / cao cho cả dãy.":""));
   }catch(e){fvMsg("Lỗi: "+e.message)}
 }
 $("fvEdit1").onclick=()=>fvEdit(false);$("fvEditSel").onclick=()=>fvEdit(true);$("fvBack").onclick=fvBack;$("fvBack2").onclick=fvBack;
@@ -6111,7 +7026,7 @@ function tri(ctx,im,A,B,C){
 }
 function puppetRender(){
   if(!pbase)return;
-  const N=24,W=eW(),H=eH(),R=Math.max(20,Number($("wRad").value)*2.5);
+  const N=24,W=eW(),H=eH(),R=Math.max(1,Number($("wRad").value)*2.5);
   const w0=1/Math.pow(R*R+1,2);
   const P=pins.map(p=>[p.px,p.py,p.qx-p.px,p.qy-p.py]);
   const V=[];
@@ -6130,11 +7045,11 @@ function puppetRender(){
 }
 function schedulePuppet(){if(!puppetRaf)puppetRaf=requestAnimationFrame(()=>{puppetRaf=0;puppetRender();drawSelection()})}
 function liquifyStep(p,last){
-  const rad=Number($("wRad").value),str=Number($("wStr").value)/100,dx=p.x-last.x,dy=p.y-last.y;
+  const rad=Math.max(1,Number($("wRad").value)),str=Number($("wStr").value)/100,dx=p.x-last.x,dy=p.y-last.y;
   if(!dx&&!dy)return;
   const x0=Math.max(0,Math.floor(p.x-rad)),y0=Math.max(0,Math.floor(p.y-rad));
   const x1=Math.min(eW(),Math.ceil(p.x+rad)),y1=Math.min(eH(),Math.ceil(p.y+rad));
-  const w=x1-x0,h=y1-y0;if(w<2||h<2)return;
+  const w=x1-x0,h=y1-y0;if(w<1||h<1)return;
   const s=wctx.getImageData(x0,y0,w,h).data,D=wctx.createImageData(w,h),o=D.data;
   for(let y=0;y<h;y++)for(let x=0;x<w;x++){
     const d=Math.hypot(x+x0-p.x,y+y0-p.y),i=(y*w+x)*4;
@@ -6309,9 +7224,29 @@ function invertSel(){
   snapshot();
   const last=regions[regions.length-1];
   if(last&&last.inv)regions.pop();
-  else regions.push({type:"rect",x:-2,y:-2,w:sourceW+4,h:sourceH+4,op:"xor",feather:0,mode:"keep",inv:true});
+  else{
+    let x0=0,y0=0,x1=sourceW,y1=sourceH;   // phần bù phủ cả khung lẫn phần lớp nằm ngoài khung
+    layers.forEach(l=>{if(l.visible===false)return;layerCorners(l).forEach(q=>{x0=Math.min(x0,q.x);y0=Math.min(y0,q.y);x1=Math.max(x1,q.x);y1=Math.max(y1,q.y)})});
+    x0=Math.floor(x0)-2;y0=Math.floor(y0)-2;x1=Math.ceil(x1)+2;y1=Math.ceil(y1)+2;
+    regions.push({type:"rect",x:x0,y:y0,w:x1-x0,h:y1-y0,op:"xor",feather:0,mode:"keep",inv:true});
+  }
   selReg=null;refreshRegions();status("Đã đảo vùng chọn.");
 }
+let growKeyT=0;
+function growSel(sign,key){   // key: bấm bằng phím [ ] (giữ phím chỉ lưu 1 bước hoàn tác)
+  if(!img)return;
+  if(!regions.length){status("Chưa có vùng chọn để tăng / giảm.");return}
+  let n=Number($("selGrowN").value);if(!isFinite(n)||n<=0)n=1;
+  if(key&&key.shift)n*=5;
+  const now=Date.now();if(!key||now-growKeyT>700)snapshot();growKeyT=key?now:0;
+  const last=regions[regions.length-1],d=sign*n;
+  if(last&&last.gd){last.gd+=d;if(Math.abs(last.gd)<1e-9)regions.pop()}
+  else regions.push({type:"rect",x:-1e7,y:-1e7,w:0,h:0,op:"add",feather:0,mode:"keep",gd:d});
+  selReg=null;refreshRegions();
+  status((sign>0?"Đã tăng":"Đã giảm")+" vùng chọn "+n+" px (đường kính "+(sign>0?"+":"−")+n+" px)"+(key?"":".")+(key?"  ·  phím [ ] = giảm / tăng, Shift = ×5":""));
+}
+$("selGrow").onclick=()=>growSel(1);
+$("selShrink").onclick=()=>growSel(-1);
 // Vùng chọn dùng chung cho cả tài liệu (toạ độ ảnh nền). Mặt nạ: canvas, alpha = độ chọn; null nếu chưa có vùng chọn.
 // Ảnh PNG có vùng trong suốt? (nhớ kết quả theo từng ảnh)
 function layerHasAlpha(el){
@@ -6333,11 +7268,37 @@ function hugLayer(){
   const cb=document.getElementById("selHug");if(cb&&!cb.checked)return null;
   const L=layers[selLayer]||(typeof bMainLayer==="function"?bMainLayer():null);
   if(!L||!L.el||L.shape||!L.visible)return null;
+  if(regions.some(r=>r.nohug))return null;   // vùng chọn đã chốt cứng (sau khi cắt/xóa): không ôm sát lại theo ảnh mới
   return layerHasAlpha(L.el)?L:null;
 }
 function hugSig(){
   const L=hugLayer();if(!L)return "";
   return "|h"+[L.x,L.y,L.w,L.h,L.rot,L.fx,L.fy,L.ver||0,L.nw,L.nh].join();
+}
+// Nở (r > 0) / co (r < 0) mặt nạ đều mọi phía r điểm ảnh (hỗ trợ số lẻ: viền được khử răng cưa), bằng phép biến đổi khoảng cách chính xác
+function edt1(f,n,v,z,d){
+  let k=0;v[0]=0;z[0]=-1e20;z[1]=1e20;
+  for(let q=1;q<n;q++){
+    let s;
+    while(true){const vk=v[k];s=((f[q]+q*q)-(f[vk]+vk*vk))/(2*q-2*vk);if(s<=z[k]&&k>0)k--;else break}
+    if(s>z[k]){k++;v[k]=q;z[k]=s;z[k+1]=1e20}else{v[k]=q;z[k]=s;z[k+1]=1e20}
+  }
+  k=0;
+  for(let q=0;q<n;q++){while(z[k+1]<q)k++;const dx=q-v[k];d[q]=dx*dx+f[v[k]]}
+}
+function morphMask(cv,W,H,r){
+  if(!r||!isFinite(r))return;
+  const cx=cv.getContext("2d",{willReadFrequently:true}),im=cx.getImageData(0,0,W,H),px=im.data,N=W*H,grow=r>0,ar=Math.abs(r),INF=1e12;
+  const f=new Float32Array(N);
+  for(let i=0;i<N;i++){const on=px[i*4+3]>=128;f[i]=grow?(on?0:INF):(on?INF:0)}
+  const m=Math.max(W,H),v=new Int32Array(m),z=new Float64Array(m+1),d=new Float64Array(m),g=new Float64Array(m);
+  for(let x=0;x<W;x++){for(let y=0;y<H;y++)g[y]=f[y*W+x];edt1(g,H,v,z,d);for(let y=0;y<H;y++)f[y*W+x]=d[y]}
+  for(let y=0;y<H;y++){for(let x=0;x<W;x++)g[x]=f[y*W+x];edt1(g,W,v,z,d);for(let x=0;x<W;x++)f[y*W+x]=d[x]}
+  for(let i=0;i<N;i++){
+    const dist=Math.sqrt(f[i]),a=grow?Math.max(0,Math.min(1,ar-dist+1)):Math.max(0,Math.min(1,dist-ar));
+    px[i*4]=px[i*4+1]=px[i*4+2]=0;px[i*4+3]=Math.round(a*255);
+  }
+  cx.putImageData(im,0,0);
 }
 function selMaskCanvas(sc,shapes,view){
   const R=shapes||regions;
@@ -6347,7 +7308,26 @@ function selMaskCanvas(sc,shapes,view){
   const x=c.getContext("2d",{willReadFrequently:true});
   const t=document.createElement("canvas");t.width=W;t.height=H;
   const tx=t.getContext("2d");
+  const HL=shapes?null:hugLayer(),hasInv=R.some(r=>r.inv);
+  const hugClip=(hard)=>{   // Ảnh PNG nền trong suốt: phần vùng chọn nằm trên nền trong suốt được bỏ đi, đường bao tự bám sát phần ảnh
+    if(!HL)return;
+    const a=document.createElement("canvas");a.width=W;a.height=H;
+    const ax=a.getContext("2d");
+    if(view)ax.setTransform(view.k,0,0,view.k,view.x,view.y);else ax.setTransform(sc,0,0,sc,0,0);
+    const LM=new DOMMatrix().translate(HL.x+HL.w/2,HL.y+HL.h/2).rotate(HL.rot).scale(HL.fx,HL.fy).translate(-HL.w/2,-HL.h/2).scale(HL.w/HL.nw,HL.h/HL.nh);
+    ax.transform(LM.a,LM.b,LM.c,LM.d,LM.e,LM.f);
+    ax.drawImage(HL.el,0,0);
+    if(hard&&window._hugHard){   // dùng khi xóa/làm liền: coi mọi điểm ảnh có màu (kể cả viền mờ) là "thuộc ảnh", không để sót dải mờ
+      const id=ax.getImageData(0,0,W,H),dd=id.data;
+      for(let i=3;i<dd.length;i+=4)dd[i]=dd[i]>10?255:0;
+      ax.putImageData(id,0,0);
+    }
+    x.globalCompositeOperation="destination-in";x.drawImage(a,0,0);x.globalCompositeOperation="source-over";
+  };
+  let invSeen=false;
   R.forEach((sh,i)=>{
+    if(sh.gd){if(!invSeen)hugClip();morphMask(c,W,H,sh.gd/2*(view?view.k:sc));return}   // Tăng / giảm vùng chọn đều mọi phía
+    if(sh.inv){hugClip();invSeen=true}                                                   // đảo = phần bù của vùng đang thấy (đã ôm sát)
     tx.setTransform(1,0,0,1,0,0);tx.filter="none";tx.clearRect(0,0,W,H);
     if(sh.feather>0)tx.filter="blur("+(sh.feather*(view?view.k:sc)/2)+"px)";
     if(view)tx.setTransform(view.k,0,0,view.k,view.x,view.y);else tx.setTransform(sc,0,0,sc,0,0);
@@ -6357,17 +7337,7 @@ function selMaskCanvas(sc,shapes,view){
     x.drawImage(t,0,0);
   });
   x.globalCompositeOperation="source-over";
-  // Ảnh PNG nền trong suốt: phần vùng chọn nằm trên nền trong suốt được bỏ đi, đường bao tự bám sát phần ảnh
-  const HL=shapes?null:hugLayer();
-  if(HL){
-    const a=document.createElement("canvas");a.width=W;a.height=H;
-    const ax=a.getContext("2d");
-    if(view)ax.setTransform(view.k,0,0,view.k,view.x,view.y);else ax.setTransform(sc,0,0,sc,0,0);
-    const LM=new DOMMatrix().translate(HL.x+HL.w/2,HL.y+HL.h/2).rotate(HL.rot).scale(HL.fx,HL.fy).translate(-HL.w/2,-HL.h/2).scale(HL.w/HL.nw,HL.h/HL.nh);
-    ax.transform(LM.a,LM.b,LM.c,LM.d,LM.e,LM.f);
-    ax.drawImage(HL.el,0,0);
-    x.globalCompositeOperation="destination-in";x.drawImage(a,0,0);x.globalCompositeOperation="source-over";
-  }
+  if(!hasInv)hugClip(true);
   return c;
 }
 window.getSelectionMask=selMaskCanvas;
@@ -6401,23 +7371,35 @@ function selEdges(ir){
     if(y<H-1&&!on(x,y+1))add(x+1,y+1,x,y+1);
     if(x>0&&!on(x-1,y))add(x,y+1,x,y);
   }
-  const loops=[];
-  while(nx.size){
-    const st=nx.keys().next().value,pts=[];let cur=st;
-    do{
+  const loops=[],indeg=new Map();
+  nx.forEach(l=>l.forEach(e=>indeg.set(e,(indeg.get(e)||0)+1)));
+  // Vùng chọn chạy ra ngoài khung nhìn → đường viền bị cắt thành các đoạn HỞ (không khép kín).
+  // Phải bắt đầu dò từ đầu đoạn hở, và KHÔNG nối đầu-cuối, nếu không sẽ ra nét xéo.
+  const trace=open=>{
+    const st=open?-1:nx.keys().next().value,pts=[];
+    let cur=open?(()=>{for(const [k,l] of nx)if(l.length>(indeg.get(k)||0))return k;return -1})():st;
+    if(cur<0)return false;
+    const first=cur;
+    for(;;){
       pts.push(cur%V,Math.floor(cur/V));
       const l=nx.get(cur);if(!l)break;
       const e=l.pop();if(!l.length)nx.delete(cur);
+      indeg.set(e,(indeg.get(e)||0)-1);
       cur=e;
-    }while(cur!==st);
+      if(!open&&cur===first)break;
+    }
     const n=pts.length/2,out=[];
-    for(let i=0;i<n;i++){   // bỏ điểm thẳng hàng
+    for(let i=0;i<n;i++){   // bỏ điểm thẳng hàng (đoạn hở giữ nguyên 2 đầu)
+      if(open&&(i===0||i===n-1)){out.push(pts[i*2],pts[i*2+1]);continue}
       const a=(i+n-1)%n,b=(i+1)%n;
       const cr=(pts[i*2]-pts[a*2])*(pts[b*2+1]-pts[i*2+1])-(pts[i*2+1]-pts[a*2+1])*(pts[b*2]-pts[i*2]);
       if(cr!==0)out.push(pts[i*2],pts[i*2+1]);
     }
-    if(out.length>=4)loops.push(out);
-  }
+    if(out.length>=4){if(open)out.open=true;loops.push(out)}
+    return true;
+  };
+  while(nx.size&&trace(true));
+  while(nx.size)trace(false);
   return edgePts=loops;
 }
 // Đường viền "kiến bò": nét luôn mảnh, cố định trên màn hình
@@ -6428,11 +7410,12 @@ function drawAnts(ir){
   loops.forEach(pt=>{
     path.moveTo(pt[0],pt[1]);
     for(let i=2;i<pt.length;i+=2)path.lineTo(pt[i],pt[i+1]);
-    path.closePath();
+    if(!pt.open)path.closePath();
   });
   pen.save();pen.lineJoin="miter";
   pen.setLineDash([]);pen.lineWidth=1.4;pen.strokeStyle="#fff";pen.stroke(path);
-  pen.setLineDash([4,4]);pen.lineDashOffset=-selAnt;pen.strokeStyle="#000";pen.stroke(path);
+  const inverted=(regions.filter(r=>r.inv).length%2===1)!==regions.some(r=>r.invShown);   // vùng chọn đang được đảo: kiến bò đỏ - trắng
+  pen.setLineDash([4,4]);pen.lineDashOffset=-selAnt;pen.strokeStyle=inverted?"#ff2a2a":"#000";pen.stroke(path);
   pen.restore();
 }
 function drawCurPreview(sh,ir){
@@ -6445,12 +7428,256 @@ function drawCurPreview(sh,ir){
   pen.setLineDash([]);pen.lineWidth=3;pen.strokeStyle="#fff";pen.stroke();
   pen.lineWidth=1.5;pen.setLineDash([5,5]);pen.strokeStyle="#000";pen.stroke();pen.setLineDash([]);
 }
+/* ---------- Xóa sạch vùng chọn + Làm liền viền ---------- */
+const ER_MAXSIDE=8192,ER_MAXPIX=20e6;
+// Lớp đang được phóng to khi hiển thị → nâng độ phân giải của lớp lên bằng cỡ hiển thị trước khi xóa/làm mịn,
+// để mép xóa mịn ở đúng độ phân giải nhìn thấy (không bị vỡ thành ô vuông to rồi nhòe).
+function erPrepare(L){
+  const c0=toCanvas(activeSrc());
+  if(!L)return {c:c0,f:1};
+  let f=Math.max(L.w/L.nw,L.h/L.nh);
+  if(!(f>1.02))return {c:c0,f:1};
+  f=Math.min(f,ER_MAXSIDE/Math.max(c0.width,c0.height),Math.sqrt(ER_MAXPIX/(c0.width*c0.height)));
+  if(!(f>1.02))return {c:c0,f:1};
+  const w=Math.round(c0.width*f),h=Math.round(c0.height*f),c=document.createElement("canvas");c.width=w;c.height=h;
+  const x=c.getContext("2d",{willReadFrequently:true});x.imageSmoothingEnabled=true;x.imageSmoothingQuality="high";x.drawImage(c0,0,0,w,h);
+  return {c,f:w/c0.width};
+}
+// Mặt nạ vùng chọn đúng như đang thấy (ôm sát ảnh, tăng/giảm vùng chọn), dựng ở đúng độ phân giải cw×ch của lớp.
+// Viền mờ của ảnh được coi là thuộc ảnh (không nhân với độ trong suốt) nên không sót dải mờ.
+function erMask(L,cw,ch,forErase,pre){
+  if(!regions.length||!sourceW)return null;
+  let s=L?Math.max(1,cw/L.w,ch/L.h):1;
+  s=Math.min(s,Math.sqrt(ER_MAXPIX/(sourceW*sourceH)));if(s<1)s=1;
+  if(pre)s=pre.s;
+  const m=pre?pre.c:selMaskCanvas(s,null);   // đúng như vùng chọn đang thấy (ôm sát ảnh + tăng/giảm + đảo)
+  if(!m)return null;
+  const c=document.createElement("canvas");c.width=cw;c.height=ch;
+  const x=c.getContext("2d",{willReadFrequently:true});x.imageSmoothingEnabled=true;x.imageSmoothingQuality="high";
+  if(!L)x.drawImage(m,0,0,cw,ch);
+  else{
+    const M=new DOMMatrix().translate(L.x+L.w/2,L.y+L.h/2).rotate(L.rot).scale(L.fx,L.fy).translate(-L.w/2,-L.h/2).scale(L.w/cw,L.h/ch);
+    x.setTransform(M.inverse().scale(1/s,1/s));x.drawImage(m,0,0);
+  }
+  if(forErase&&!pre&&!regions.some(r=>r.feather>0)){
+    // viền ôm sát ảnh là độ trong suốt mềm của ảnh: nén quanh ngưỡng 50% để mép xóa đúng đường kiến bò, nhưng vẫn giữ 1 điểm khử răng cưa
+    x.setTransform(1,0,0,1,0,0);
+    const id=x.getImageData(0,0,cw,ch),d=id.data;
+    for(let i=3;i<d.length;i+=4){const a=d[i];if(a===0||a===255)continue;const v=(a-127.5)*3.5+127.5;d[i]=v<=0?0:v>=255?255:Math.round(v)}
+    x.putImageData(id,0,0);
+  }
+  return c;
+}
+// Viền mờ của ảnh nằm sát vùng xóa (nhưng nằm ngoài đường 50%) cũng bị xóa luôn → không sót dải mờ
+function erSweepFringe(c,m,f){
+  const w=c.width,h=c.height,la=c.getContext("2d",{willReadFrequently:true}).getImageData(0,0,w,h).data;
+  const bc=document.createElement("canvas");bc.width=w;bc.height=h;
+  const bx=bc.getContext("2d",{willReadFrequently:true});bx.filter="blur("+Math.max(1.5,1.2*f)+"px)";bx.drawImage(m,0,0);bx.filter="none";
+  const bd=bx.getImageData(0,0,w,h).data,mx=m.getContext("2d",{willReadFrequently:true}),id=mx.getImageData(0,0,w,h),md=id.data;
+  for(let o=3;o<md.length;o+=4)if(md[o]<255&&la[o]<140&&bd[o]>=15)md[o]=255;
+  mx.putImageData(id,0,0);
+}
+// Làm liền kênh trong suốt của canvas c: làm mờ rồi tăng tương phản nên bậc thang răng cưa tròn lại, mép vẫn sắc.
+// wc = canvas trọng số (null = cả ảnh); band = true: chỉ làm quanh mép của wc (vùng vừa xóa).
+function smoothCore(c,r,wc,band){
+  const w=c.width,h=c.height,p=Math.ceil(r*3)+2,W=w+2*p,H=h+2*p;
+  const b=document.createElement("canvas");b.width=W;b.height=H;
+  const bx=b.getContext("2d",{willReadFrequently:true});bx.imageSmoothingEnabled=false;
+  bx.drawImage(c,p,p);
+  // nhân bản điểm ảnh mép ra vùng đệm để mép khung không bị xói mòn khi làm mờ
+  bx.drawImage(c,0,0,w,1,p,0,w,p);bx.drawImage(c,0,h-1,w,1,p,p+h,w,p);
+  bx.drawImage(c,0,0,1,h,0,p,p,h);bx.drawImage(c,w-1,0,1,h,p+w,p,p,h);
+  bx.drawImage(c,0,0,1,1,0,0,p,p);bx.drawImage(c,w-1,0,1,1,p+w,0,p,p);
+  bx.drawImage(c,0,h-1,1,1,0,p+h,p,p);bx.drawImage(c,w-1,h-1,1,1,p+w,p+h,p,p);
+  const bl=document.createElement("canvas");bl.width=W;bl.height=H;
+  const lx=bl.getContext("2d",{willReadFrequently:true});lx.filter="blur("+r+"px)";lx.drawImage(b,0,0);lx.filter="none";
+  const bd=lx.getImageData(p,p,w,h).data;
+  let md=null;
+  if(wc){
+    let src=wc;
+    if(band){src=document.createElement("canvas");src.width=w;src.height=h;const sx=src.getContext("2d");sx.filter="blur("+Math.max(3,r*2.5)+"px)";sx.drawImage(wc,0,0);sx.filter="none"}
+    md=src.getContext("2d",{willReadFrequently:true}).getImageData(0,0,w,h).data;
+  }
+  const cx=c.getContext("2d",{willReadFrequently:true}),id=cx.getImageData(0,0,w,h),d=id.data;
+  const g=Math.max(3,2.6*r);
+  for(let i=0;i<w*h;i++){
+    const o=i*4;
+    let k=1;if(md){k=band?Math.min(1,md[o+3]/255*16):md[o+3]/255;if(k<=0)continue}
+    const a0=d[o+3];
+    let t=((bd[o+3]/255-0.5)*g+0.5);t=t<0?0:t>1?1:t;
+    let a1=a0+(t*255-a0)*k;
+    if(a1>a0){d[o]=bd[o];d[o+1]=bd[o+1];d[o+2]=bd[o+2]}   // điểm ảnh mới được lấp: lấy màu trung bình các điểm lân cận
+    d[o+3]=Math.round(a1);
+  }
+  cx.putImageData(id,0,0);
+}
+// Dò các vòng viền khép kín của một mặt nạ nhị phân on(x,y)
+function traceOnLoops(on,W,H){
+  const V=W+1,nx=new Map();
+  const add=(x0,y0,x1,y1)=>{const kk=y0*V+x0,e=y1*V+x1,l=nx.get(kk);if(l)l.push(e);else nx.set(kk,[e])};
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++)if(on(x,y)){
+    if(!on(x,y-1))add(x,y,x+1,y);
+    if(!on(x+1,y))add(x+1,y,x+1,y+1);
+    if(!on(x,y+1))add(x+1,y+1,x,y+1);
+    if(!on(x-1,y))add(x,y+1,x,y);
+  }
+  const loops=[];
+  while(nx.size){
+    const st=nx.keys().next().value,pts=[];let cur=st;
+    do{pts.push([cur%V,Math.floor(cur/V)]);const l=nx.get(cur);if(!l)break;const e=l.pop();if(!l.length)nx.delete(cur);cur=e}while(cur!==st);
+    loops.push(pts);
+  }
+  return loops;
+}
+function rdpOpen(P,eps){
+  const n=P.length,keep=new Uint8Array(n);keep[0]=keep[n-1]=1;const st=[[0,n-1]];
+  while(st.length){
+    const [a,b]=st.pop();let md=-1,mi=-1;
+    const ax=P[a][0],ay=P[a][1],dx=P[b][0]-ax,dy=P[b][1]-ay,Ln=Math.hypot(dx,dy)||1e-9;
+    for(let i=a+1;i<b;i++){const dd=Math.abs((P[i][0]-ax)*dy-(P[i][1]-ay)*dx)/Ln;if(dd>md){md=dd;mi=i}}
+    if(md>eps&&mi>0){keep[mi]=1;st.push([a,mi],[mi,b])}
+  }
+  return P.filter((_,i)=>keep[i]);
+}
+function rdpRing(P,eps){
+  const n=P.length;if(n<=4)return P;
+  let k=0,best=-1;for(let i=1;i<n;i++){const dx=P[i][0]-P[0][0],dy=P[i][1]-P[0][1],dd=dx*dx+dy*dy;if(dd>best){best=dd;k=i}}
+  const A=rdpOpen(P.slice(0,k+1),eps),B=rdpOpen(P.slice(k).concat([P[0]]),eps);
+  return A.concat(B.slice(1,-1));
+}
+// Chụp lại vùng chọn đang thấy thành các vùng tự do cố định (không còn phụ thuộc vào ảnh), để sau khi cắt/xóa
+// ảnh đổi thì vùng chọn KHÔNG tự co lại (ôm sát + tăng/giảm vùng chọn sẽ không bị tính lại trên ảnh mới).
+function freezeSelection(pre){
+  if(!regions.length||!sourceW||!hugLayer())return null;
+  const sc=pre?pre.s:Math.min(1,Math.sqrt(25e6/(sourceW*sourceH)));
+  let m;
+  if(pre)m=pre.c;
+  else{const m0=selMaskCanvas(sc,null);if(!m0)return null;m=smoothMaskEdge(m0,erEdgeSm()*sc,1)}   // đường viền được làm mượt giống hệt lúc xóa
+  const W=m.width,H=m.height,d=m.getContext("2d",{willReadFrequently:true}).getImageData(0,0,W,H).data;
+  const on=(x,y)=>x>=0&&y>=0&&x<W&&y<H&&d[(y*W+x)*4+3]>=128;
+  const raw=traceOnLoops(on,W,H);
+  let eps=0.8,out;
+  for(let tries=0;tries<3;tries++){
+    out=[];let total=0;
+    for(const lp of raw){
+      let ar=0;for(let i=0;i<lp.length;i++){const q=lp[(i+1)%lp.length];ar+=lp[i][0]*q[1]-q[0]*lp[i][1]}
+      if(Math.abs(ar)/2<3)continue;
+      const sp=rdpRing(lp,eps);if(sp.length<3)continue;
+      out.push(sp);total+=sp.length;
+    }
+    if(total<=60000)break;eps*=2.5;out=null;
+  }
+  if(!out||!out.length||out.length>4000)return null;
+  const wasInv=regions.filter(r=>r.inv).length%2===1;   // đang ở chiều đảo: giữ nét kiến bò đỏ - trắng
+  return out.map((sp,i)=>{const r={type:"lasso",points:sp.map(q=>({x:q[0]/sc,y:q[1]/sc})),op:i?"xor":"add",feather:0,mode:"keep",nohug:true};if(i===0&&wasInv)r.invShown=true;return r});
+}
+// Làm mượt ĐƯỜNG BAO của mặt nạ (làm mờ rồi tăng tương phản): bậc thang 1 px thành đường cong mượt, mép khử răng cưa dưới điểm ảnh.
+function smoothMaskEdge(m,sig,ss){
+  ss=ss||1;
+  if(!(sig>0.05))return m;
+  const sp=sig*ss,w=m.width,h=m.height,p=Math.ceil(sp*3)+2,W=w+2*p,H=h+2*p;   // sig: px thật của ảnh; sp: px của mặt nạ (đã nhân độ phân giải)
+  const b=document.createElement("canvas");b.width=W;b.height=H;
+  const bx=b.getContext("2d",{willReadFrequently:true});bx.imageSmoothingEnabled=false;
+  bx.drawImage(m,p,p);
+  bx.drawImage(m,0,0,w,1,p,0,w,p);bx.drawImage(m,0,h-1,w,1,p,p+h,w,p);
+  bx.drawImage(m,0,0,1,h,0,p,p,h);bx.drawImage(m,w-1,0,1,h,p+w,p,p,h);
+  bx.drawImage(m,0,0,1,1,0,0,p,p);bx.drawImage(m,w-1,0,1,1,p+w,0,p,p);
+  bx.drawImage(m,0,h-1,1,1,0,p+h,p,p);bx.drawImage(m,w-1,h-1,1,1,p+w,p+h,p,p);
+  const bl=document.createElement("canvas");bl.width=W;bl.height=H;
+  const lx=bl.getContext("2d",{willReadFrequently:true});lx.filter="blur("+sp+"px)";lx.drawImage(b,0,0);lx.filter="none";
+  const bd=lx.getImageData(p,p,w,h).data;
+  // Giới hạn: viền mượt chỉ được xóa lấn thêm tối đa 0,4 px so với viền vùng chọn (chủ yếu chỉ lấp lại bậc thang, không ăn sâu)
+  const mar=0.3*ss,gr=document.createElement("canvas"),er=document.createElement("canvas");
+  gr.width=er.width=w;gr.height=er.height=h;
+  gr.getContext("2d",{willReadFrequently:true}).drawImage(m,0,0);er.getContext("2d",{willReadFrequently:true}).drawImage(m,0,0);
+  morphMask(gr,w,h,0);morphMask(er,w,h,-mar);
+  const gd=gr.getContext("2d",{willReadFrequently:true}).getImageData(0,0,w,h).data,ed=er.getContext("2d",{willReadFrequently:true}).getImageData(0,0,w,h).data;
+  const out=document.createElement("canvas");out.width=w;out.height=h;
+  const ox=out.getContext("2d",{willReadFrequently:true}),id=ox.createImageData(w,h),d=id.data,g=Math.max(2,2.5*sig);
+  for(let i=0;i<w*h;i++){
+    let t=(bd[i*4+3]/255-.5)*g+.5;t=t<0?0:t>1?1:t;let v=Math.round(t*255);
+    const hi=gd[i*4+3],lo=ed[i*4+3];if(v>hi)v=hi;if(v<lo)v=lo;
+    d[i*4+3]=v;
+  }
+  ox.putImageData(id,0,0);
+  return out;
+}
+// Mặt nạ vùng chọn dựng ở độ phân giải CAO (x2–x4) rồi làm mượt: đường viền chính xác dưới điểm ảnh, giống độ mịn của viền kiến bò trên màn hình
+function erSelMask(sm){
+  if(!(sm>0)||!sourceW)return null;
+  const ss=Math.floor(Math.min(4,Math.sqrt(6e6/(sourceW*sourceH))));
+  if(ss<2)return null;
+  const c0=selMaskCanvas(ss,null);if(!c0)return null;
+  return {c:smoothMaskEdge(c0,sm,ss),s:ss};
+}
+// Độ mượt mép (px). Chỉ áp dụng khi đường viền đến từ chính ảnh (ôm sát / tăng-giảm vùng chọn) để hình chữ nhật, elip tự vẽ vẫn giữ góc nhọn.
+function erEdgeSm(){
+  const e=$("selEdgeSm");let v=e?Number(e.value):1.5;
+  if(!isFinite(v)||v<0)v=0;v=Math.min(v,12);
+  if(!v||regions.some(r=>r.feather>0))return 0;
+  return (hugLayer()||regions.some(r=>r.gd||r.nohug))?v:0;
+}
+// Dấu vết lần xóa gần nhất: bấm Delete lại với đúng vùng chọn đó trên đúng ảnh đó thì KHÔNG làm gì (không ăn mòn thêm)
+let erLast=null;
+function erSig(L){
+  const e=$("selEdgeSm");
+  return JSON.stringify(regions)+"|"+(L?[L.x,L.y,L.w,L.h,L.rot,L.fx,L.fy].join():"base")+"|"+(e?e.value:"");
+}
 function eraseSelection(quiet){
-  const L=layers[selLayer]||null,m=selMaskFor(L);if(!m||!img)return;
+  window._hugHard=true;   // lúc xóa: viền mờ của ảnh coi như thuộc ảnh, xóa sạch không sót dải mờ
+  try{return eraseSelection0(quiet)}finally{window._hugHard=false}
+}
+function eraseSelection0(quiet){
+  const L=layers[selLayer]||null;if(!img||!regions.length)return;
   commitWarp();
-  const c=toCanvas(activeSrc()),cx=c.getContext("2d");
-  cx.globalCompositeOperation="destination-out";cx.drawImage(m,0,0,c.width,c.height);cx.globalCompositeOperation="source-over";
-  commitEditCanvas(c,L);if(!quiet)status("Đã xóa phần ảnh trong vùng chọn của "+(L?"lớp \""+L.name+"\"":"ảnh gốc")+".");
+  if(erLast&&erLast.el===activeSrc()&&erLast.sig===erSig(L)){
+    status("Vùng chọn này đã được xóa rồi, không còn gì để xóa thêm (ảnh giữ nguyên, không bị thu nhỏ).");return;
+  }
+  const sm=erEdgeSm();
+  const sel=erSelMask(sm);   // mặt nạ siêu mịn (nếu ảnh không quá lớn)
+  const fr=freezeSelection(sel);   // chụp vùng chọn đang thấy TRƯỚC khi xóa
+  const P=erPrepare(L),c=P.c;let m=erMask(L,c.width,c.height,true,sel);if(!m)return;
+  // Trong vùng chọn không còn điểm ảnh nào nhìn thấy được → không làm gì (tránh quét viền / làm liền lặp lại gây ăn mòn)
+  {
+    const a=c.getContext("2d",{willReadFrequently:true}).getImageData(0,0,c.width,c.height).data,
+          b=m.getContext("2d",{willReadFrequently:true}).getImageData(0,0,m.width,m.height).data;
+    let any=false;for(let o=3;o<a.length;o+=4)if(b[o]>=128&&a[o]>=8){any=true;break}
+    if(!any){status("Trong vùng chọn không còn phần ảnh nào để xóa.");return}
+  }
+  // Hai lần xóa bù nhau (xóa trong rồi đảo xóa ngoài): mép mỗi lần chỉ xóa theo tỉ lệ (vd 50% × 50% = còn 25%) nên để lại vệt mờ.
+  // Nhân đôi độ phủ (>=50% là xóa hẳn): với 2 vùng bù nhau thì luôn có một lần xóa sạch điểm ảnh mép.
+  if(sm>0&&!sel)m=smoothMaskEdge(m,sm,1);
+  if(!regions.some(r=>r.feather>0)){
+    const mx=m.getContext("2d",{willReadFrequently:true}),hd=mx.getImageData(0,0,m.width,m.height),dd=hd.data;
+    for(let o=3;o<dd.length;o+=4){const v=dd[o]*3;dd[o]=v>255?255:v}
+    mx.putImageData(hd,0,0);
+  }   // viền cắt mềm, không còn bậc thang
+  if(!sel&&!regions.some(r=>r.feather>0)&&c.width*c.height<=ER_MAXPIX*1.2)erSweepFringe(c,m,P.f);   // có mặt nạ siêu mịn thì cắt đúng viền chọn, không quét thêm
+  const cx=c.getContext("2d");
+  cx.globalCompositeOperation="destination-out";cx.drawImage(m,0,0);cx.globalCompositeOperation="source-over";
+  if(!sel&&c.width*c.height<=ER_MAXPIX*1.2)smoothCore(c,Math.max(0.8,0.8*P.f),m,true);   // làm liền mép vừa cắt, tránh bậc thang răng cưa
+  {   // smoothCore không được phép "mọc" lại ảnh bên trong vùng đã xóa
+    const md=m.getContext("2d",{willReadFrequently:true}).getImageData(0,0,m.width,m.height).data,
+          id=cx.getImageData(0,0,c.width,c.height),d=id.data;
+    for(let o=3;o<d.length;o+=4)if(md[o]>=250||(md[o]>0&&d[o]<16))d[o]=0;   // điểm ảnh còn quá mờ (<6%) sát mép vùng xóa thì xóa luôn, khỏi để lại vệt
+    cx.putImageData(id,0,0);
+  }
+  window._hugHard=false;
+  commitEditCanvas(c,L);
+  if(fr){regions.length=0;fr.forEach(r=>regions.push(r));selReg=null;refreshRegions()}
+  erLast={el:activeSrc(),sig:erSig(L)};
+  if(!quiet)status("Đã xóa sạch phần ảnh trong vùng chọn của "+(L?"lớp \""+L.name+"\"":"ảnh gốc")+".");
+}
+// Làm liền viền: làm tròn các bậc thang răng cưa ở mép trong suốt của lớp (có vùng chọn thì chỉ làm trong vùng chọn)
+function smoothEdges(){
+  if(!img||batchRunning)return;
+  commitWarp();
+  const L=layers[selLayer]||null,P=erPrepare(L),c=P.c;
+  if(c.width*c.height>ER_MAXPIX*1.2){status("Ảnh quá lớn để làm liền viền.");return}
+  const mk=erMask(L,c.width,c.height);
+  smoothCore(c,Math.min(40,Math.max(1.2,1.3*P.f)),mk,false);
+  commitEditCanvas(c,L);
+  status("Đã làm liền viền"+(mk?" trong vùng chọn":"")+" của "+(L?"lớp \""+L.name+"\"":"ảnh gốc")+".");
 }
 
 /* ---------- Sao chép / Cắt / Dán / Lớp mới từ vùng chọn (dùng được giữa các tab) ---------- */
@@ -6546,6 +7773,8 @@ $("selBarCopy").onclick=()=>selCopy(false);
 $("selBarCut").onclick=()=>selCopy(true);
 $("selBarPaste").onclick=()=>pasteClip();
 $("selBarLayer").onclick=()=>selToLayer(false);
+$("selBarDel").onclick=()=>eraseSelection();
+$("selBarSmooth").onclick=()=>smoothEdges();
 
 
 /* ---------- Lasso tự do nhiều nét ---------- */
@@ -6969,7 +8198,7 @@ document.addEventListener("keydown",e=>{
   const n=e.shiftKey?10:1,dx=e.key==="ArrowLeft"?-n:e.key==="ArrowRight"?n:0,dy=e.key==="ArrowUp"?-n:e.key==="ArrowDown"?n:0;
   const now=Date.now();if(now-nudgeT>700)snapshot();nudgeT=now;
   regions.forEach(sh=>{
-    if(sh.inv)return;   // hình đảo vùng chọn phủ cả ảnh, không dời
+    if(sh.inv||sh.gd)return;   // hình đảo vùng chọn phủ cả ảnh / lệnh tăng giảm: không dời
     if(sh.type==="lasso")sh.points.forEach(q=>{q.x+=dx;q.y+=dy});else{sh.x+=dx;sh.y+=dy}
   });
   drawSelection();status("Đã dời vùng chọn "+(dx||dy?"("+(dx>=0?"+":"")+dx+", "+(dy>=0?"+":"")+dy+" px)":"")+".");
@@ -7001,7 +8230,10 @@ document.addEventListener("keydown",e=>{
   const tg=e.target&&e.target.tagName;if(tg==="TEXTAREA"||tg==="SELECT"||(tg==="INPUT"&&/text|number|search/.test(e.target.type||"")))return;
   if(tool==="crop"&&crop){e.preventDefault();e.stopPropagation();cropScale(right,e.shiftKey);return}
   const MAP={pen:["penSize","Cọ vẽ"],erase:["erSize","Cục tẩy"],bgerase:["erSize","Tẩy nền"],restore:["erSize","Khôi phục"],clone:["clSize","Clone Stamp"],liquify:["wRad","Liquify"]},m=MAP[tool];
-  if(!m)return;
+  if(!m){   // công cụ vùng chọn: [ ] giảm / tăng vùng chọn
+    if(regions.length&&(isSelTool(tool)||tool==="select")){e.preventDefault();e.stopPropagation();growSel(right?1:-1,{shift:e.shiftKey})}
+    return;
+  }
   const el=$(m[0]);if(!el)return;
   e.preventDefault();e.stopPropagation();
   const min=Number(el.min)||1,max=Number(el.max)||1000,v=Number(el.value)||min;
@@ -7029,6 +8261,7 @@ document.addEventListener("keydown",e=>{
   }
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="z"){e.preventDefault();e.shiftKey?redo():undo();return}
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="y"){e.preventDefault();redo();return}
+  if((e.ctrlKey||e.metaKey)&&e.altKey&&((e.shiftKey&&e.code==="KeyT")||(!e.shiftKey&&e.code==="KeyD"))){e.preventDefault();repeatDup($("lyRepeatN").value);return}
   if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="d"){e.preventDefault();duplicateSelected();return}
   if((e.key==="v"||e.key==="V")&&!e.ctrlKey&&!e.metaKey)setTool("select");
   if((e.ctrlKey||e.metaKey)&&!e.altKey&&img&&!ftxSess){
@@ -7398,7 +8631,13 @@ function autoRun(r){
   status("Đã tự tạo "+nodes.length+" điểm chọn. Chỉnh sửa nếu cần rồi nhấn Enter để tạo vùng.");
 }
 function toggleRegionMode(){invertSel()}
-document.getElementById("selHug").addEventListener("change",()=>{edgeKey="";drawSelection();if(img)scheduleLive()});
+document.getElementById("selHug").addEventListener("change",()=>{edgeKey="";syncHugSeg();drawSelection();if(img)scheduleLive()});
+function syncHugSeg(){const on=document.getElementById("selHug").checked;document.querySelectorAll("#selHugSeg [data-hug]").forEach(b=>b.classList.toggle("active",(b.dataset.hug==="1")===on))}
+document.querySelectorAll("#selHugSeg [data-hug]").forEach(b=>b.onclick=()=>{
+  const cb=document.getElementById("selHug"),want=b.dataset.hug==="1";
+  if(cb.checked!==want){cb.checked=want;cb.dispatchEvent(new Event("change"))}
+  status(want?"Vùng chọn ôm sát ảnh: phần trong suốt của PNG bị bỏ khỏi vùng chọn.":"Vùng chọn không ôm sát: giữ đúng hình bạn vẽ, kể cả ra ngoài phần ảnh.");
+});
 // phím tắt mới: phím cách (giữ = bàn tay), X / Ctrl+Shift+I, Enter / Backspace cho điểm chọn
 document.addEventListener("keydown",e=>{
   if(batchRunning)return;
@@ -7493,7 +8732,7 @@ function restoreDoc(s){
     c.toBlob(b=>{const pv=$("sourceStage").querySelector("img");if(pv&&b){if(warpURL)URL.revokeObjectURL(warpURL);warpURL=URL.createObjectURL(b);pv.src=warpURL}});
     if(sizeChanged){zoom=1;panX=panY=0;layoutViews()}
     syncItemUI();syncPageUI();layerChanged();
-  }finally{stepBusy=false}
+  }finally{stepBusy=false;try{fxRebase()}catch(_){}}
 }
 function addStep(label){
   if(stepCur<steps.length-1)steps.length=stepCur+1;      // thao tác mới sau khi quay lại bước cũ: bỏ nhánh phía sau
@@ -7504,6 +8743,7 @@ function addStep(label){
 }
 function histReset(label){steps=[];stepCur=-1;stepLabel=null;addStep(label);stepFp=fingerprint();renderSteps()}
 function histTick(force){
+  try{fxTick()}catch(_){}
   if(ftxSess||!img||stepBusy||!steps.length)return;
   if(!force&&(ptrDown&&Date.now()-ptrDown<20000||ldrag||penDraw||cloneDraw||drawing||warpDirty||batchRunning))return;
   const fp=fingerprint();
@@ -8436,7 +9676,7 @@ function updateXfFields(){
   if(a!==$("xfWp"))$("xfWp").value=pc(b.w/ref.w*100);
   if(a!==$("xfHp"))$("xfHp").value=pc(b.h/ref.h*100);
 }
-function drawSelection(){drawSelection0();drawXform();drawFtx();updateXfFields();syncTextEditor();drawGuides()}
+function drawSelection(){drawSelection0();drawXform();drawFtx();drawRotHud();dpDiffUpdate();updateXfFields();syncTextEditor();drawGuides()}
 
 // Giữ kích thước xuất ra khớp với nội dung sau khi đổi cỡ vùng / lớp
 function followExport(fn){fn();syncExportSize()}
@@ -8736,6 +9976,8 @@ function ctxLayerItems(){
   const what=ms.length?ms.length+" lớp":(act?"lớp":"cả khung");
   const items=[
     ["Nhân bản "+(ms.length?ms.length+" lớp":(act?"lớp":"ảnh gốc")),"Ctrl+D",im,()=>duplicateSelected()],
+    ["Nhân bản + lặp biến đổi","Ctrl+Alt+Shift+T",hasL,()=>repeatDup($("lyRepeatN").value)],
+    ["Nhân bản + hiệu ứng…","",hasL,()=>{openTab("Nhân bản");dpSetMode("fx")}],
     null,
     ["Sao chép "+what+" sang tab","▸",im,null,tabItems(false)],
     ["Di chuyển "+(ms.length?ms.length+" lớp":"lớp")+" sang tab","▸",hasL,null,tabItems(true)],
@@ -8833,6 +10075,7 @@ window.addEventListener("wheel",ctxMenuClose,{passive:true});
 /* ---------- Biến đổi tự do: Scale / Rotate / Skew / Distort / Perspective / Warp ---------- */
 var ftxSess=null,frameHidden=false;
 canvas.addEventListener("pointerdown",()=>{if(frameHidden){frameHidden=false;drawSelection()}},true);
+const FTX_PIVOT_HINT=" Chấm tròn ◉ là tâm xoay: kéo nó tới bất kỳ vị trí nào để đổi tâm, nhấp đúp vào nó để về giữa lớp.";
 const FTX_MODES={scale:"Scale (thu phóng)",rotate:"Rotate (xoay)",skew:"Skew (nghiêng)",distort:"Distort (méo tự do)",persp:"Perspective (phối cảnh)",warp:"Warp (lưới uốn)"};
 const ftxCp=p=>({x:p.x,y:p.y});
 // ánh xạ ô vuông đơn vị -> tứ giác q (TL,TR,BR,BL) bằng phép chiếu (đúng cho cả méo và phối cảnh)
@@ -8882,22 +10125,22 @@ function ftxStart(mode){
     baseVisible=false;fromBase=true;refreshLayers();
   }
   const L=layers[selLayer];if(!L)return;
-  const orig={el:L.el,nw:L.nw,nh:L.nh,x:L.x,y:L.y,w:L.w,h:L.h,rot:L.rot,fx:L.fx,fy:L.fy,shape:L.shape,ver:L.ver||0};
+  const orig={el:L.el,nw:L.nw,nh:L.nh,x:L.x,y:L.y,w:L.w,h:L.h,rot:L.rot,fx:L.fx,fy:L.fy,shape:L.shape,ver:L.ver||0,vq:L.vq};
   const full=document.createElement("canvas");full.width=L.nw;full.height=L.nh;
   const fc=full.getContext("2d");fc.translate(L.fx<0?L.nw:0,L.fy<0?L.nh:0);fc.scale(L.fx,L.fy);fc.drawImage(L.el,0,0);
   let small=full;const m=700/Math.max(L.nw,L.nh);
   if(m<1){small=document.createElement("canvas");small.width=Math.max(1,Math.round(L.nw*m));small.height=Math.max(1,Math.round(L.nh*m));small.getContext("2d").drawImage(full,0,0,small.width,small.height)}
-  ftxSess={L,orig,fromBase,prevBV,full,small,k0:full.width/Math.max(1,L.w),pts:layerCorners(L).map(ftxCp),grid:null,mode:mode||"scale",drag:null,raf:0};
+  ftxSess={L,orig,fromBase,prevBV,full,small,k0:full.width/Math.max(1,L.w),pts:layerCorners(L).map(ftxCp),rect0:layerCorners(L).map(ftxCp),q0:frameQuad(L).map(ftxCp),pivot:null,grid:null,mode:mode||"scale",drag:null,raf:0};
   if(tool==="select"||tool==="xform")setTool("rect",true);
   if(ftxSess.mode==="warp")ftxBuildGrid(ftxSess);
-  status("Biến đổi tự do — "+FTX_MODES[ftxSess.mode]+". Enter = áp dụng, Esc = hủy, chuột phải = đổi chế độ."+(ftxSess.mode==="warp"?" ↑/↓: thêm/bớt đường lưới.":""));
+  status("Biến đổi tự do — "+FTX_MODES[ftxSess.mode]+". Enter = áp dụng, Esc = hủy, chuột phải = đổi chế độ."+(ftxSess.mode==="warp"?" ↑/↓: thêm/bớt đường lưới.":"")+(ftxSess.mode==="rotate"?FTX_PIVOT_HINT:""));
   drawSelection();
 }
 function ftxSetMode(m){
   const S=ftxSess;if(!S||S.mode===m)return;
   if(S.mode==="warp"&&S.grid){const G=S.grid,e=G.length-1;S.pts=[G[0][0],G[0][e],G[e][e],G[e][0]].map(ftxCp);S.grid=null;ftxRender(false)}
-  S.mode=m;if(m==="warp")ftxBuildGrid(S);
-  status("Biến đổi tự do — "+FTX_MODES[m]+". Enter = áp dụng, Esc = hủy.");
+  S.mode=m;S.pivot=null;if(m==="warp")ftxBuildGrid(S);
+  status("Biến đổi tự do — "+FTX_MODES[m]+". Enter = áp dụng, Esc = hủy."+(m==="rotate"?FTX_PIVOT_HINT:""));
   drawSelection();
 }
 function ftxTri(c,im,s0,s1,s2,d0,d1,d2,pad){
@@ -8942,9 +10185,16 @@ function ftxFinish(){
   S.drag=null;
   ftxRender(true);
   const L=S.L;
+  try{   // nhớ khung "ảo" của lớp sau khi biến đổi (xoay / nghiêng / méo...) để Nhân bản + lặp biến đổi tính được phép biến đổi
+    const map=ftxMapper(S),r0=S.rect0,U={x:r0[1].x-r0[0].x,y:r0[1].y-r0[0].y},V={x:r0[3].x-r0[0].x,y:r0[3].y-r0[0].y},det=U.x*V.y-U.y*V.x;
+    if(Math.abs(det)>1e-9&&L.w>0&&L.h>0){
+      const nq=S.q0.map(q=>{const dx=q.x-r0[0].x,dy=q.y-r0[0].y;return map((dx*V.y-dy*V.x)/det,(U.x*dy-U.y*dx)/det)});
+      if(nq.every(q=>isFinite(q.x)&&isFinite(q.y)))L.vq=nq.map(q=>[(q.x-L.x)/L.w,(q.y-L.y)/L.h]);
+    }
+  }catch(_){}
   if(!S.fromBase){   // Ctrl+Z cũ: trả lại điểm ảnh và vị trí / kích thước trước đó
     pixPush(L,S.orig.el);const e=pixHist[pixHist.length-1];
-    if(e)e.geo={x:S.orig.x,y:S.orig.y,w:S.orig.w,h:S.orig.h,rot:S.orig.rot,fx:S.orig.fx,fy:S.orig.fy};
+    if(e)e.geo={x:S.orig.x,y:S.orig.y,w:S.orig.w,h:S.orig.h,rot:S.orig.rot,fx:S.orig.fx,fy:S.orig.fy,vq:S.orig.vq};
   }
   ftxSess=null;frameHidden=true;
   refreshLayerThumb(L);
@@ -8985,24 +10235,30 @@ function ftxDown(e){
   e.preventDefault();
   const p=ftxPt(e),h=ftxHit(S,p),inside=ftxInside(ftxOutline(S),p);
   let kind=null;
-  if(h&&S.mode!=="rotate")kind="h";
+  const pvp=S.mode==="rotate"?(S.pivot||ftxCenter(S)):null;
+  if(pvp&&Math.hypot(pvp.x-p.x,pvp.y-p.y)<=10/ftxK())kind="pivot";
+  else if(h&&S.mode!=="rotate")kind="h";
   else if(S.mode==="rotate"&&(h||!inside))kind="rot";
   else if(inside)kind="move";
   if(!kind)return;
-  const c=ftxCenter(S);
-  S.drag={kind,hid:h?h.id:null,gj:h?h.gj:0,gi:h?h.gi:0,p0:p,pts0:S.pts.map(ftxCp),grid0:S.grid?S.grid.map(r=>r.map(ftxCp)):null,c,a0:Math.atan2(p.y-c.y,p.x-c.x)};
+  const c=(S.mode==="rotate"&&S.pivot)?S.pivot:ftxCenter(S);
+  S.drag={kind,tot0:ftxTotAng(S),pv0:S.pivot?ftxCp(S.pivot):null,hid:h?h.id:null,gj:h?h.gj:0,gi:h?h.gi:0,p0:p,pts0:S.pts.map(ftxCp),grid0:S.grid?S.grid.map(r=>r.map(ftxCp)):null,c,a0:Math.atan2(p.y-c.y,p.x-c.x)};
   canvas.setPointerCapture(e.pointerId);
 }
 function ftxApply(S,d,p,e){
   const dx=p.x-d.p0.x,dy=p.y-d.p0.y,P=d.pts0;
+  if(d.kind==="pivot"){S.pivot={x:d.c.x+dx,y:d.c.y+dy};return}   // chỉ dời tâm xoay, không biến đổi lớp
   if(d.kind==="move"){
+    if(d.pv0)S.pivot={x:d.pv0.x+dx,y:d.pv0.y+dy};
     S.pts=P.map(q=>({x:q.x+dx,y:q.y+dy}));
     if(d.grid0)S.grid=d.grid0.map(r=>r.map(q=>({x:q.x+dx,y:q.y+dy})));
     return;
   }
   if(d.kind==="rot"){
-    let ang=Math.atan2(p.y-d.c.y,p.x-d.c.x)-d.a0;
+    const aNow=Math.atan2(p.y-d.c.y,p.x-d.c.x);
+    let ang=aNow-d.a0;
     if(e.shiftKey)ang=Math.round(ang/(Math.PI/12))*(Math.PI/12);
+    setRotHud(d,aNow,d.a0,ang/D2R,d.c.x,d.c.y,p,"tổng "+fmtDeg((d.tot0||0)+ang/D2R,true),(d.tot0||0));
     const cs=Math.cos(ang),sn=Math.sin(ang),rot=q=>({x:d.c.x+(q.x-d.c.x)*cs-(q.y-d.c.y)*sn,y:d.c.y+(q.x-d.c.x)*sn+(q.y-d.c.y)*cs});
     S.pts=P.map(rot);if(d.grid0)S.grid=d.grid0.map(r=>r.map(rot));
     return;
@@ -9043,17 +10299,19 @@ function ftxApply(S,d,p,e){
 function ftxMoveEv(e){
   const S=ftxSess;if(!S)return;
   if(!S.drag){
-    const p=ftxPt(e),h=ftxHit(S,p);
+    const p=ftxPt(e),h=ftxHit(S,p),pv=S.mode==="rotate"?(S.pivot||ftxCenter(S)):null;
+    if(pv&&Math.hypot(pv.x-p.x,pv.y-p.y)<=10/ftxK()){canvas.style.cursor="crosshair";return}
     canvas.style.cursor=h?(S.mode==="rotate"?"alias":"pointer"):(ftxInside(ftxOutline(S),p)?"move":(S.mode==="rotate"?"alias":"default"));
     return;
   }
   e.stopImmediatePropagation();
   ftxApply(S,S.drag,ftxPt(e),e);
-  ftxSchedule();drawSelection();
+  if(S.drag.kind!=="pivot")ftxSchedule();
+  drawSelection();
 }
 function ftxUp(e){
   const S=ftxSess;if(!S||!S.drag)return;
-  e.stopImmediatePropagation();S.drag=null;
+  e.stopImmediatePropagation();S.drag=null;rotHud=null;
   try{canvas.releasePointerCapture(e.pointerId)}catch(_){}
   ftxRender(false);drawSelection();scheduleLive();
 }
@@ -9061,8 +10319,13 @@ canvas.addEventListener("pointerdown",ftxDown,true);
 canvas.addEventListener("pointermove",ftxMoveEv,true);
 canvas.addEventListener("pointerup",ftxUp,true);
 canvas.addEventListener("pointercancel",ftxUp,true);
+canvas.addEventListener("dblclick",e=>{   // nhấp đúp vào tâm xoay: đưa về giữa lớp
+  const S=ftxSess;if(!S||S.mode!=="rotate"||!S.pivot)return;
+  const p=ftxPt(e);if(Math.hypot(S.pivot.x-p.x,S.pivot.y-p.y)>10/ftxK())return;
+  e.stopImmediatePropagation();e.preventDefault();S.pivot=null;drawSelection();status("Tâm xoay đã về giữa lớp.");
+},true);
 function drawFtx(){
-  const S=ftxSess;if(!S||!img)return;
+  const S=ftxSess;if(!S||!img){ftxAngUpdate(null);return}
   const ir=imageRect(),k=ir.w/sourceW,sc=p=>({x:ir.x+p.x*k,y:ir.y+p.y*k});
   pen.save();pen.setLineDash([]);
   const line=(pts,close)=>{pen.beginPath();pts.forEach((p,i)=>{const q=sc(p);i?pen.lineTo(q.x,q.y):pen.moveTo(q.x,q.y)});if(close)pen.closePath()};
@@ -9082,9 +10345,55 @@ function drawFtx(){
     if(S.mode==="warp"){pen.beginPath();pen.arc(q.x,q.y,5,0,7);pen.fillStyle="#fff";pen.fill();pen.lineWidth=1.5;pen.strokeStyle="#3b8cf5";pen.stroke()}
     else{pen.fillStyle="#fff";pen.fillRect(q.x-4,q.y-4,8,8);pen.lineWidth=1;pen.strokeStyle="#000";pen.strokeRect(q.x-4,q.y-4,8,8)}
   });
-  if(S.mode==="rotate"){const c=sc(ftxCenter(S));pen.strokeStyle="#fff";pen.lineWidth=2;pen.beginPath();pen.moveTo(c.x-8,c.y);pen.lineTo(c.x+8,c.y);pen.moveTo(c.x,c.y-8);pen.lineTo(c.x,c.y+8);pen.stroke();pen.strokeStyle="#3b8cf5";pen.lineWidth=1;pen.stroke()}
+  if(S.mode==="rotate"){   // chấm tròn = tâm xoay (kéo được)
+    const c=sc(S.pivot||ftxCenter(S));
+    pen.beginPath();pen.moveTo(c.x-13,c.y);pen.lineTo(c.x+13,c.y);pen.moveTo(c.x,c.y-13);pen.lineTo(c.x,c.y+13);
+    pen.lineWidth=3;pen.strokeStyle="rgba(0,0,0,.55)";pen.stroke();pen.lineWidth=1;pen.strokeStyle="#fff";pen.stroke();
+    pen.beginPath();pen.arc(c.x,c.y,7,0,Math.PI*2);pen.fillStyle="rgba(59,140,245,.35)";pen.fill();
+    pen.lineWidth=3;pen.strokeStyle="#000";pen.stroke();pen.lineWidth=1.5;pen.strokeStyle="#fff";pen.stroke();
+    pen.beginPath();pen.arc(c.x,c.y,2.2,0,Math.PI*2);pen.fillStyle="#3b8cf5";pen.fill();
+  }
   pen.restore();
-  sizeLabel(FTX_MODES[S.mode]+(S.mode==="warp"&&S.grid?" "+S.grid.length+"×"+S.grid.length+"  ·  ↑↓: thêm/bớt đường lưới":"")+"  ·  Enter: áp dụng  ·  Esc: hủy  ·  chuột phải: đổi chế độ",8,8);
+  ftxAngUpdate(S);
+  sizeLabel(FTX_MODES[S.mode]+(S.mode==="rotate"?"  ·  kéo chấm tròn ◉ để đổi tâm xoay":"")+(S.mode==="warp"&&S.grid?" "+S.grid.length+"×"+S.grid.length+"  ·  ↑↓: thêm/bớt đường lưới":"")+"  ·  Enter: áp dụng  ·  Esc: hủy  ·  chuột phải: đổi chế độ",8,8);
+}
+
+/* ---------- Nhập góc xoay chính xác (Biến đổi tự do → Rotate) ---------- */
+var ftxAngBox=document.createElement("div");ftxAngBox.id="ftxAngBox";
+ftxAngBox.style.cssText="position:fixed;display:none;z-index:60;background:rgba(20,20,24,.96);border:1px solid #3b8cf5;border-radius:4px;padding:5px 8px;font-size:11px;color:#fff;align-items:center;gap:5px";
+ftxAngBox.innerHTML='Góc <input type="number" id="ftxAngIn" step="1" style="width:68px" title="Nhập góc so với vị trí ban đầu rồi Enter. Dương = xoay theo chiều kim đồng hồ"> ° <button type="button" class="small-btn" data-d="-90">−90°</button><button type="button" class="small-btn" data-d="90">+90°</button><button type="button" class="small-btn" data-d="0" title="Về góc ban đầu">0°</button>';
+document.body.appendChild(ftxAngBox);
+function ftxSetAngle(target){
+  const S=ftxSess;if(!S||S.mode!=="rotate"||!isFinite(target))return;
+  const d=target-ftxTotAng(S);if(Math.abs(d)<1e-9)return;
+  const c=S.pivot||ftxCenter(S),t=d*D2R,cs=Math.cos(t),sn=Math.sin(t);
+  const rot=q=>({x:c.x+(q.x-c.x)*cs-(q.y-c.y)*sn,y:c.y+(q.x-c.x)*sn+(q.y-c.y)*cs});
+  S.pts=S.pts.map(rot);if(S.grid)S.grid=S.grid.map(r=>r.map(rot));
+  ftxSchedule();drawSelection();
+}
+function ftxAngUpdate(S){
+  if(!ftxAngBox)return;
+  if(!S||S.mode!=="rotate"){ftxAngBox.style.display="none";return}
+  const r=canvas.getBoundingClientRect();
+  ftxAngBox.style.display="flex";ftxAngBox.style.left=(r.left+8)+"px";ftxAngBox.style.top=(r.top+34)+"px";
+  const inp=document.getElementById("ftxAngIn");
+  if(document.activeElement!==inp)inp.value=Math.round(ftxTotAng(S)*10)/10;
+}
+{
+  const inp=document.getElementById("ftxAngIn");
+  const go=()=>{if(inp.value!=="")ftxSetAngle(Number(inp.value))};
+  inp.addEventListener("keydown",e=>{
+    e.stopPropagation();
+    if(e.key==="Enter"){e.preventDefault();go();inp.blur()}
+    else if(e.key==="Escape"){e.preventDefault();inp.blur();ftxAngUpdate(ftxSess)}
+  });
+  inp.addEventListener("input",go);   // gõ tới đâu xoay tới đó
+  ftxAngBox.querySelectorAll("button").forEach(b=>b.onclick=()=>{
+    const S=ftxSess;if(!S)return;
+    const d=Number(b.dataset.d);
+    ftxSetAngle(d===0?0:ftxTotAng(S)+d);
+    inp.blur();
+  });
 }
 document.addEventListener("keydown",e=>{
   if(!ftxSess)return;
@@ -10316,6 +11625,288 @@ $("sfMake").onclick=()=>{
     renderTabs();
   };
   document.addEventListener("pointerup",end);document.addEventListener("pointercancel",end);
+})();
+</script>
+
+<script>
+/* ===== Lưu .ico: nhiều cỡ, mỗi cỡ là một ảnh PNG nhúng trong file ICO ===== */
+async function pbMakeIco(){
+  const r=await renderImage("image/png"),bmp=await createImageBitmap(r.blob);
+  const sizes=[...document.querySelectorAll("#icoOpts input:checked")].map(x=>+x.value);
+  if(!sizes.length)sizes.push(256);
+  const parts=[];
+  for(const s of sizes){
+    const c=document.createElement("canvas");c.width=c.height=s;const x=c.getContext("2d");
+    x.imageSmoothingQuality="high";
+    const k=Math.min(s/bmp.width,s/bmp.height),w=bmp.width*k,h=bmp.height*k;
+    x.drawImage(bmp,(s-w)/2,(s-h)/2,w,h);
+    const b=await new Promise(rs=>c.toBlob(rs,"image/png"));
+    parts.push({s,d:new Uint8Array(await b.arrayBuffer())});
+  }
+  const n=parts.length;let off=6+16*n;
+  const buf=new Uint8Array(off+parts.reduce((a,p)=>a+p.d.length,0)),dv=new DataView(buf.buffer);
+  dv.setUint16(2,1,true);dv.setUint16(4,n,true);
+  parts.forEach((p,i)=>{const o=6+16*i,v=p.s>=256?0:p.s;buf[o]=v;buf[o+1]=v;dv.setUint16(o+4,1,true);dv.setUint16(o+6,32,true);dv.setUint32(o+8,p.d.length,true);dv.setUint32(o+12,off,true);buf.set(p.d,off);off+=p.d.length});
+  return {blob:new Blob([buf],{type:"image/x-icon"}),w:bmp.width,h:bmp.height};
+}
+(function(){
+const sf=$("saveFormat");
+function icoUI(){const ic=sf.value==="image/x-icon";$("icoOpts").classList.toggle("hidden",!ic);
+  ["quality","maxKB"].forEach(id=>{const f=$(id).closest(".field");if(f)f.classList.toggle("hidden",ic)})}
+sf.addEventListener("change",icoUI);$("saveBtn").addEventListener("click",icoUI);
+
+/* ===== Kiểu nét vẽ giống Photoshop ===== */
+const TS=256;
+function star(c,S,n,ro,ri){c.beginPath();for(let i=0;i<n*2;i++){const r=(i%2?ri:ro)*S,a=-Math.PI/2+i*Math.PI/n;c.lineTo(S/2+Math.cos(a)*r,S/2+Math.sin(a)*r)}c.closePath();c.fill()}
+// id:[tên, khoảng cách mặc định %, rải mặc định %, hàm vẽ (màu trắng)]
+const TIPS={
+ dot:["Tròn mềm",25,0,(c,S)=>{const g=c.createRadialGradient(S/2,S/2,0,S/2,S/2,S/2);g.addColorStop(0,"#fff");g.addColorStop(.5,"#fff");g.addColorStop(1,"rgba(255,255,255,0)");c.fillStyle=g;c.fillRect(0,0,S,S)}],
+ hard:["Tròn cứng",25,0,(c,S)=>{c.beginPath();c.arc(S/2,S/2,S*.48,0,6.283);c.fill()}],
+ sq:["Vuông",40,0,(c,S)=>c.fillRect(S*.08,S*.08,S*.84,S*.84)],
+ star:["Ngôi sao",120,0,(c,S)=>star(c,S,5,.47,.19)],
+ heart:["Trái tim",120,0,(c,S)=>{c.beginPath();c.moveTo(S/2,S*.9);c.bezierCurveTo(S*.02,S*.55,S*.1,S*.1,S/2,S*.32);c.bezierCurveTo(S*.9,S*.1,S*.98,S*.55,S/2,S*.9);c.fill()}],
+ snow:["Bông tuyết",120,0,(c,S)=>{c.translate(S/2,S/2);c.lineCap="round";c.lineWidth=S*.05;for(let i=0;i<6;i++){c.rotate(Math.PI/3);c.beginPath();c.moveTo(0,0);c.lineTo(0,-S*.46);for(const r of[.2,.33]){c.moveTo(0,-S*r);c.lineTo(S*.11,-S*(r+.1));c.moveTo(0,-S*r);c.lineTo(-S*.11,-S*(r+.1))}c.stroke()}}],
+ grass:["Cỏ",70,25,(c,S)=>{[.7,.92,.6,.98,.76,.86,.55].forEach((h,i)=>{const x=S*(.16+.68*i/6),l=(i-3)*.045*S,w=S*.04,y=S*(1-h);c.beginPath();c.moveTo(x-w,S);c.quadraticCurveTo(x+l*.2,y+(S-y)*.45,x+l,y);c.quadraticCurveTo(x+l*.2+w*.6,y+(S-y)*.45,x+w,S);c.fill()})}],
+ leaf:["Chiếc lá",110,10,(c,S)=>{c.beginPath();c.moveTo(S/2,S*.94);c.bezierCurveTo(S*.04,S*.7,S*.1,S*.2,S/2,S*.05);c.bezierCurveTo(S*.9,S*.2,S*.96,S*.7,S/2,S*.94);c.fill();c.globalCompositeOperation="destination-out";c.lineWidth=S*.03;c.beginPath();c.moveTo(S/2,S*.9);c.lineTo(S/2,S*.2);c.stroke()}],
+ flower:["Bông hoa",120,0,(c,S)=>{for(let i=0;i<5;i++){c.save();c.translate(S/2,S/2);c.rotate(i*1.2566);c.beginPath();c.ellipse(0,-S*.24,S*.12,S*.22,0,0,6.283);c.fill();c.restore()}c.beginPath();c.arc(S/2,S/2,S*.1,0,6.283);c.fill()}],
+ spray:["Hạt rải",60,0,(c,S)=>{let s=7;const r=()=>(s=s*16807%2147483647)/2147483647;for(let i=0;i<70;i++){const a=r()*6.283,d=Math.sqrt(r())*S*.44,q=S*(.012+r()*.03);c.beginPath();c.arc(S/2+Math.cos(a)*d,S/2+Math.sin(a)*d,q,0,6.283);c.fill()}}]
+};
+const BASE={},CUST=[],TC=new Map();let sel="line",cn=0;
+function baseOf(id){
+  if(BASE[id])return BASE[id];
+  const c=document.createElement("canvas");c.width=c.height=TS;const x=c.getContext("2d");x.fillStyle=x.strokeStyle="#fff";
+  TIPS[id][3](x,TS);return BASE[id]=c;
+}
+function tipOf(id,color,orig){
+  const k=id+color+(orig?1:0);let t=TC.get(k);if(t)return t;
+  t=document.createElement("canvas");t.width=t.height=TS;const x=t.getContext("2d");x.drawImage(baseOf(id),0,0);
+  if(!orig){x.globalCompositeOperation="source-in";x.fillStyle=color;x.fillRect(0,0,TS,TS)}
+  if(TC.size>40)TC.clear();TC.set(k,t);return t;
+}
+// Thêm ảnh bất kỳ làm đầu cọ: PNG trong suốt dùng độ trong suốt, ảnh thường dùng độ tối (tối = đậm)
+function addCustom(im,save){
+  const k=Math.min(TS/im.naturalWidth,TS/im.naturalHeight),w=Math.max(1,Math.round(im.naturalWidth*k)),h=Math.max(1,Math.round(im.naturalHeight*k));
+  const t=document.createElement("canvas");t.width=w;t.height=h;const tx=t.getContext("2d");tx.drawImage(im,0,0,w,h);
+  const d=tx.getImageData(0,0,w,h),p=d.data;let ha=false;
+  for(let i=3;i<p.length;i+=4)if(p[i]<250){ha=true;break}
+  if(!ha){for(let i=0;i<p.length;i+=4){const l=.299*p[i]+.587*p[i+1]+.114*p[i+2];p[i]=p[i+1]=p[i+2]=0;p[i+3]=255-l}tx.putImageData(d,0,0)}
+  const c=document.createElement("canvas");c.width=c.height=TS;c.getContext("2d").drawImage(t,(TS-w)/2,(TS-h)/2);
+  const id="c"+(++cn);BASE[id]=c;CUST.push(id);
+  if(save)try{const a=JSON.parse(localStorage.getItem("pbCustom")||"[]");a.push(c.toDataURL("image/png"));localStorage.setItem("pbCustom",JSON.stringify(a.slice(-10)))}catch(_){}
+  return id;
+}
+function build(){
+  const g=$("pbGrid");g.replaceChildren();
+  const add=(id,title,txt)=>{const b=document.createElement("button");b.type="button";b.className="pbb"+(id===sel?" on":"");b.title=title;
+    if(txt)b.textContent=txt;else{const c=document.createElement("canvas");c.width=c.height=40;c.getContext("2d").drawImage(tipOf(id,"#e6e6ea",false),0,0,40,40);b.appendChild(c)}
+    b.onclick=()=>pick(id);g.appendChild(b)};
+  add("line","Nét liền (mặc định)","⎯");
+  Object.keys(TIPS).forEach(id=>add(id,TIPS[id][0]));
+  CUST.forEach(id=>add(id,"Kiểu từ ảnh của bạn"));
+}
+function setV(id,v){$(id).value=v;const s=$(id+"T");if(s)s.textContent=v}
+function pick(id){
+  sel=id;$("pbOpts").classList.toggle("hidden",id==="line");$("pbDel").classList.toggle("hidden",id[0]!=="c");
+  if(id!=="line"){const d=TIPS[id];setV("pbSp",d?d[1]:100);setV("pbScat",d?d[2]:0);$("pbOrig").checked=id[0]==="c"}
+  build();
+}
+const SL=(id,l,a,b,v)=>`<label class="prop-label" style="margin-top:6px">${l}: <span id="${id}T">${v}</span></label><input type="range" id="${id}" min="${a}" max="${b}" value="${v}">`;
+$("pbBox").innerHTML=`<label class="prop-label" style="margin-top:8px">Kiểu nét</label><div id="pbGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px"></div>
+<input type="file" id="pbFile" accept="image/*" multiple hidden>
+<div style="display:flex;gap:4px;margin-top:4px"><button type="button" class="small-btn" id="pbAdd" style="flex:1">＋ Thêm ảnh làm kiểu vẽ</button><button type="button" class="small-btn hidden" id="pbDel" title="Xóa kiểu ảnh đang chọn">🗑</button></div>
+<div id="pbOpts" class="hidden">`
++SL("pbSp","Khoảng cách giữa các hạt (%)",3,300,40)+SL("pbScat","Rải ngẫu nhiên (%)",0,200,0)+SL("pbCnt","Số hạt mỗi điểm",1,8,1)+SL("pbSj","Ngẫu nhiên cỡ (%)",0,90,0)
++`<label class="check" style="margin-top:8px"><input type="checkbox" id="pbFollow">Xoay theo hướng nét vẽ</label>`
++SL("pbRot","Góc xoay (°)",0,360,0)+SL("pbAj","Ngẫu nhiên góc xoay (%)",0,100,0)+SL("pbOj","Ngẫu nhiên độ đậm (%)",0,90,0)
++`<label class="check" style="margin-top:8px"><input type="checkbox" id="pbOrig">Giữ màu gốc của ảnh (không tô màu bút)</label>
+<label class="prop-label" style="margin-top:8px">Xa gần dọc theo nét vẽ</label>
+<select id="pbDepth"><option value="0">Tắt (mọi hạt bằng nhau)</option><option value="y">Theo độ cao ảnh (trên = xa, nhỏ)</option><option value="in">Dọc nét: xa → gần (nhỏ → to)</option><option value="out">Dọc nét: gần → xa (to → nhỏ)</option></select>`
++SL("pbDepthAmt","Mức xa gần (%)",0,95,70)+SL("pbRamp","Độ dài chuyển xa → gần (px)",50,3000,600)
++`<label class="check" style="margin-top:6px"><input type="checkbox" id="pbFade">Xa thì nhạt hơn</label>
+<p class="help" style="margin-top:6px">Độ đậm nhạt mỗi hạt lấy theo hình mẫu: độ trong suốt (PNG) hoặc độ tối (ảnh thường). Cỡ hạt = "Cỡ bút", độ đậm chung = "Độ đậm" ở trên.</p></div>`;
+$("pbBox").addEventListener("input",e=>{const s=$(e.target.id+"T");if(s)s.textContent=e.target.value});
+$("pbAdd").onclick=()=>$("pbFile").click();
+$("pbFile").onchange=e=>{
+  const fs=[...e.target.files];e.target.value="";let last=null,n=fs.length;
+  fs.forEach(f=>{const u=URL.createObjectURL(f),im=new Image();
+    im.onload=()=>{last=addCustom(im,true);URL.revokeObjectURL(u);if(--n===0)pick(last)};
+    im.onerror=()=>{URL.revokeObjectURL(u);n--}; im.src=u});
+};
+$("pbDel").onclick=()=>{
+  const i=CUST.indexOf(sel);if(i<0)return;CUST.splice(i,1);delete BASE[sel];
+  try{const a=JSON.parse(localStorage.getItem("pbCustom")||"[]");a.splice(i,1);localStorage.setItem("pbCustom",JSON.stringify(a))}catch(_){}
+  pick("line");
+};
+try{(JSON.parse(localStorage.getItem("pbCustom")||"[]")).forEach(u=>{const im=new Image();im.onload=()=>{addCustom(im,false);build()};im.src=u})}catch(_){}
+build();
+
+window.stampOn=(erase,mode)=>!erase&&!mode&&sel!=="line";
+window.stampCursor=()=>{
+  if(sel==="line")return null;
+  const v=id=>Number($(id).value)||0;
+  return {tip:tipOf(sel,$("penColor").value,$("pbOrig").checked),rot:v("pbRot")*Math.PI/180,follow:$("pbFollow").checked,alpha:v("penAlpha")/100};
+};
+function comp(d){
+  if(!d.tmp)return;
+  const x=d.cv.getContext("2d");x.save();x.globalCompositeOperation="source-over";x.globalAlpha=1;
+  x.clearRect(0,0,d.cv.width,d.cv.height);x.drawImage(d.base,0,0);x.globalAlpha=d.alpha;x.drawImage(d.tmp,0,0);x.restore();
+}
+function dab(d,x,y,ang){
+  const S=d.stamp,c=S.ctx;
+  let t=1;
+  if(S.dm==="y")t=y/sourceH;else if(S.dm==="in"||S.dm==="out"){t=Math.min(1,S.dist/S.ramp);if(S.dm==="out")t=1-t}
+  t=Math.max(0,Math.min(1,t));
+  const on=S.dm!=="0",f=on?1-S.da+S.da*t:1,fa=(on&&S.fade)?.3+.7*t:1;
+  for(let n=0;n<S.cnt;n++){
+    const sz=d.size*f*(1+(Math.random()*2-1)*S.sj);if(sz<.5)continue;
+    const j=S.scat*d.size,px=x+(Math.random()*2-1)*j,py=y+(Math.random()*2-1)*j;
+    c.save();c.globalAlpha=fa*(1-S.oj*Math.random());c.translate(px,py);
+    c.rotate((S.follow?ang:0)+S.rot+(Math.random()*2-1)*S.aj*Math.PI);
+    c.drawImage(S.tip,-sz/2,-sz/2,sz,sz);c.restore();
+  }
+}
+window.stampBegin=function(d,p){
+  const v=id=>Number($(id).value)||0;
+  const S=d.stamp={sp:Math.max(3,v("pbSp"))/100,scat:v("pbScat")/100,cnt:Math.max(1,v("pbCnt")|0),sj:v("pbSj")/100,rot:v("pbRot")*Math.PI/180,aj:v("pbAj")/100,oj:v("pbOj")/100,
+    follow:$("pbFollow").checked,dm:$("pbDepth").value,da:v("pbDepthAmt")/100,ramp:Math.max(20,v("pbRamp")),fade:$("pbFade").checked,acc:0,dist:0,ang:null};
+  S.tip=tipOf(sel,d.color,$("pbOrig").checked);
+  if(d.alpha<1){d.base=copyCanvas(d.cv);d.tmp=document.createElement("canvas");d.tmp.width=d.cv.width;d.tmp.height=d.cv.height;S.ctx=d.tmp.getContext("2d")}
+  else S.ctx=d.cv.getContext("2d");
+  dab(d,p.x,p.y,0);comp(d);
+};
+window.stampMove=function(d,p){
+  const S=d.stamp,a=d.last,dx=p.x-a.x,dy=p.y-a.y,len=Math.hypot(dx,dy);
+  if(len<.01)return;
+  const ang=Math.atan2(dy,dx);
+  if(S.ang==null)S.ang=ang;else{let da=ang-S.ang;da=Math.atan2(Math.sin(da),Math.cos(da));S.ang+=da*.4}
+  const step=Math.max(1,d.size*S.sp),base=S.dist;let need=step-S.acc;
+  while(need<=len){S.dist=base+need;dab(d,a.x+dx*need/len,a.y+dy*need/len,S.ang);need+=step}
+  S.acc=len-(need-step);S.dist=base+len;if(!S.nocomp)comp(d);
+};
+
+/* ===== Vẽ nét theo viền vùng chọn (Stroke) ===== */
+// Dò viền mặt nạ thành các vòng khép kín (toạ độ góc điểm ảnh). d = dữ liệu RGBA, W x H
+function maskLoops(d,W,H){
+  const on=(x,y)=>x>=0&&y>=0&&x<W&&y<H&&d[(y*W+x)*4+3]>=128,V=W+1,nx=new Map();
+  const add=(x0,y0,x1,y1)=>{const k=y0*V+x0,e=y1*V+x1,l=nx.get(k);if(l)l.push(e);else nx.set(k,[e])};
+  for(let y=0;y<H;y++)for(let x=0;x<W;x++)if(on(x,y)){
+    if(!on(x,y-1))add(x,y,x+1,y);
+    if(!on(x+1,y))add(x+1,y,x+1,y+1);
+    if(!on(x,y+1))add(x+1,y+1,x,y+1);
+    if(!on(x-1,y))add(x,y+1,x,y);
+  }
+  const loops=[];
+  while(nx.size){
+    const first=nx.keys().next().value,pts=[];let cur=first;
+    for(;;){
+      pts.push(cur%V,(cur/V)|0);
+      const l=nx.get(cur);if(!l)break;
+      const e=l.pop();if(!l.length)nx.delete(cur);
+      cur=e;if(cur===first)break;
+    }
+    if(pts.length>=8)loops.push(pts);
+  }
+  return loops;
+}
+// Rải đều điểm theo chiều dài (bước h) rồi làm mượt nhẹ: bậc thang răng cưa -> đường cong, góc chỉ bo vài px
+function resampleLoop(pts,h,sm){
+  const n=pts.length/2,cum=[0];
+  for(let i=0;i<n;i++){const j=(i+1)%n;cum.push(cum[i]+Math.hypot(pts[j*2]-pts[i*2],pts[j*2+1]-pts[i*2+1]))}
+  const total=cum[n];if(total<2)return null;
+  const m=Math.max(8,Math.round(total/h)),out=[];let seg=0;
+  for(let k=0;k<m;k++){
+    const t=total*k/m;while(seg<n-1&&cum[seg+1]<t)seg++;
+    const j=(seg+1)%n,len=cum[seg+1]-cum[seg]||1,u=(t-cum[seg])/len;
+    out.push([pts[seg*2]+(pts[j*2]-pts[seg*2])*u,pts[seg*2+1]+(pts[j*2+1]-pts[seg*2+1])*u]);
+  }
+  const w=m>=24?sm:0;if(!w)return out;
+  return out.map((_,i)=>{let sx=0,sy=0;for(let q=-w;q<=w;q++){const a=out[(i+q+m)%m];sx+=a[0];sy+=a[1]}return [sx/(2*w+1),sy/(2*w+1)]});
+}
+window.maskLoops=maskLoops;window.resampleLoop=resampleLoop;
+let strokePos="mid";
+function strokeSelection(){
+  if(!img){status("Hãy mở ảnh trước.");return}
+  if(!regions.length){status("Chưa có vùng chọn: hãy tạo vùng chọn (⬚ ◯ ✎ ...) rồi bấm lại.");return}
+  const size=Math.max(1,Number($("penSize").value)||8),alpha=Math.min(1,Math.max(.01,Number($("penAlpha").value)/100)),color=$("penColor").value;
+  // Mặt nạ lấy TRƯỚC khi đổi lớp; đang đứng trên lớp nét vẽ thì không ôm sát (lớp đó chỉ có nét)
+  const cur=layers[selLayer],hugCb=$("selHug"),hugOld=hugCb.checked;
+  if(cur&&cur.draw)hugCb.checked=false;
+  const s=Math.min(1,2400/Math.max(sourceW,sourceH));
+  let m;try{m=selMaskCanvas(s)}finally{hugCb.checked=hugOld}
+  if(!m){status("Không dựng được viền vùng chọn.");return}
+  if(strokePos!=="mid")morphMask(m,m.width,m.height,(strokePos==="out"?1:-1)*size/2*s);
+  const raw=maskLoops(m.getContext("2d",{willReadFrequently:true}).getImageData(0,0,m.width,m.height).data,m.width,m.height);
+  if(!raw.length){status("Vùng chọn quá nhỏ để vẽ nét theo viền.");return}
+  const a0=layers[selLayer];if(!a0||!a0.draw)newDrawLayer();
+  const {L,cv}=strokeTarget();
+  let toLayer=(x,y)=>({x,y});
+  if(L){
+    const M=new DOMMatrix().translate(L.x+L.w/2,L.y+L.h/2).rotate(L.rot).scale(L.fx,L.fy).translate(-L.w/2,-L.h/2).scale(L.w/L.nw,L.h/L.nh).inverse();
+    toLayer=(x,y)=>{const q=M.transformPoint({x,y});return {x:q.x,y:q.y}};
+  }
+  pixPush(L,copyCanvas(cv));
+  const h=Math.max(1,1/s),stamp=stampOn(false,"");let n=0;
+  strokeLive=true;
+  for(const r of raw){
+    const sp=resampleLoop(r,h,3);if(!sp)continue;
+    const pts=sp.map(q=>toLayer(q[0]/s,q[1]/s));pts.push(pts[0]);
+    const p0=pts[0];
+    const d=penDraw={L,cv,pts:[p0],last:p0,mid:p0,erase:false,alpha,size,color,mode:"",noClip:true};
+    if(stamp){
+      stampBegin(d,p0);d.stamp.nocomp=true;
+      for(let i=1;i<pts.length;i++)penPoint(pts[i]);
+      comp(d);
+    }else if(alpha<1){
+      d.base=copyCanvas(cv);d.tmp=document.createElement("canvas");d.tmp.width=cv.width;d.tmp.height=cv.height;
+      d.pts=pts;penFull();
+    }else{
+      const c=cv.getContext("2d");c.save();c.fillStyle=color;c.beginPath();c.arc(p0.x,p0.y,size/2,0,7);c.fill();c.restore();
+      for(let i=1;i<pts.length;i++)penPoint(pts[i]);
+    }
+    penEnd();n++;
+  }
+  drawSelection();
+  status("Đã vẽ nét theo viền vùng chọn ("+n+" đường viền).");
+}
+document.querySelectorAll("#selStrokePos [data-sp]").forEach(b=>b.onclick=()=>{
+  strokePos=b.dataset.sp;document.querySelectorAll("#selStrokePos [data-sp]").forEach(x=>x.classList.toggle("active",x===b));
+});
+$("selStrokeBtn").onclick=strokeSelection;
+$("selBarStroke").onclick=strokeSelection;
+
+/* ===== Giao diện mobile ===== */
+const mq=matchMedia("(max-width:820px), (pointer:coarse) and (max-width:1100px)"),root=document.documentElement;
+const relayout=()=>setTimeout(()=>{try{resizeOverlay()}catch(_){}},40);
+function sheet(on){root.classList.toggle("sheet",on);if(!on)root.classList.remove("big");relayout()}
+function mbSet(){root.classList.toggle("mb",mq.matches);if(!mq.matches){root.classList.remove("sheet","big")}relayout()}
+mq.addEventListener("change",mbSet);mbSet();
+$("mbOpen").onclick=()=>$("openBtn").click();$("mbNew").onclick=()=>$("newBtn").click();
+$("mbUndo").onclick=()=>undo();$("mbRedo").onclick=()=>redo();$("mbSave").onclick=()=>$("saveBtn").click();
+$("mbPanel").onclick=()=>sheet(!root.classList.contains("sheet"));
+$("mbClose").onclick=()=>sheet(false);
+$("mbBig").onclick=()=>{root.classList.toggle("big");relayout()};
+if(typeof openTab==="function"){const o=openTab;openTab=function(){const r=o.apply(this,arguments);if(mq.matches)sheet(true);return r}}
+// Hai ngón: chụm để phóng/thu, kéo để dời ảnh (hủy nét đang vẽ dở bằng ngón đầu)
+const st=$("sourceStage"),tp=new Map();let pg=null,sw=false,syn=false;
+const cen=()=>{const a=[...tp.values()],r=st.getBoundingClientRect();return{x:(a[0].x+a[1].x)/2-r.left-r.width/2,y:(a[0].y+a[1].y)/2-r.top-r.height/2,d:Math.hypot(a[0].x-a[1].x,a[0].y-a[1].y)||1}};
+st.addEventListener("pointerdown",e=>{
+  if(e.pointerType!=="touch")return;
+  tp.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(tp.size===2){
+    const first=[...tp.keys()][0];syn=true;
+    try{canvas.dispatchEvent(new PointerEvent("pointercancel",{pointerId:first,pointerType:"touch",bubbles:true}))}catch(_){}
+    syn=false;const c=cen();pg={x:c.x,y:c.y,d:c.d,z:zoom,px:panX,py:panY};sw=true;
+    e.stopImmediatePropagation();e.preventDefault();
+  }else if(sw){e.stopImmediatePropagation();e.preventDefault()}
+},true);
+st.addEventListener("pointermove",e=>{
+  if(e.pointerType!=="touch"||!tp.has(e.pointerId))return;
+  tp.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(!sw)return;e.stopImmediatePropagation();
+  if(tp.size>=2&&pg){const c=cen(),nz=Math.max(.05,Math.min(40,pg.z*c.d/pg.d)),k=nz/pg.z;zoom=nz;panX=c.x-(pg.x-pg.px)*k;panY=c.y-(pg.y-pg.py)*k;layoutViews()}
+},true);
+const up=e=>{if(syn||e.pointerType!=="touch")return;tp.delete(e.pointerId);if(sw){e.stopImmediatePropagation();if(tp.size<2)pg=null;if(tp.size===0)sw=false}};
+st.addEventListener("pointerup",up,true);st.addEventListener("pointercancel",up,true);
 })();
 </script>
 </body>
